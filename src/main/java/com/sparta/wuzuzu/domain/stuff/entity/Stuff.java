@@ -1,7 +1,6 @@
 package com.sparta.wuzuzu.domain.stuff.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
-import com.sparta.wuzuzu.domain.post.entity.PostType;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
