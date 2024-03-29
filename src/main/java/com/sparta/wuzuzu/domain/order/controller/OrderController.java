@@ -5,6 +5,7 @@ import com.sparta.wuzuzu.domain.order.dto.OrderRequest;
 import com.sparta.wuzuzu.domain.order.dto.OrdersProjection;
 import com.sparta.wuzuzu.domain.order.service.OrderService;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Void> createOrder(
         //@AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody OrderRequest requestDto
+        @Valid @RequestBody OrderRequest requestDto
     ){
         orderService.createOrder(testUser, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED.value()).build();

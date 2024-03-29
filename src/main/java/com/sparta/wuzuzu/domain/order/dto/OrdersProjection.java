@@ -1,6 +1,5 @@
 package com.sparta.wuzuzu.domain.order.dto;
 
-import com.sparta.wuzuzu.domain.stuff.entity.StuffType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,13 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrdersProjection {
     private Long postId;
-    private String postTitle;
-    private String postContent;
-    private Boolean postStatus;
-    private Long postViews;
-    private Long stuffId;
-    private String stuffName;
-    private String stuffDescription;
-    private Long stuffPrice;
-    private StuffType stuffCategory;
+    private String title;
+    private Long views;
+    private String author;
+    private Boolean status;
+    private String goods;
+    private Long price;
+    private Long count;
 }
