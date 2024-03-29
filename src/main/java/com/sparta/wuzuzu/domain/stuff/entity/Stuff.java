@@ -1,6 +1,7 @@
 package com.sparta.wuzuzu.domain.stuff.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.stuff.dto.StuffRequest;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -51,4 +52,25 @@ public class Stuff extends Timestamped {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StuffType category;
+
+    public Stuff(StuffRequest requestDto, User user) {
+        this.user = user;
+        this.name = requestDto.getName();
+        this.description = requestDto.getDescription();
+        this.price = requestDto.getPrice();
+        this.stock = requestDto.getStock();
+        this.category = requestDto.getCategory();
+    }
+
+    public void update(StuffRequest requestDto) {
+        this.name = requestDto.getName();
+        this.description = requestDto.getDescription();
+        this.price = requestDto.getPrice();
+        this.stock = requestDto.getStock();
+        this.category = requestDto.getCategory();
+    }
+
+    public void stuffOrder(Long order){
+        stock -= order;
+    }
 }
