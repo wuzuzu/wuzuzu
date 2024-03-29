@@ -36,13 +36,18 @@ public class User extends Timestamped {
     @Column
     private String petType;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
     @Builder
-    public User(String email, String password, String userName, String address, String petName, String petType) {
+    public User(String email, String password, String userName, String address, String petName, String petType, UserRole role) {
         this.email = email;
         this.password = password;
         this.userName = userName;
         this.address = address;
         this.petName = petName;
         this.petType = petType;
+        this.role = role;
     }
 }
