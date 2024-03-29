@@ -47,6 +47,11 @@ public class DibsService {
         Long postId
     ) {
         Dibs dibs = dibsRepository.findByUserAndPostId(user, postId);
+
+        if(dibs == null){
+            throw new IllegalArgumentException("Dibs is empty.");
+        }
+
         dibsRepository.delete(dibs);
     }
 }
