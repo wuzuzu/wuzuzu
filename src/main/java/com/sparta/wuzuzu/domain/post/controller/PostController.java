@@ -1,11 +1,12 @@
 package com.sparta.wuzuzu.domain.post.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
+import com.sparta.wuzuzu.domain.post.dto.PostProjection;
 import com.sparta.wuzuzu.domain.post.dto.PostRequest;
 import com.sparta.wuzuzu.domain.post.dto.PostResponse;
-import com.sparta.wuzuzu.domain.post.dto.StuffPostProjection;
 import com.sparta.wuzuzu.domain.post.service.PostService;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     private final PostService postService;
 
+
     User testUser = User.builder()
         .userId(1L)
         .email("test@test.com")
@@ -34,7 +36,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Void> createPost(
         //@AuthenticationPrincipal UserDetailsImpl userDetails
-        @RequestBody PostRequest requestDto
+        @Valid @RequestBody PostRequest requestDto
     ){
         postService.createPost(testUser, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED.value()).build();
@@ -50,10 +52,10 @@ public class PostController {
 
     // 게시물 상세 조회 : QueryDSL 사용하기, 조회시 동시성 제어로 조회수 증가
     @GetMapping("/{postId}")
-    public ResponseEntity<CommonResponse<StuffPostProjection>> getPost(
+    public ResponseEntity<CommonResponse<PostProjection>> getPost(
         @PathVariable Long postId
     ){
-        StuffPostProjection response = postService.getPost(postId);
+        PostProjection response = postService.getPost(postId);
         return CommonResponse.ofDataWithHttpStatus(response, HttpStatus.OK);
     }
 
@@ -61,7 +63,7 @@ public class PostController {
     public ResponseEntity<Void> updatePost(
         //@AuthenticationPrincipal UserDetailsImpl userDetails
         @PathVariable Long postId,
-        @RequestBody PostRequest requestDto
+        @Valid @RequestBody PostRequest requestDto
     ){
         postService.updatePost(testUser, postId, requestDto);
         return ResponseEntity.status(HttpStatus.OK.value()).build();

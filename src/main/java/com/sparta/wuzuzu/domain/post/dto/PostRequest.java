@@ -1,6 +1,7 @@
 package com.sparta.wuzuzu.domain.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 
 @Getter
@@ -9,11 +10,14 @@ public class PostRequest {
     private String title;
 
     @NotBlank(message = "내용은 필수입니다.")
-    private String content;
+    private String description;
 
-    @NotBlank(message = "재고 아이디는 필수입니다.")
-    private Long stuffId;
+    @NotBlank(message = "상품명은 필수입니다.")
+    private String goods;
 
-    @NotBlank(message = "판매 수량은 필수입니다.")
-    private Long count;
+    @Positive(message = "가격은 양수이어야 합니다.")
+    private Long price;
+
+    @Positive(message = "판매 수량은 양수이어야 합니다.")
+    private Long stock;
 }

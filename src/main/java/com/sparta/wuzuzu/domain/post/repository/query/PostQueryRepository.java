@@ -1,8 +1,9 @@
 package com.sparta.wuzuzu.domain.post.repository.query;
 
-import com.sparta.wuzuzu.domain.post.dto.StuffPostProjection;
+import com.sparta.wuzuzu.domain.post.dto.PostProjection;
+import com.sparta.wuzuzu.domain.user.entity.User;
 
 public interface PostQueryRepository {
 
-    public StuffPostProjection findStuffAndPostByPostId(Long postId);
+    public PostProjection findPostByPostId(Long postId);
 }

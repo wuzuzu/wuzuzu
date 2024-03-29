@@ -36,35 +36,49 @@ public class Post extends Timestamped {
     private User user;
 
     @Column(nullable = false)
-    private Long stuffId;
-
-    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
-    private String content;
+    private String description;
+
+    @Column(nullable = false)
+    private Long views = 0L;
 
     @Column(columnDefinition = "TINYINT(1) default 0")
     private Boolean status = true;
 
     @Column(nullable = false)
-    private Long views = 0L;
+    private String goods;
 
-    public Post(PostRequest requestDto, User user) {
+    @Column(nullable = false)
+    private Long price;
+
+    @Column(nullable = false)
+    private Long stock;
+
+    public Post(User user, PostRequest requestDto) {
         this.user = user;
-        this.stuffId = requestDto.getStuffId();
         this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.description = requestDto.getDescription();
+        this.goods = requestDto.getGoods();
+        this.price = requestDto.getPrice();
+        this.stock = requestDto.getStock();
     }
 
     public void update(PostRequest requestDto) {
-        this.stuffId = requestDto.getStuffId();
         this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.description = requestDto.getDescription();
+        this.goods = requestDto.getGoods();
+        this.price = requestDto.getPrice();
+        this.stock = requestDto.getStock();
     }
 
     public void increaseViews(){
         views++;
+    }
+
+    public void goodsOrder(Long count){
+        stock -= count;
     }
 
     public void delete() {
