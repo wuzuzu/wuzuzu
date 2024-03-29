@@ -1,6 +1,7 @@
 package com.sparta.wuzuzu.domain.order.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.order.dto.OrderRequest;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -35,11 +36,14 @@ public class Order extends Timestamped {
     private User user;
 
     @Column
-    private Long stuffId;
-
-    @Column
     private Long postId;
 
     @Column(nullable = false)
     private Long count;
+
+    public Order(OrderRequest requestDto, User user) {
+        this.postId = requestDto.getPostId();
+        this.count = requestDto.getCount();
+        this.user = user;
+    }
 }
