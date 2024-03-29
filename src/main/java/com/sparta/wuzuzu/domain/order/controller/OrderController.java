@@ -42,7 +42,6 @@ public class OrderController {
         //@AuthenticationPrincipal UserDetailsImpl userDetails,
     ){
         List<OrdersProjection> orderResponseList = orderService.getOrders(testUser);
-
         return CommonResponse.ofDataWithHttpStatus(orderResponseList, HttpStatus.CREATED);
     }
 }
