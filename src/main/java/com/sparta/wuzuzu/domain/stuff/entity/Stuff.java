@@ -51,5 +51,5 @@ public class Stuff extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PostType category;
+    private StuffType category;
 }
