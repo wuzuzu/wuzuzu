@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/dibs")
+@RequestMapping("/api/v1/post/{postId}/dibs")
 public class DibsController {
     private final DibsService dibsService;
 
@@ -28,7 +28,7 @@ public class DibsController {
         .userName("userName")
         .build();
 
-    @PostMapping("/post/{postId}")
+    @PostMapping
     public ResponseEntity<Void> createDibs(
         //@AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long postId
@@ -45,7 +45,7 @@ public class DibsController {
         return CommonResponse.ofDataWithHttpStatus(dibsResponseList, HttpStatus.OK);
     }
 
-    @DeleteMapping("/post/{postId}")
+    @DeleteMapping
     public ResponseEntity<Void> deleteDibs(
         //@AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long postId

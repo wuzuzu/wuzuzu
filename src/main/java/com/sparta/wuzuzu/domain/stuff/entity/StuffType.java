@@ -5,3 +5,5 @@ public enum StuffType {
     FOOD,
     DRINK;
 }
+
+
