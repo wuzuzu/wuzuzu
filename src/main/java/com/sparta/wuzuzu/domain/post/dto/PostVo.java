@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostProjection {
+public class PostVo {
     private Long postId;
     private String title;
     private String description;

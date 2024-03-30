@@ -1,6 +1,6 @@
 package com.sparta.wuzuzu.domain.dibs.service;
 
-import com.sparta.wuzuzu.domain.dibs.dto.DibsProjection;
+import com.sparta.wuzuzu.domain.dibs.dto.DibsVo;
 import com.sparta.wuzuzu.domain.dibs.entity.Dibs;
 import com.sparta.wuzuzu.domain.dibs.repository.DibsRepository;
 import com.sparta.wuzuzu.domain.dibs.repository.query.DibsQueryRepository;
@@ -32,8 +32,8 @@ public class DibsService {
         dibsRepository.save(new Dibs(postId, user));
     }
 
-    public List<DibsProjection> getDibs(User user) {
-        List<DibsProjection> dibsList = dibsQueryRepository.findAllDibs(user.getUserId());
+    public List<DibsVo> getDibs(User user) {
+        List<DibsVo> dibsList = dibsQueryRepository.findAllDibs(user.getUserId());
 
         if (dibsList.isEmpty()) {
             throw new IllegalArgumentException("Dibs list is empty");

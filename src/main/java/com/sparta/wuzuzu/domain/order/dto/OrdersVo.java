@@ -1,4 +1,4 @@
-package com.sparta.wuzuzu.domain.dibs.dto;
+package com.sparta.wuzuzu.domain.order.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DibsProjection {
+public class OrdersVo {
     private Long postId;
     private String title;
     private Long views;
@@ -15,5 +15,5 @@ public class DibsProjection {
     private Boolean status;
     private String goods;
     private Long price;
-    private Long stock;
+    private Long count;
 }

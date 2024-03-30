@@ -2,7 +2,7 @@ package com.sparta.wuzuzu.domain.order.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
 import com.sparta.wuzuzu.domain.order.dto.OrderRequest;
-import com.sparta.wuzuzu.domain.order.dto.OrdersProjection;
+import com.sparta.wuzuzu.domain.order.dto.OrdersVo;
 import com.sparta.wuzuzu.domain.order.service.OrderService;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.validation.Valid;
@@ -39,10 +39,10 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse<List<OrdersProjection>>> getOrders(
+    public ResponseEntity<CommonResponse<List<OrdersVo>>> getOrders(
         //@AuthenticationPrincipal UserDetailsImpl userDetails,
     ){
-        List<OrdersProjection> orderResponseList = orderService.getOrders(testUser);
+        List<OrdersVo> orderResponseList = orderService.getOrders(testUser);
         return CommonResponse.ofDataWithHttpStatus(orderResponseList, HttpStatus.CREATED);
     }
 }

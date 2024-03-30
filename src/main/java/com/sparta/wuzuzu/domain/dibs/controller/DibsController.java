@@ -1,7 +1,7 @@
 package com.sparta.wuzuzu.domain.dibs.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
-import com.sparta.wuzuzu.domain.dibs.dto.DibsProjection;
+import com.sparta.wuzuzu.domain.dibs.dto.DibsVo;
 import com.sparta.wuzuzu.domain.dibs.service.DibsService;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import java.util.List;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,10 +36,10 @@ public class DibsController {
     }
 
     @GetMapping("/api/v1/dibs")
-    public ResponseEntity<CommonResponse<List<DibsProjection>>> getOrders(
+    public ResponseEntity<CommonResponse<List<DibsVo>>> getOrders(
         //@AuthenticationPrincipal UserDetailsImpl userDetails
     ){
-        List<DibsProjection> dibsResponseList = dibsService.getDibs(testUser);
+        List<DibsVo> dibsResponseList = dibsService.getDibs(testUser);
         return CommonResponse.ofDataWithHttpStatus(dibsResponseList, HttpStatus.OK);
     }
 

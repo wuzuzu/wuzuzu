@@ -1,7 +1,7 @@
 package com.sparta.wuzuzu.domain.post.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
-import com.sparta.wuzuzu.domain.post.dto.PostProjection;
+import com.sparta.wuzuzu.domain.post.dto.PostVo;
 import com.sparta.wuzuzu.domain.post.dto.PostRequest;
 import com.sparta.wuzuzu.domain.post.dto.PostResponse;
 import com.sparta.wuzuzu.domain.post.service.PostService;
@@ -52,10 +52,10 @@ public class PostController {
 
     // 게시물 상세 조회 : QueryDSL 사용하기, 조회시 동시성 제어로 조회수 증가
     @GetMapping("/{postId}")
-    public ResponseEntity<CommonResponse<PostProjection>> getPost(
+    public ResponseEntity<CommonResponse<PostVo>> getPost(
         @PathVariable Long postId
     ){
-        PostProjection response = postService.getPost(postId);
+        PostVo response = postService.getPost(postId);
         return CommonResponse.ofDataWithHttpStatus(response, HttpStatus.OK);
     }
 

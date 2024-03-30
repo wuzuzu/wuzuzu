@@ -2,7 +2,7 @@ package com.sparta.wuzuzu.domain.order.repository.query;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.wuzuzu.domain.order.dto.OrdersProjection;
+import com.sparta.wuzuzu.domain.order.dto.OrdersVo;
 import com.sparta.wuzuzu.domain.order.entity.QOrder;
 import com.sparta.wuzuzu.domain.post.entity.QPost;
 import java.util.List;
@@ -18,9 +18,9 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
     private final QOrder order = QOrder.order;
 
     @Override
-    public List<OrdersProjection> findAllOrders(Long userId) {
+    public List<OrdersVo> findAllOrders(Long userId) {
         return jpaQueryFactory
-            .select(Projections.constructor(OrdersProjection.class,
+            .select(Projections.constructor(OrdersVo.class,
                 post.postId,
                 post.title,
                 post.views,

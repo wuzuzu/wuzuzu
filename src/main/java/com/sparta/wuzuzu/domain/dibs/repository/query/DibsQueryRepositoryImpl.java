@@ -2,7 +2,7 @@ package com.sparta.wuzuzu.domain.dibs.repository.query;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.wuzuzu.domain.dibs.dto.DibsProjection;
+import com.sparta.wuzuzu.domain.dibs.dto.DibsVo;
 import com.sparta.wuzuzu.domain.dibs.entity.QDibs;
 import com.sparta.wuzuzu.domain.post.entity.QPost;
 import java.util.List;
@@ -17,9 +17,9 @@ public class DibsQueryRepositoryImpl implements DibsQueryRepository{
     private final QDibs dibs = QDibs.dibs;
 
     @Override
-    public List<DibsProjection> findAllDibs(Long userId) {
+    public List<DibsVo> findAllDibs(Long userId) {
         return jpaQueryFactory
-            .select(Projections.constructor(DibsProjection.class,
+            .select(Projections.constructor(DibsVo.class,
                 post.postId,
                 post.title,
                 post.views,

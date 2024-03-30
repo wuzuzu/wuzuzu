@@ -1,6 +1,6 @@
 package com.sparta.wuzuzu.domain.post.service;
 
-import com.sparta.wuzuzu.domain.post.dto.PostProjection;
+import com.sparta.wuzuzu.domain.post.dto.PostVo;
 import com.sparta.wuzuzu.domain.post.dto.PostRequest;
 import com.sparta.wuzuzu.domain.post.dto.PostResponse;
 import com.sparta.wuzuzu.domain.post.entity.Post;
@@ -46,7 +46,7 @@ public class PostService {
     // 상세 게시글 : 제목, 조회수, 설명, 상품 내용 출력
     // 게시물 상세 조회 : QueryDSL 사용하기
     @Transactional
-    public PostProjection getPost(
+    public PostVo getPost(
         Long postId
     ) {
         Post post = postRepository.findById(postId).orElseThrow(

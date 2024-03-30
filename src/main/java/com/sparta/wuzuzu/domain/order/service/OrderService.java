@@ -1,7 +1,7 @@
 package com.sparta.wuzuzu.domain.order.service;
 
 import com.sparta.wuzuzu.domain.order.dto.OrderRequest;
-import com.sparta.wuzuzu.domain.order.dto.OrdersProjection;
+import com.sparta.wuzuzu.domain.order.dto.OrdersVo;
 import com.sparta.wuzuzu.domain.order.entity.Order;
 import com.sparta.wuzuzu.domain.order.repository.OrderRepository;
 import com.sparta.wuzuzu.domain.order.repository.query.OrderQueryRepository;
@@ -43,10 +43,10 @@ public class OrderService {
         orderRepository.save(new Order(requestDto, user));
     }
 
-    public List<OrdersProjection> getOrders(
+    public List<OrdersVo> getOrders(
         User user
     ) {
-        List<OrdersProjection> orderList = orderQueryRepository.findAllOrders(user.getUserId());
+        List<OrdersVo> orderList = orderQueryRepository.findAllOrders(user.getUserId());
 
         if(orderList.isEmpty()){
             throw new IllegalArgumentException("orderList is empty.");

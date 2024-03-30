@@ -2,7 +2,7 @@ package com.sparta.wuzuzu.domain.post.repository.query;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.wuzuzu.domain.post.dto.PostProjection;
+import com.sparta.wuzuzu.domain.post.dto.PostVo;
 import com.sparta.wuzuzu.domain.post.entity.QPost;
 
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,9 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
 
     private final QPost post = QPost.post;
     @Override
-    public PostProjection findPostByPostId(Long postId) {
+    public PostVo findPostByPostId(Long postId) {
         return jpaQueryFactory
-            .select(Projections.constructor(PostProjection.class,
+            .select(Projections.constructor(PostVo.class,
                 post.postId,
                 post.title,
                 post.description,
