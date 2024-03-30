@@ -27,4 +27,20 @@ public class Category {
 
     @Column(columnDefinition = "TINYINT(1) default 0")
     private Boolean status = true;
+
+    public Category(String name) {
+        this.name = name;
+    }
+
+    public void update(String name) {
+        this.name = name;
+    }
+
+    public void delete() {
+        this.status = false;
+    }
+
+    public void reCreate() {
+        this.status = true;
+    }
 }

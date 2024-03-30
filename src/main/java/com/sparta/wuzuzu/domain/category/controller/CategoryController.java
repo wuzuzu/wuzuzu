@@ -1,13 +1,17 @@
 package com.sparta.wuzuzu.domain.category.controller;
 
 import com.sparta.wuzuzu.domain.category.dto.CategoryRequest;
+import com.sparta.wuzuzu.domain.category.dto.CategoryResponse;
 import com.sparta.wuzuzu.domain.category.service.CategoryService;
-import com.sparta.wuzuzu.domain.post.dto.PostRequest;
+import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,7 +33,7 @@ public class CategoryController {
         .build();
 
     @PostMapping
-    public ResponseEntity<Void> createPost(
+    public ResponseEntity<Void> createCategory(
         //@AuthenticationPrincipal UserDetailsImpl userDetails
         @Valid @RequestBody CategoryRequest requestDto
     ){
@@ -37,17 +41,25 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED.value()).build();
     }
 
-    @PutMapping
-    public ResponseEntity<Void> updatePost(
+    @GetMapping
+    public ResponseEntity<CommonResponse<List<CategoryResponse>>> getCategory(
+    ){
+        List<CategoryResponse> response = categoryService.getCategory();
+        return CommonResponse.ofDataWithHttpStatus(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<Void> updateCategory(
         //@AuthenticationPrincipal UserDetailsImpl userDetails
+        @PathVariable Long categoryId,
         @Valid @RequestBody CategoryRequest requestDto
     ){
-        categoryService.updatePost(testUser, requestDto);
+        categoryService.updatePost(testUser, categoryId, requestDto);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 
     @PostMapping("/{categoryId}")
-    public ResponseEntity<Void> deletePost(
+    public ResponseEntity<Void> deleteCategory(
         //@AuthenticationPrincipal UserDetailsImpl userDetails
         @PathVariable Long categoryId
     ){
