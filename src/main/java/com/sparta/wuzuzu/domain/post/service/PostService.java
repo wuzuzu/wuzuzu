@@ -1,5 +1,7 @@
 package com.sparta.wuzuzu.domain.post.service;
 
+import com.sparta.wuzuzu.domain.category.entity.Category;
+import com.sparta.wuzuzu.domain.category.repository.CategoryRepository;
 import com.sparta.wuzuzu.domain.post.dto.PostVo;
 import com.sparta.wuzuzu.domain.post.dto.PostRequest;
 import com.sparta.wuzuzu.domain.post.dto.PostResponse;
@@ -18,17 +20,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
     private final PostRepository postRepository;
     private final PostQueryRepository postQueryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public void createPost(
         User user,
         PostRequest requestDto
     ) {
-        postRepository.save(new Post(user, requestDto));
+        Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(
+            () -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")
+        );
+
+        postRepository.save(new Post(user, requestDto, category));
     }
 
     // 전체 게시글 : 제목, 조회수만 출력
     // 전체 게시글 목록 조회 : createAt 기준으로 pageable 사용하기(미적용)
+    // Category 와 User 의 name 을 가져오면서 N+1 문제 생김 -> QueryDSL 로 변경하기
     @Transactional
     public List<PostResponse> getPosts()
     {
@@ -80,15 +88,11 @@ public class PostService {
             throw new IllegalArgumentException("post is deleted.");
         }
 
-//        Stuff stuff = stuffRepository.findById(requestDto.getStuffId()).orElseThrow(
-//            () -> new IllegalArgumentException("stuff is empty.")
-//        );
+        Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(
+            () -> new IllegalArgumentException("존재하지 않는 카테고리 입니다.")
+        );
 
-//        if(!user.getUserId().equals(stuff.getUser().getUserId())){
-//            throw new IllegalArgumentException("stuff is not yours");
-//        }
-
-        post.update(requestDto);
+        post.update(requestDto, category);
     }
 
     @Transactional

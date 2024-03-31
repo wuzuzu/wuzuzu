@@ -36,9 +36,12 @@ public class OrderService {
         // 동시성 제어 고려
         post.goodsOrder(requestDto.getCount());
 
+        /*
+        // 상품 주문시 재고가 모두 소진시 Post delete 처리 or 그대로 방치(재고 부족으로 남김)
         if(post.getStock().equals(0L)){
             post.delete();
         }
+         */
 
         orderRepository.save(new Order(requestDto, user));
     }

@@ -13,6 +13,7 @@ public class PostVo {
     private String description;
     private Long views;
     private String author;
+    private String category;
     private Boolean status;
     private String goods;
     private Long price;

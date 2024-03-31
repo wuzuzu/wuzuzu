@@ -20,4 +20,7 @@ public class PostRequest {
 
     @Positive(message = "판매 수량은 양수이어야 합니다.")
     private Long stock;
+
+    @NotBlank(message = "카테고리는 필수입니다.")
+    private String category;
 }

@@ -12,6 +12,7 @@ public class DibsVo {
     private String title;
     private Long views;
     private String author;
+    private String category;
     private Boolean status;
     private String goods;
     private Long price;

@@ -24,6 +24,7 @@ public class DibsQueryRepositoryImpl implements DibsQueryRepository{
                 post.title,
                 post.views,
                 post.user.userName,
+                post.category.name,
                 post.status,
                 post.goods,
                 post.price,
