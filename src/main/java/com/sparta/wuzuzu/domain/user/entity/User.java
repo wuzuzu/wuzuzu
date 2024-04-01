@@ -1,6 +1,7 @@
 package com.sparta.wuzuzu.domain.user.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.user.dto.MyInformUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,5 +50,12 @@ public class User extends Timestamped {
         this.petName = petName;
         this.petType = petType;
         this.role = role;
+    }
+
+    public void update(User user, MyInformUpdateRequest myInformUpdateRequest) {
+        user.address = myInformUpdateRequest.getAddress();
+        user.userName = myInformUpdateRequest.getUserName();
+        user.petName = myInformUpdateRequest.getPetName();
+        user.petType = myInformUpdateRequest.getPetType();
     }
 }
