@@ -1,8 +1,8 @@
-package com.sparta.wuzuzu.domain.post.entity;
+package com.sparta.wuzuzu.domain.sale_post.entity;
 
 import com.sparta.wuzuzu.domain.category.entity.Category;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
-import com.sparta.wuzuzu.domain.post.dto.PostRequest;
+import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -14,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,12 +25,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "posts")
-public class Post extends Timestamped {
+@Table(name = "sale_posts")
+public class SalePost extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long salePostId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -62,7 +61,7 @@ public class Post extends Timestamped {
     @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category;
 
-    public Post(User user, PostRequest requestDto, Category category) {
+    public SalePost(User user, SalePostRequest requestDto, Category category) {
         this.user = user;
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
@@ -72,7 +71,7 @@ public class Post extends Timestamped {
         this.category = category;
     }
 
-    public void update(PostRequest requestDto, Category category) {
+    public void update(SalePostRequest requestDto, Category category) {
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
         this.goods = requestDto.getGoods();
