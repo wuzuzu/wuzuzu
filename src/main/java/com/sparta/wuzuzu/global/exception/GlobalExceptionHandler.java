@@ -30,4 +30,12 @@ public class GlobalExceptionHandler {
             .build();
         return ResponseEntity.badRequest().body(response);
     }
+    @ExceptionHandler({NotFoundCommunityPostException.class})
+    public ResponseEntity<ExceptionResponse> NotFoundCommunityPostException(Exception ex) {
+        ExceptionResponse response = ExceptionResponse.builder()
+            .msg(ex.getMessage())
+            .httpCode(HttpStatus.BAD_REQUEST.value())
+            .build();
+        return ResponseEntity.badRequest().body(response);
+    }
 }

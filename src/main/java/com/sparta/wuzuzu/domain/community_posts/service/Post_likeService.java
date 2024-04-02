@@ -6,6 +6,7 @@ import com.sparta.wuzuzu.domain.community_posts.entity.Post_likes;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostsRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.Post_likeRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.global.exception.NotFoundCommunityPostException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class Post_likeService {
     @Transactional(readOnly = true)
     public PostLikeResponse createLike(Long communitypostId, User user) {
         CommunityPosts post = communityPostsRepository.findById(communitypostId)
-            .orElseThrow(() -> new NotFoundPostException());
+            .orElseThrow(() -> new NotFoundCommunityPostException());
 
         // 이미 좋아요가 존재하면 삭제
         if (post_likeRepository.findByUserAndCommunityPosts(user, post).isPresent()) {

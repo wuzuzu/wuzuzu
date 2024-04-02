@@ -21,7 +21,7 @@ public class LikeController {
     public ResponseEntity<PostLikeResponse> createLike(@PathVariable Long communitypostId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok()
-            .body(Post_likeService.createLike(communitypostId, userDetails.getUser()));
+            .body(likeService.createLike(communitypostId, userDetails.getUser()));
     }
 
 }
