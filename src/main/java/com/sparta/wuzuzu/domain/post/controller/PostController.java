@@ -6,11 +6,13 @@ import com.sparta.wuzuzu.domain.post.dto.PostRequest;
 import com.sparta.wuzuzu.domain.post.dto.PostResponse;
 import com.sparta.wuzuzu.domain.post.service.PostService;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,20 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     private final PostService postService;
 
-
-    User testUser = User.builder()
-        .userId(1L)
-        .email("test@test.com")
-        .password("password")
-        .userName("userName")
-        .build();
-
     @PostMapping
     public ResponseEntity<Void> createPost(
-        //@AuthenticationPrincipal UserDetailsImpl userDetails
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody PostRequest requestDto
     ){
-        postService.createPost(testUser, requestDto);
+        postService.createPost(userDetails.getUser(), requestDto);
         return ResponseEntity.status(HttpStatus.CREATED.value()).build();
     }
 
@@ -61,20 +55,20 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<Void> updatePost(
-        //@AuthenticationPrincipal UserDetailsImpl userDetails
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long postId,
         @Valid @RequestBody PostRequest requestDto
     ){
-        postService.updatePost(testUser, postId, requestDto);
+        postService.updatePost(userDetails.getUser(), postId, requestDto);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 
     @PostMapping("/{postId}/delete")
     public ResponseEntity<Void> deletePost(
-        //@AuthenticationPrincipal UserDetailsImpl userDetails
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long postId
     ){
-        postService.deletePost(testUser, postId);
+        postService.deletePost(userDetails.getUser(), postId);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 }
