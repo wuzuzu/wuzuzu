@@ -2,6 +2,7 @@ package com.sparta.wuzuzu.domain.user.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
 import com.sparta.wuzuzu.domain.user.dto.MyInformUpdateRequest;
+import com.sparta.wuzuzu.domain.user.dto.UpdatePasswordRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,5 +58,9 @@ public class User extends Timestamped {
         user.userName = myInformUpdateRequest.getUserName();
         user.petName = myInformUpdateRequest.getPetName();
         user.petType = myInformUpdateRequest.getPetType();
+    }
+
+    public void updatePassword(User user, String passwordToEncrypt) {
+        user.password = passwordToEncrypt;
     }
 }
