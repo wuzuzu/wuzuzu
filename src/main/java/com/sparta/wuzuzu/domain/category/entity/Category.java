@@ -32,7 +32,7 @@ public class Category {
     @Column(columnDefinition = "TINYINT(1) default 0")
     private Boolean status = true;
 
-    @OneToMany(mappedBy = "categories")
+    @OneToMany(mappedBy = "category")
     private List<Post> posts;
 
     public Category(String name) {
