@@ -3,11 +3,13 @@ package com.sparta.wuzuzu.domain.community_posts.controller;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
 import com.sparta.wuzuzu.domain.community_posts.service.CommunityPostsService;
+import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,7 +45,7 @@ public class CommunityPostsController {
         @PathVariable Long communityposts_id
     ) {
         CommunityPostsResponse communityPostsResponse = communityPostsService.updateCommunityPosts(
-            communityPostsRequest, userDetails.getUser().getId(), communityposts_id);
+            communityPostsRequest, userDetails.getUser().getUserId(), communityposts_id);
 
         return new ResponseEntity<>(communityPostsResponse, HttpStatus.OK);
     }
@@ -68,7 +70,7 @@ public class CommunityPostsController {
         @PathVariable Long communityposts_id,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        communityPostsService.deleteCommunityPost(communityposts_id, userDetails.getUser().getId());
+        communityPostsService.deleteCommunityPost(communityposts_id, userDetails.getUser());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
