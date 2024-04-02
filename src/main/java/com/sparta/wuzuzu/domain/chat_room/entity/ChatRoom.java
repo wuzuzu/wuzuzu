@@ -33,16 +33,16 @@ public class ChatRoom extends Timestamped {
     @Column(nullable = false)
     private String chatRoomName;
 
-    @Column(nullable = false)
+    @Column
     private String description;
 
     @Column(columnDefinition = "TINYINT(1) default 0", nullable = false)
     private Boolean secret = false;
 
-    @Column(nullable = false)
+    @Column
     private String coverImage;
 
-    @Column(nullable = false)
+    @Column
     private String chatRoomTag;
 
     @ManyToOne(fetch = FetchType.LAZY)
