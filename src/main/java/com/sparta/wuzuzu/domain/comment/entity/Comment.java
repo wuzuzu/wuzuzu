@@ -1,6 +1,6 @@
 package com.sparta.wuzuzu.domain.comment.entity;
 
-import com.sparta.wuzuzu.domain.board_item.entity.BoardItem;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -31,5 +31,5 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "borad_item_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private BoardItem boardItem;
+    private CommunityPosts communityPosts;
 }

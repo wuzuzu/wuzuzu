@@ -21,4 +21,13 @@ public class GlobalExceptionHandler {
             .build();
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler({ValidateUserException.class})
+    public ResponseEntity<ExceptionResponse> ValidateException(Exception ex) {
+        ExceptionResponse response = ExceptionResponse.builder()
+            .msg(ex.getMessage())
+            .httpCode(HttpStatus.FORBIDDEN.value())
+            .build();
+        return ResponseEntity.badRequest().body(response);
+    }
 }
