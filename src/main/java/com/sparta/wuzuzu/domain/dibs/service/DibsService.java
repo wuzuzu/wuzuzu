@@ -4,7 +4,7 @@ import com.sparta.wuzuzu.domain.dibs.dto.DibsVo;
 import com.sparta.wuzuzu.domain.dibs.entity.Dibs;
 import com.sparta.wuzuzu.domain.dibs.repository.DibsRepository;
 import com.sparta.wuzuzu.domain.dibs.repository.query.DibsQueryRepository;
-import com.sparta.wuzuzu.domain.post.repository.PostRepository;
+import com.sparta.wuzuzu.domain.sale_post.repository.SalePostRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,21 +15,21 @@ import org.springframework.stereotype.Service;
 public class DibsService {
     private final DibsRepository dibsRepository;
     private final DibsQueryRepository dibsQueryRepository;
-    private final PostRepository postRepository;
+    private final SalePostRepository salePostRepository;
 
     public void createDibs(
         User user,
-        Long postId
+        Long salePostId
     ) {
-        if(!postRepository.existsById(postId)){
+        if(!salePostRepository.existsById(salePostId)){
             throw new IllegalArgumentException("존재하지 않는 페이지 입니다.");
         }
 
-        if(dibsRepository.existsByPostId(postId)){
+        if(dibsRepository.existsBySalePostId(salePostId)){
             throw new IllegalArgumentException("이미 존재하는 찜 목록 입니다.");
         }
 
-        dibsRepository.save(new Dibs(postId, user));
+        dibsRepository.save(new Dibs(salePostId, user));
     }
 
     public List<DibsVo> getDibs(User user) {
@@ -44,9 +44,9 @@ public class DibsService {
 
     public void deleteDibs(
         User user,
-        Long postId
+        Long salePostId
     ) {
-        Dibs dibs = dibsRepository.findByUserAndPostId(user, postId);
+        Dibs dibs = dibsRepository.findByUserAndSalePostId(user, salePostId);
 
         if(dibs == null){
             throw new IllegalArgumentException("Dibs is empty.");

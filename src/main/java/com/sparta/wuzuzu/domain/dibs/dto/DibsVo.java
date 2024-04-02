@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DibsVo {
-    private Long postId;
+    private Long salePostId;
     private String title;
     private Long views;
     private String author;

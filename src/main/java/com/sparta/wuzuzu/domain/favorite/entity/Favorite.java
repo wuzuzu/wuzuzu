@@ -1,5 +1,7 @@
-package com.sparta.wuzuzu.domain.favorite_spot.entity;
+package com.sparta.wuzuzu.domain.favorite.entity;
 
+import com.sparta.wuzuzu.domain.favorite.dto.request.FavoriteRequest;
+import com.sparta.wuzuzu.domain.favorite.dto.response.FavoriteResponse;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -22,12 +24,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "favorite_spots")
-public class FavoriteSpot {
+@Table(name = "favorites")
+public class Favorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long favoriteSpotId;
+    private Long favoriteId;
 
     @Column(nullable = false)
     private String spotName;
@@ -41,4 +43,15 @@ public class FavoriteSpot {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
+
+    public Favorite(FavoriteRequest request, User user) {
+        this.spotName = request.getSpotName();
+        this.address = request.getAddress();
+        this.category = request.getCategory();
+        this.user = user;
+    }
+
+    public FavoriteResponse createResponseFavorite() {
+        return new FavoriteResponse(this.spotName, this.address, this.category);
+    }
 }

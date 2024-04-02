@@ -1,4 +1,4 @@
-package com.sparta.wuzuzu.domain.post.dto;
+package com.sparta.wuzuzu.domain.sale_post.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostVo {
-    private Long postId;
+public class SalePostVo {
+    private Long salePostId;
     private String title;
     private String description;
     private Long views;

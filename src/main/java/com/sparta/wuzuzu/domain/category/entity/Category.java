@@ -1,13 +1,12 @@
 package com.sparta.wuzuzu.domain.category.entity;
 
-import com.sparta.wuzuzu.domain.post.entity.Post;
+import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -32,8 +31,8 @@ public class Category {
     @Column(columnDefinition = "TINYINT(1) default 0")
     private Boolean status = true;
 
-    @OneToMany(mappedBy = "categories")
-    private List<Post> posts;
+    @OneToMany(mappedBy = "category")
+    private List<SalePost> posts;
 
     public Category(String name) {
         this.name = name;

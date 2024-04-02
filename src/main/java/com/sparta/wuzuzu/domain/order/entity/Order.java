@@ -36,13 +36,13 @@ public class Order extends Timestamped {
     private User user;
 
     @Column
-    private Long postId;
+    private Long salePostId;
 
     @Column(nullable = false)
     private Long count;
 
     public Order(OrderRequest requestDto, User user) {
-        this.postId = requestDto.getPostId();
+        this.salePostId = requestDto.getSalePostId();
         this.count = requestDto.getCount();
         this.user = user;
     }
