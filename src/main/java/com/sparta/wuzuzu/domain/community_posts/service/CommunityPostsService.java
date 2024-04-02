@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.community_posts.service;
 
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostGet;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
@@ -59,20 +60,24 @@ public class CommunityPostsService {
 
     }
 
-    public Page<CommunityPostsResponse> getCommunityPosts(int page, int size, String sortBy,
+    public Page<CommunityPostGet> getCommunityPosts(int page, int size, String sortBy,
         boolean isAsc) {
         Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return communityPostsRepository.findAllProjectedBy(pageable);
+        // CommunityPosts의 Page를 CommunityPostGet의 Page로 변환
+        return communityPostsRepository.findAll(pageable)
+            .map(post -> new CommunityPostGet(post.getTitle(), post.getViews(), post.getLikesCount()));
     }
 
     public CommunityPostsResponse getDetail(Long communitypostsId) {
         CommunityPosts post = communityPostsRepository.findById(communitypostsId)
             .orElseThrow(() -> new NoSuchElementException("해당 글을 찾을 수 없습니다."));
+        post.increaseViews();
         return CommunityPostsResponse.builder().
             title(post.getTitle()).
             username(post.getUser().getUserName()).
             contents(post.getContent()).
+            views(post.getViews()).
             build();
     }
 

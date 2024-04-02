@@ -47,4 +47,15 @@ public class GlobalExceptionHandler {
             .build();
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler({ValidateAdminException.class , ValidateUserException.class})
+    public ResponseEntity<ExceptionResponse> ValidationUserException(MethodArgumentNotValidException ex) {
+        ExceptionResponse response = ExceptionResponse.builder()
+            .msg(Objects.requireNonNull(ex.getFieldError()).getDefaultMessage())
+            .httpCode(HttpStatus.FORBIDDEN.value())
+            .build();
+        return ResponseEntity.badRequest().body(response);
+    }
+
+
 }

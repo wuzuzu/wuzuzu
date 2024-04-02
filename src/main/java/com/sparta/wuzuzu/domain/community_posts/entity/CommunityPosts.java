@@ -37,6 +37,9 @@ public class CommunityPosts extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private Long views = 0L;
+
     private int likeCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,7 +49,7 @@ public class CommunityPosts extends Timestamped {
     @OneToMany(mappedBy = "boardItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post_likes> postlikesList = new ArrayList<>();
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Community_Category category;
 
@@ -61,6 +64,10 @@ public class CommunityPosts extends Timestamped {
 
     public int getLikesCount() {
         return postlikesList.size();
+    }
+
+    public void increaseViews(){
+        views++;
     }
 
     public boolean validateUser(Long loginUserId) {

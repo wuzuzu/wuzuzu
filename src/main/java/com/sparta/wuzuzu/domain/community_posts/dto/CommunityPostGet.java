@@ -3,20 +3,19 @@ package com.sparta.wuzuzu.domain.community_posts.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+@Getter
+@Builder
 public class CommunityPostGet {
 
-    @Getter
-    @Builder
-    public class CommunityPostsResponse {
+    private String title;
+    private Long views;
+    private int likeCount;
 
-        private String title;
-        private int likeCount;
-
-        // 필요한 생성자를 추가합니다.
-        public CommunityPostsResponse(String title, int likeCount) {
-            this.title = title;
-            this.likeCount = likeCount;
-        }
-
+    // 필요한 생성자를 추가합니다.
+    public CommunityPostGet(String title, Long views, int likeCount) {
+        this.title = title;
+        this.views = views;
+        this.likeCount = likeCount;
     }
+
 }

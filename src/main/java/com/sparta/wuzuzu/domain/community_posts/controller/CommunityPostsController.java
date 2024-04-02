@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.community_posts.controller;
 
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostGet;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
 import com.sparta.wuzuzu.domain.community_posts.service.CommunityPostsService;
@@ -51,7 +52,7 @@ public class CommunityPostsController {
     }
 
     @GetMapping("/read")
-    public Page<CommunityPostsResponse> getCommunityPosts(
+    public Page<CommunityPostGet> getCommunityPosts(
         @RequestParam("page") int page,
         @RequestParam("size") int size,
         @RequestParam("sortBy") String sortBy,
