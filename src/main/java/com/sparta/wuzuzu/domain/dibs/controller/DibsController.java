@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class DibsController {
     private final DibsService dibsService;
 
-    @PostMapping("/api/v1/posts/{postId}/dibs")
+    @PostMapping("/api/v1/salePosts/{salePostId}/dibs")
     public ResponseEntity<Void> createDibs(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long postId
+        @PathVariable Long salePostId
     ){
-        dibsService.createDibs(userDetails.getUser(), postId);
+        dibsService.createDibs(userDetails.getUser(), salePostId);
         return ResponseEntity.status(HttpStatus.CREATED.value()).build();
     }
 
@@ -38,12 +38,12 @@ public class DibsController {
         return CommonResponse.ofDataWithHttpStatus(dibsResponseList, HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/v1/posts/{postId}/dibs")
+    @DeleteMapping("/api/v1/salePosts/{salePostId}/dibs")
     public ResponseEntity<Void> deleteDibs(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long postId
+        @PathVariable Long salePostId
     ){
-        dibsService.deleteDibs(userDetails.getUser(), postId);
+        dibsService.deleteDibs(userDetails.getUser(), salePostId);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 }

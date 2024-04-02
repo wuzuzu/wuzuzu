@@ -1,11 +1,11 @@
-package com.sparta.wuzuzu.domain.post.dto;
+package com.sparta.wuzuzu.domain.sale_post.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 
 @Getter
-public class PostRequest {
+public class SalePostRequest {
     @NotBlank(message = "제목은 필수입니다.")
     private String title;
 

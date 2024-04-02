@@ -4,7 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.wuzuzu.domain.dibs.dto.DibsVo;
 import com.sparta.wuzuzu.domain.dibs.entity.QDibs;
-import com.sparta.wuzuzu.domain.post.entity.QPost;
+import com.sparta.wuzuzu.domain.sale_post.entity.QSalePost;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,24 +13,24 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class DibsQueryRepositoryImpl implements DibsQueryRepository{
     private final JPAQueryFactory jpaQueryFactory;
-    private final QPost post = QPost.post;
+    private final QSalePost salePost = QSalePost.salePost;
     private final QDibs dibs = QDibs.dibs;
 
     @Override
     public List<DibsVo> findAllDibs(Long userId) {
         return jpaQueryFactory
             .select(Projections.constructor(DibsVo.class,
-                post.postId,
-                post.title,
-                post.views,
-                post.user.userName,
-                post.category.name,
-                post.status,
-                post.goods,
-                post.price,
-                post.stock))
+                salePost.salePostId,
+                salePost.title,
+                salePost.views,
+                salePost.user.userName,
+                salePost.category.name,
+                salePost.status,
+                salePost.goods,
+                salePost.price,
+                salePost.stock))
             .from(dibs)
-            .join(post).on(dibs.postId.eq(post.postId))
+            .join(salePost).on(dibs.salePostId.eq(salePost.salePostId))
             .where(dibs.user.userId.eq(userId))
             .orderBy(dibs.modifiedAt.desc())
             .fetch();
