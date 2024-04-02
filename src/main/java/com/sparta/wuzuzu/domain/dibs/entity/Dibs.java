@@ -36,4 +36,9 @@ public class Dibs extends Timestamped {
 
     @Column(nullable = false)
     private Long postId;
+
+    public Dibs(Long postId, User user) {
+        this.postId = postId;
+        this.user = user;
+    }
 }
