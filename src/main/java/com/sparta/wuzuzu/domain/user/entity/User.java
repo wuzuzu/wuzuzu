@@ -1,12 +1,8 @@
 package com.sparta.wuzuzu.domain.user.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.sparta.wuzuzu.domain.user.dto.MyInformUpdateRequest;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Table(name = "users")
 public class User extends Timestamped {
 
@@ -41,4 +36,26 @@ public class User extends Timestamped {
 
     @Column
     private String petType;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
+    @Builder
+    public User(String email, String password, String userName, String address, String petName, String petType, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.address = address;
+        this.petName = petName;
+        this.petType = petType;
+        this.role = role;
+    }
+
+    public void update(User user, MyInformUpdateRequest myInformUpdateRequest) {
+        user.address = myInformUpdateRequest.getAddress();
+        user.userName = myInformUpdateRequest.getUserName();
+        user.petName = myInformUpdateRequest.getPetName();
+        user.petType = myInformUpdateRequest.getPetType();
+    }
 }
