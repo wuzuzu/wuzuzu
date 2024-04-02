@@ -34,6 +34,15 @@ public class EmailAuthService {
         javaMailSender.send(emailForm);
     }
 
+    public boolean verifyEmailCode(String mail, String verifyCode) {
+        String codeFromEmail = redisUtil.getData(mail);
+
+        if(codeFromEmail == null)
+            return false;
+
+        return codeFromEmail.equals(verifyCode);
+    }
+
     // 코드 생성
     private String createCode() {
         int leftLimit = 48; // number '0'
