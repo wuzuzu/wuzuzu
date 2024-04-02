@@ -66,7 +66,44 @@ public class CommunityPostsService {
         Pageable pageable = PageRequest.of(page, size, sort);
         // CommunityPosts의 Page를 CommunityPostGet의 Page로 변환
         return communityPostsRepository.findAll(pageable)
-            .map(post -> new CommunityPostGet(post.getTitle(), post.getViews(), post.getLikesCount()));
+            .map(communityPosts -> new CommunityPostGet(communityPosts.getTitle(), communityPosts.getViews(), communityPosts.getLikesCount()));
+    }
+
+    public Page<CommunityPostsResponse> getPostsByKeyword(String keyword, int page, int size, String sortBy,
+        boolean isAsc) {
+
+        Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<CommunityPosts> posts = communityPostsRepository.findByTitleContaining(keyword, pageable);
+
+        if(posts.isEmpty()) { throw new NoSuchElementException("다음 키워드를 포함한 제목이 없습니다. " + keyword); }
+
+        return posts.map(communityPosts -> CommunityPostsResponse.builder().
+                title(communityPosts.getTitle()).
+                username(communityPosts.getUser().getUserName()).
+                contents(communityPosts.getContent()).
+                likecount(communityPosts.getLikeCount()).
+                views(communityPosts.getViews()).
+                build());
+
+    }
+
+    public Page<CommunityPostsResponse> getPostsByCategory(String categoryName, int page, int size,
+        String sortBy, boolean isAsc) {
+        Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<CommunityPosts> posts = communityPostsRepository.findByCategoryName(categoryName, pageable);
+        if(posts.isEmpty()) { throw new NoSuchElementException("해당 카테고리의 글이 없습니다." ); }
+
+        return posts.map(communityPosts -> CommunityPostsResponse.builder().
+            title(communityPosts.getTitle()).
+            username(communityPosts.getUser().getUserName()).
+            contents(communityPosts.getContent()).
+            likecount(communityPosts.getLikeCount()).
+            views(communityPosts.getViews()).
+            build());
+
     }
 
     public CommunityPostsResponse getDetail(Long communitypostsId) {
@@ -77,6 +114,7 @@ public class CommunityPostsService {
             title(post.getTitle()).
             username(post.getUser().getUserName()).
             contents(post.getContent()).
+            likecount(post.getLikeCount()).
             views(post.getViews()).
             build();
     }
@@ -89,4 +127,6 @@ public class CommunityPostsService {
 
         communityPostsRepository.deleteById(communityPostsID); // 게시글 삭제
     }
+
+
 }

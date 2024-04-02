@@ -8,6 +8,10 @@ import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -54,11 +58,33 @@ public class CommunityPostsController {
     @GetMapping("/read")
     public Page<CommunityPostGet> getCommunityPosts(
         @RequestParam("page") int page,
-        @RequestParam("size") int size,
+        @RequestParam(value = "size", defaultValue = "10") int size,
         @RequestParam("sortBy") String sortBy,
         @RequestParam("isAsc") boolean isAsc) {
         return communityPostsService.getCommunityPosts(
             page - 1, size, sortBy, isAsc);
+    }
+
+    @GetMapping("/read/title")
+    public Page<CommunityPostsResponse> getPostsByKeyword(
+        @RequestParam("keyword") String keyword,
+        @RequestParam("page") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size,
+        @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+        @RequestParam(value = "isAsc", defaultValue = "true") boolean isAsc) {
+
+        return communityPostsService.getPostsByKeyword(keyword, page - 1, size, sortBy, isAsc);
+    }
+
+    @GetMapping("/posts/category/{categoryName}")
+    public Page<CommunityPostsResponse> getPostsByCategory(
+        @PathVariable String categoryName,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size,
+        @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+        @RequestParam(value = "isAsc", defaultValue = "true") boolean isAsc) {
+
+        return communityPostsService.getPostsByCategory(categoryName, page-1, size, sortBy, isAsc);
     }
 
     @GetMapping("/read/{communityposts_id}")

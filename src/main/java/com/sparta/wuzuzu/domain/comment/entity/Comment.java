@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.comment.entity;
 
+import com.sparta.wuzuzu.domain.common.entity.Timestamped;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -13,23 +14,31 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
     @Column(nullable = false)
-    private String content;
+    private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "borad_item_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "communityPosts_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CommunityPosts communityPosts;
+
+    public Comment(CommunityPosts communityPosts, User user, String contents) {
+        this.communityPosts = communityPosts;
+        this.user = user;
+        this.contents = contents;
+    }
 }
