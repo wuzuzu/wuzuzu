@@ -1,9 +1,9 @@
-package com.sparta.wuzuzu.domain.favorite_spot.controller;
+package com.sparta.wuzuzu.domain.spot.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
-import com.sparta.wuzuzu.domain.favorite_spot.dto.request.AroundFavoriteSpotRequset;
-import com.sparta.wuzuzu.domain.favorite_spot.dto.response.SpotAddressResponse;
-import com.sparta.wuzuzu.domain.favorite_spot.service.FavoriteSpotService;
+import com.sparta.wuzuzu.domain.spot.dto.request.AroundSpotRequset;
+import com.sparta.wuzuzu.domain.spot.dto.response.SpotAddressResponse;
+import com.sparta.wuzuzu.domain.spot.service.SpotService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/favoriteSpots")
-public class FavoriteSpotController {
+@RequestMapping("/api/v1/spots")
+public class SpotController {
 
-    private final FavoriteSpotService favoriteSpotService;
+    private final SpotService SpotService;
 
     // 상세조회
-    @GetMapping("/around")
+    @GetMapping("/detail")
     public ResponseEntity<CommonResponse<List<SpotAddressResponse>>> getAroundFavoriteSpot(
-        @RequestBody AroundFavoriteSpotRequset request) {
-        List<SpotAddressResponse> spotAddressResponseList = favoriteSpotService.getAroundFavoriteSpot(
+        @RequestBody AroundSpotRequset request) {
+        List<SpotAddressResponse> spotAddressResponseList = SpotService.getAroundFavoriteSpot(
             request);
         return CommonResponse.ofDataWithHttpStatus(spotAddressResponseList, HttpStatus.OK);
     }

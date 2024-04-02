@@ -1,7 +1,7 @@
-package com.sparta.wuzuzu.domain.favorite_spot.service;
+package com.sparta.wuzuzu.domain.spot.service;
 
-import com.sparta.wuzuzu.domain.favorite_spot.dto.request.AroundFavoriteSpotRequset;
-import com.sparta.wuzuzu.domain.favorite_spot.dto.response.SpotAddressResponse;
+import com.sparta.wuzuzu.domain.spot.dto.request.AroundSpotRequset;
+import com.sparta.wuzuzu.domain.spot.dto.response.SpotAddressResponse;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +16,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 //@RequiredArgsConstructor
-public class FavoriteSpotService {
+public class SpotService {
 
     private final RestTemplate restTemplate;
 
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성
-    public FavoriteSpotService(RestTemplateBuilder builder) {
+    public SpotService(RestTemplateBuilder builder) {
         this.restTemplate = builder.build();
     }
 
-    public List<SpotAddressResponse> getAroundFavoriteSpot(AroundFavoriteSpotRequset request) {
+    public List<SpotAddressResponse> getAroundFavoriteSpot(AroundSpotRequset request) {
         String keyword = request.getLocation() + request.getCategory();
 
         // 요청 URL 만들기

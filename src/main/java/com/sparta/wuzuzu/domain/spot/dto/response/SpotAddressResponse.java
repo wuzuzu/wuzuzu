@@ -1,4 +1,4 @@
-package com.sparta.wuzuzu.domain.favorite_spot.dto.response;
+package com.sparta.wuzuzu.domain.spot.dto.response;
 
 import lombok.Getter;
 import org.json.JSONObject;
