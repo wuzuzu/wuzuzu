@@ -84,7 +84,7 @@ function setConnected(connected) {
 function sendMessage() {
     const content = messageInput.val();
     stompClient.publish({
-        destination: `/app/v1/chat-rooms/${currentRoomId}/messages`,
+        destination: `/app/chat-rooms/${currentRoomId}/messages`,
         headers: {Authorization: getToken()},
         body: JSON.stringify({'content': content})
     });
@@ -200,7 +200,8 @@ function createRoom() {
         data: JSON.stringify({
             chatRoomName: roomName,
             description: roomDesc,
-            coverImage: ""
+            coverImage: "",
+            chatRoomTags: [""]
         }),
         success: function (createdRoom) {
             $("#new-room-name").val("");

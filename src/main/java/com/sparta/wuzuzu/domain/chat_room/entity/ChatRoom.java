@@ -36,8 +36,8 @@ public class ChatRoom extends Timestamped {
     @Column
     private String description;
 
-    @Column(columnDefinition = "TINYINT(1) default 0", nullable = false)
-    private Boolean secret = false;
+//    @Column(columnDefinition = "TINYINT(1) default 0", nullable = false)
+//    private Boolean secret = false;
 
     @Column
     private String coverImage;

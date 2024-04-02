@@ -47,6 +47,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     String token = headerAccessor.getFirstNativeHeader("Authorization");
 
                     if (token != null) {
+                        token = token.substring(7);
                         jwtUtil.validateToken(token);
                     }
                 }
