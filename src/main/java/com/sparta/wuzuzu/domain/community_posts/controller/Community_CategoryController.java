@@ -1,8 +1,6 @@
 package com.sparta.wuzuzu.domain.community_posts.controller;
 
-import com.sparta.wuzuzu.domain.category.dto.CategoryRequest;
-import com.sparta.wuzuzu.domain.category.dto.CategoryResponse;
-import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
+
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityCategoryRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityCategoryResponse;
 import com.sparta.wuzuzu.domain.community_posts.service.Community_CategoryService;
