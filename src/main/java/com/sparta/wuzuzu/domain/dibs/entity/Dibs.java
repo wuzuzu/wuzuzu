@@ -35,10 +35,10 @@ public class Dibs extends Timestamped {
     private User user;
 
     @Column(nullable = false)
-    private Long postId;
+    private Long salePostId;
 
-    public Dibs(Long postId, User user) {
-        this.postId = postId;
+    public Dibs(Long salePostId, User user) {
+        this.salePostId = salePostId;
         this.user = user;
     }
 }

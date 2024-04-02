@@ -4,12 +4,13 @@ import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
 import com.sparta.wuzuzu.domain.order.dto.OrderRequest;
 import com.sparta.wuzuzu.domain.order.dto.OrdersVo;
 import com.sparta.wuzuzu.domain.order.service.OrderService;
-import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,27 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
     private final OrderService orderService;
 
-    User testUser = User.builder()
-        .userId(1L)
-        .email("test@test.com")
-        .password("password")
-        .userName("userName")
-        .build();
-
     @PostMapping
     public ResponseEntity<Void> createOrder(
-        //@AuthenticationPrincipal UserDetailsImpl userDetails,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody OrderRequest requestDto
     ){
-        orderService.createOrder(testUser, requestDto);
+        orderService.createOrder(userDetails.getUser(), requestDto);
         return ResponseEntity.status(HttpStatus.CREATED.value()).build();
     }
 
     @GetMapping
     public ResponseEntity<CommonResponse<List<OrdersVo>>> getOrders(
-        //@AuthenticationPrincipal UserDetailsImpl userDetails,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
-        List<OrdersVo> orderResponseList = orderService.getOrders(testUser);
+        List<OrdersVo> orderResponseList = orderService.getOrders(userDetails.getUser());
         return CommonResponse.ofDataWithHttpStatus(orderResponseList, HttpStatus.CREATED);
     }
 }
