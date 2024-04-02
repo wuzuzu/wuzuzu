@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DibsRepository extends JpaRepository<Dibs,Long> {
 
-    Dibs findByUserAndPostId(User user, Long postId);
+    Dibs findByUserAndSalePostId(User user, Long salePostId);
 
-    boolean existsByPostId(Long postId);
+    boolean existsBySalePostId(Long salePostId);
 }

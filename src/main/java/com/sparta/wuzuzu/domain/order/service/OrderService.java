@@ -5,8 +5,8 @@ import com.sparta.wuzuzu.domain.order.dto.OrdersVo;
 import com.sparta.wuzuzu.domain.order.entity.Order;
 import com.sparta.wuzuzu.domain.order.repository.OrderRepository;
 import com.sparta.wuzuzu.domain.order.repository.query.OrderQueryRepository;
-import com.sparta.wuzuzu.domain.post.entity.Post;
-import com.sparta.wuzuzu.domain.post.repository.PostRepository;
+import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
+import com.sparta.wuzuzu.domain.sale_post.repository.SalePostRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
-    private final PostRepository postRepository;
+    private final SalePostRepository salePostRepository;
 
     // 주문 요청 : redis 활용해서 재고 감소(QueryDsL 로 탐색) + 주문 내역 저장
     @Transactional
@@ -26,20 +26,20 @@ public class OrderService {
         User user,
         OrderRequest requestDto
     ) {
-        Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(
+        SalePost salePost = salePostRepository.findById(requestDto.getSalePostId()).orElseThrow(
             () -> new IllegalArgumentException("post is empty."));
 
-        if(post.getStock() < requestDto.getCount()){
+        if(salePost.getStock() < requestDto.getCount()){
             throw new IllegalArgumentException("재고보다 주문 수량이 많습니다.");
         }
 
         // 동시성 제어 고려
-        post.goodsOrder(requestDto.getCount());
+        salePost.goodsOrder(requestDto.getCount());
 
         /*
         // 상품 주문시 재고가 모두 소진시 Post delete 처리 or 그대로 방치(재고 부족으로 남김)
-        if(post.getStock().equals(0L)){
-            post.delete();
+        if(salePost.getStock().equals(0L)){
+            salePost.delete();
         }
          */
 
