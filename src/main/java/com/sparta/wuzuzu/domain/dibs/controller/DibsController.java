@@ -26,7 +26,7 @@ public class DibsController {
         .userName("userName")
         .build();
 
-    @PostMapping("/api/v1/post/{postId}/dibs")
+    @PostMapping("/api/v1/posts/{postId}/dibs")
     public ResponseEntity<Void> createDibs(
         //@AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long postId
@@ -43,7 +43,7 @@ public class DibsController {
         return CommonResponse.ofDataWithHttpStatus(dibsResponseList, HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/v1/post/{postId}/dibs")
+    @DeleteMapping("/api/v1/posts/{postId}/dibs")
     public ResponseEntity<Void> deleteDibs(
         //@AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long postId

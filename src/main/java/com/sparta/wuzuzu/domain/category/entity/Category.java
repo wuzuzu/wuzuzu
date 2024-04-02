@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "categorys")
+@Table(name = "categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class Category {
     @Column(columnDefinition = "TINYINT(1) default 0")
     private Boolean status = true;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "categories")
     private List<Post> posts;
 
     public Category(String name) {
