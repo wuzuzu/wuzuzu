@@ -1,6 +1,5 @@
-package com.sparta.wuzuzu.domain.member.entity;
+package com.sparta.wuzuzu.domain.chat_room.entity;
 
-import com.sparta.wuzuzu.domain.chat_room.entity.ChatRoom;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.ConstraintMode;
