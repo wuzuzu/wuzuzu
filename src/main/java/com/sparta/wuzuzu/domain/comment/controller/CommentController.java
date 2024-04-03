@@ -26,7 +26,7 @@ public class CommentController {
     private final CommentSerivce commentSerivce;
 
 
-    @PostMapping("/communitypost/{postid}")
+    @PostMapping("/communityposts/{postid}")
     public ResponseEntity<CommentResponse> postComment(@PathVariable Long postid,
         @AuthenticationPrincipal
         UserDetailsImpl userDetails, @RequestBody CommentRequest commentRequest) {

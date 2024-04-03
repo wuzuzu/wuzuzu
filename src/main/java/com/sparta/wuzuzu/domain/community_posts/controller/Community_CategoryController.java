@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin/communitycategories")
+@RequestMapping("/api/v1/communitycategories")
 public class Community_CategoryController {
 
     private final Community_CategoryService community_CategoryService;
 
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<CommunityCategoryResponse> createCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody CommunityCategoryRequest communityCategoryRequest
@@ -44,7 +44,7 @@ public class Community_CategoryController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PutMapping("/{categoryId}")
+    @PutMapping("/admin/{categoryId}")
     public ResponseEntity<Void> updateCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long categoryId,
@@ -54,7 +54,7 @@ public class Community_CategoryController {
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 
-    @DeleteMapping("/{categoryId}")
+    @PostMapping("/admin/{categoryId}")
     public ResponseEntity<Void> deleteCategory (@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long categoryId){
         community_CategoryService.deleteCategory(userDetails.getUser(), categoryId);
         return ResponseEntity.status(HttpStatus.OK.value()).build();

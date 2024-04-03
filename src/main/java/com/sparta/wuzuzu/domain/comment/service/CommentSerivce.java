@@ -12,14 +12,16 @@ import com.sparta.wuzuzu.global.exception.ValidateUserException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class CommentSerivce {
 
-    CommunityPostsRepository communityPostsRepository;
-    CommentRepository commentRepository;
+    private final CommunityPostsRepository communityPostsRepository;
+    private final CommentRepository commentRepository;
 
     public CommentResponse createComment(Long postid, User user, CommentRequest commentRequest) {
         CommunityPosts communityPosts = communityPostsRepository.findById(postid).orElseThrow(
@@ -31,7 +33,7 @@ public class CommentSerivce {
 
     public List<CommentResponse> getCommentByCommunityPost(Long postid) {
 
-        List<Comment> commentsList = commentRepository.findAllByPostIdOrderByCreatedAtCommentIdDesc(
+        List<Comment> commentsList = commentRepository.findAllByCommunityPostsIdOrderByCreatedAtDesc(
             postid);
         if (commentsList.isEmpty()) {
             throw new NoSuchElementException();
@@ -39,14 +41,13 @@ public class CommentSerivce {
         return commentsList.stream().map(s -> new CommentResponse(s)).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void deleteComment(Long commentId, User user) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(NoSuchElementException::new);
-        if (comment.getUser().equals(user)) {
-            commentRepository.deleteById(commentId);
-        } else {
-            throw new ValidateUserException();
+        if (!comment.getUser().getUserId().equals(user.getUserId())) { throw new ValidateUserException();}
+
+        commentRepository.deleteById(commentId);
         }
     }
-}
+

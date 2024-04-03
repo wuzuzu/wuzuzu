@@ -16,9 +16,4 @@ public class CommunityPostsResponse {
     private int likecount;
     private Long views;
 
-    public CommunityPostsResponse(String title, String username, String contents,
-        LocalDateTime createdDate) {
-    }
-
-
 }

@@ -18,7 +18,7 @@ public class Post_likeService {
     private final CommunityPostsRepository communityPostsRepository;
     private final Post_likeRepository post_likeRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PostLikeResponse createLike(Long communitypostId, User user) {
         CommunityPosts post = communityPostsRepository.findById(communitypostId)
             .orElseThrow(() -> new NotFoundCommunityPostException());
@@ -27,11 +27,13 @@ public class Post_likeService {
         if (post_likeRepository.findByUserAndCommunityPosts(user, post).isPresent()) {
             Post_likes like = post_likeRepository.findByUserAndCommunityPosts(user, post).get();
             like.removeLike(post);//게시글 좋아요 리스트에서 제거.
+            post.removeLike();
             communityPostsRepository.save(post);
             return new PostLikeResponse("좋아요가 취소되었습니다");
         } else {
             Post_likes like = new Post_likes(user, post);
             like.addLike(post); // 게시글에 좋아요 추가(리스트 형태)
+            post.addLike();
             communityPostsRepository.save(post);
 
             return new PostLikeResponse(like, "좋아요 하셨습니다");

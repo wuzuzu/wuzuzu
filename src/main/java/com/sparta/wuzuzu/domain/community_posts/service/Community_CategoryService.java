@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,24 +25,29 @@ public class Community_CategoryService {
         CommunityCategoryRequest communityCategoryRequest) {
 
         UserRole userRole = user.getRole();
-        if (userRole == UserRole.ADMIN) {
-            Optional<Community_Category> category = community_CategoryRepository.findByNameEquals(
-                communityCategoryRequest.getName());
-            if (category.isPresent()) {
-                if (category.get().getStatus()) {
-                    throw new IllegalArgumentException("중복된 카테고리 이름입니다.");
-                } else {
-                    category.get().reCreate();
-                }
-            } else {
-                community_CategoryRepository.save(
-                    new Community_Category(communityCategoryRequest.getName()));
-            }
-
-            return new CommunityCategoryResponse(category.get());
-        } else {
+        if (userRole != UserRole.ADMIN) {
             throw new ValidateAdminException();
         }
+
+        Community_Category category = community_CategoryRepository
+            .findByNameEquals(communityCategoryRequest.getName())
+            .orElse(null); // Optional 객체를 사용하여 값의 존재 유무를 먼저 확인
+
+        if (category != null && category.getStatus()) {
+            throw new IllegalArgumentException("중복된 카테고리 이름입니다.");
+        }
+
+        if (category == null) {
+            // 카테고리가 존재하지 않으면 새로 생성
+            category = community_CategoryRepository.save(
+                new Community_Category(communityCategoryRequest.getName()));
+        } else {
+            // 이미 존재하는 카테고리를 재활용
+            category.reCreate();
+            community_CategoryRepository.save(category); // 변경사항 저장
+        }
+
+        return new CommunityCategoryResponse(category);
 
     }
 
@@ -56,6 +62,7 @@ public class Community_CategoryService {
 
     }
 
+    @Transactional
     public void updateCategory(User user, Long categoryId, CommunityCategoryRequest request) {
         if (user.getRole() == UserRole.ADMIN) {
             Community_Category category = community_CategoryRepository.findById(categoryId)
@@ -64,20 +71,21 @@ public class Community_CategoryService {
             category.update(request.getName());
 
         }
-        ;
     }
 
+    @Transactional
     public void deleteCategory(User user, Long categoryId) {
-        if (user.getRole() == UserRole.ADMIN) {
-            Community_Category community_Category = community_CategoryRepository.findById(
-                categoryId).orElseThrow(NoSuchElementException::new);
-            if (!community_Category.getStatus()) {
-                throw new IllegalArgumentException("이미 삭제 된 카테고리입니다.");
-            } else {
-                community_Category.delete();
-            }
-        } else {
+        if (user.getRole() != UserRole.ADMIN) {
             throw new ValidateAdminException();
         }
+        Community_Category community_Category = community_CategoryRepository.findById(
+            categoryId).orElseThrow(NoSuchElementException::new);
+        if (!community_Category.getStatus()) {
+            throw new IllegalArgumentException("이미 삭제 된 카테고리입니다.");
+        } else {
+            community_Category.delete();
+        }
     }
+
 }
+

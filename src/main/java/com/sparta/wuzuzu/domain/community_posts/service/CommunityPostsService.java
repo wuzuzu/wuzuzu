@@ -4,6 +4,7 @@ import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostGet;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
+import com.sparta.wuzuzu.domain.community_posts.entity.Community_Category;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostsRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.Community_CategoryRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
@@ -27,10 +28,16 @@ public class CommunityPostsService {
     public CommunityPostsResponse saveCommunityPosts(CommunityPostsRequest communityPostsRequest,
         User user) {
 
+        Community_Category community_Category = community_CategoryRepository.findByNameEquals(
+                communityPostsRequest.getCategoryName())
+            .orElseThrow();
+        if (community_Category.getStatus() == false) {
+            throw new NoSuchElementException();
+        }
+
         communityPostsRepository.save(new CommunityPosts(
                 communityPostsRequest.getTitle(),
-                community_CategoryRepository.findByNameEquals(communityPostsRequest.getCategoryName())
-                    .orElseThrow(),
+                community_Category,
                 communityPostsRequest.getContent(),
                 user
             )
@@ -43,6 +50,7 @@ public class CommunityPostsService {
 
     }
 
+    @Transactional
     public CommunityPostsResponse updateCommunityPosts(CommunityPostsRequest communityPostsRequest,
         Long userId, Long communityPostsId) {
         CommunityPosts post = communityPostsRepository.findById(communityPostsId).orElseThrow();
@@ -66,26 +74,30 @@ public class CommunityPostsService {
         Pageable pageable = PageRequest.of(page, size, sort);
         // CommunityPosts의 Page를 CommunityPostGet의 Page로 변환
         return communityPostsRepository.findAll(pageable)
-            .map(communityPosts -> new CommunityPostGet(communityPosts.getTitle(), communityPosts.getViews(), communityPosts.getLikesCount()));
+            .map(communityPosts -> new CommunityPostGet(communityPosts.getTitle(),
+                communityPosts.getViews(), communityPosts.getLikesCount()));
     }
 
-    public Page<CommunityPostsResponse> getPostsByKeyword(String keyword, int page, int size, String sortBy,
+    public Page<CommunityPostsResponse> getPostsByKeyword(String keyword, int page, int size,
+        String sortBy,
         boolean isAsc) {
 
         Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<CommunityPosts> posts = communityPostsRepository.findByTitleContaining(keyword, pageable);
+        Page<CommunityPosts> posts = communityPostsRepository.findByTitleContaining(keyword,
+            pageable);
 
-        if(posts.isEmpty()) { throw new NoSuchElementException("다음 키워드를 포함한 제목이 없습니다. " + keyword); }
+        if (posts.isEmpty()) {
+            throw new NoSuchElementException("다음 키워드를 포함한 제목이 없습니다. " + keyword);
+        }
 
         return posts.map(communityPosts -> CommunityPostsResponse.builder().
-                title(communityPosts.getTitle()).
-                username(communityPosts.getUser().getUserName()).
-                contents(communityPosts.getContent()).
-                likecount(communityPosts.getLikeCount()).
-                views(communityPosts.getViews()).
-                build());
+            title(communityPosts.getTitle()).
+            username(communityPosts.getUser().getUserName()).
+            contents(communityPosts.getContent()).
+            views(communityPosts.getViews()).
+            build());
 
     }
 
@@ -93,19 +105,21 @@ public class CommunityPostsService {
         String sortBy, boolean isAsc) {
         Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<CommunityPosts> posts = communityPostsRepository.findByCategoryName(categoryName, pageable);
-        if(posts.isEmpty()) { throw new NoSuchElementException("해당 카테고리의 글이 없습니다." ); }
+        Page<CommunityPosts> posts = communityPostsRepository.findByCategoryName(categoryName,
+            pageable);
+        if (posts.isEmpty()) {
+            throw new NoSuchElementException("해당 카테고리의 글이 없습니다.");
+        }
 
         return posts.map(communityPosts -> CommunityPostsResponse.builder().
             title(communityPosts.getTitle()).
             username(communityPosts.getUser().getUserName()).
             contents(communityPosts.getContent()).
-            likecount(communityPosts.getLikeCount()).
             views(communityPosts.getViews()).
             build());
 
     }
-
+    @Transactional
     public CommunityPostsResponse getDetail(Long communitypostsId) {
         CommunityPosts post = communityPostsRepository.findById(communitypostsId)
             .orElseThrow(() -> new NoSuchElementException("해당 글을 찾을 수 없습니다."));
@@ -114,7 +128,6 @@ public class CommunityPostsService {
             title(post.getTitle()).
             username(post.getUser().getUserName()).
             contents(post.getContent()).
-            likecount(post.getLikeCount()).
             views(post.getViews()).
             build();
     }

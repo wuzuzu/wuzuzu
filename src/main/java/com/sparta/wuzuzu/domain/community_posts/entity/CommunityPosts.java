@@ -28,7 +28,7 @@ public class CommunityPosts extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long communityPostsID;
+    private Long id;
 
     @Column(nullable = false)
     private String title;
@@ -39,13 +39,14 @@ public class CommunityPosts extends Timestamped {
     @Column(nullable = false)
     private Long views = 0L;
 
-    private int likeCount;
+    @Column(nullable = false)
+    private Long likeCount = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
-    @OneToMany(mappedBy = "boardItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "communityPosts", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post_likes> postlikesList = new ArrayList<>();
 
     @ManyToOne
@@ -57,12 +58,19 @@ public class CommunityPosts extends Timestamped {
         this.category = category;
         this.content = content;
         this.user = user;
-        this.likeCount = getLikesCount();
 
     }
 
     public int getLikesCount() {
         return postlikesList.size();
+    }
+
+    public void addLike() {
+        this.likeCount++;
+    }
+
+    public void removeLike() {
+        this.likeCount = Math.max(0, this.likeCount - 1); // 0 미만으로 내려가지 않도록 보장
     }
 
     public void increaseViews(){

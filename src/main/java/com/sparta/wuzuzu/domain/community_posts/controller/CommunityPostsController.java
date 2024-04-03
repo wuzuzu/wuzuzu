@@ -64,7 +64,7 @@ public class CommunityPostsController {
     @GetMapping("/read/title")
     public Page<CommunityPostsResponse> getPostsByKeyword(
         @RequestParam("keyword") String keyword,
-        @RequestParam("page") int page,
+        @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "size", defaultValue = "10") int size,
         @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
         @RequestParam(value = "isAsc", defaultValue = "true") boolean isAsc) {
@@ -72,9 +72,9 @@ public class CommunityPostsController {
         return communityPostsService.getPostsByKeyword(keyword, page - 1, size, sortBy, isAsc);
     }
 
-    @GetMapping("/posts/category/{categoryName}")
+    @GetMapping("/category")
     public Page<CommunityPostsResponse> getPostsByCategory(
-        @PathVariable String categoryName,
+        @RequestParam String categoryName,
         @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "size", defaultValue = "10") int size,
         @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
