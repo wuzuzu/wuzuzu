@@ -2,6 +2,7 @@ package com.sparta.wuzuzu.domain.sale_post.service;
 
 import com.sparta.wuzuzu.domain.category.entity.Category;
 import com.sparta.wuzuzu.domain.category.repository.CategoryRepository;
+import com.sparta.wuzuzu.domain.common.image.service.ImageService;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostResponse;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostVo;
@@ -9,11 +10,13 @@ import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import com.sparta.wuzuzu.domain.sale_post.repository.SalePostRepository;
 import com.sparta.wuzuzu.domain.sale_post.repository.query.SalePostQueryRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class SalePostService {
     private final SalePostRepository salePostRepository;
     private final SalePostQueryRepository salePostQueryRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageService imageService;
 
     @Transactional
     public void createSalePost(
@@ -76,17 +80,7 @@ public class SalePostService {
         Long salePostId,
         SalePostRequest requestDto
     ) {
-        SalePost salePost = salePostRepository.findById(salePostId).orElseThrow(
-            () -> new IllegalArgumentException("post is empty.")
-        );
-
-        if(!user.getUserId().equals(salePost.getUser().getUserId())){
-            throw new IllegalArgumentException("post is not yours");
-        }
-
-        if(!salePost.getStatus()){
-            throw new IllegalArgumentException("post is deleted.");
-        }
+        SalePost salePost = checkSalePost(user, salePostId);
 
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(
             () -> new IllegalArgumentException("존재하지 않는 카테고리 입니다.")
@@ -100,6 +94,26 @@ public class SalePostService {
         User user,
         Long salePostId
     ) {
+        SalePost salePost = checkSalePost(user, salePostId);
+        salePost.delete();
+    }
+
+    @Transactional
+    public void uploadImage(User user, Long salePostId, List<MultipartFile> imageFiles) throws IOException {
+        SalePost salePost = checkSalePost(user, salePostId);
+
+        for (MultipartFile imageFile : imageFiles) {
+            if (salePost.getImageUrls().size() == 10) {
+                throw new IllegalArgumentException("최대 저장 개수를 초과합니다.");
+            }
+
+            String imageUrl = imageService.createImageName(imageFile);
+
+            salePost.imageUpload(imageUrl);
+        }
+    }
+
+    private SalePost checkSalePost(User user, Long salePostId){
         SalePost salePost = salePostRepository.findById(salePostId).orElseThrow(
             () -> new IllegalArgumentException("post is empty.")
         );
@@ -112,6 +126,6 @@ public class SalePostService {
             throw new IllegalArgumentException("post is already deleted.");
         }
 
-        salePost.delete();
+        return salePost;
     }
 }

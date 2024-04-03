@@ -7,6 +7,7 @@ import com.sparta.wuzuzu.domain.sale_post.dto.SalePostResponse;
 import com.sparta.wuzuzu.domain.sale_post.service.SalePostService;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -68,6 +71,17 @@ public class SalePostController {
         @PathVariable Long salePostId
     ){
         salePostService.deleteSalePost(userDetails.getUser(), salePostId);
+        return ResponseEntity.status(HttpStatus.OK.value()).build();
+    }
+
+    @PostMapping("/{salePostId}/multipart-files")
+    public ResponseEntity<Void> uploadImage(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long salePostId,
+        @RequestPart(value = "image", required = false) List<MultipartFile> images
+    ) throws IOException {
+        salePostService.uploadImage(userDetails.getUser(), salePostId, images);
+
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 }
