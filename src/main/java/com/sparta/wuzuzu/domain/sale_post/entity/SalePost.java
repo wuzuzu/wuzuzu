@@ -2,11 +2,11 @@ package com.sparta.wuzuzu.domain.sale_post.entity;
 
 import com.sparta.wuzuzu.domain.category.entity.Category;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.common.image.entity.Image;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -63,8 +64,8 @@ public class SalePost extends Timestamped {
     @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category;
 
-    @ElementCollection(fetch = FetchType.LAZY)  // JPA 에서 컬렉션 형태의 속성 매핑시 사용
-    private List<String> imageUrls;
+    @OneToMany(mappedBy = "salePost")
+    private List<Image> imageUrl;
 
     public SalePost(User user, SalePostRequest requestDto, Category category) {
         this.user = user;
@@ -95,9 +96,5 @@ public class SalePost extends Timestamped {
 
     public void delete() {
         status = false;
-    }
-
-    public void imageUpload(String imageUrl) {
-        imageUrls.add(imageUrl);
     }
 }

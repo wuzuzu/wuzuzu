@@ -103,13 +103,7 @@ public class SalePostService {
         SalePost salePost = checkSalePost(user, salePostId);
 
         for (MultipartFile imageFile : imageFiles) {
-            if (salePost.getImageUrls().size() == 10) {
-                throw new IllegalArgumentException("최대 저장 개수를 초과합니다.");
-            }
-
-            String imageUrl = imageService.createImageName(imageFile);
-
-            salePost.imageUpload(imageUrl);
+            imageService.createImage(imageFile, salePost);
         }
     }
 

@@ -1,10 +1,14 @@
 package com.sparta.wuzuzu.domain.common.image.service;
 
+import com.sparta.wuzuzu.domain.common.image.entity.Image;
+import com.sparta.wuzuzu.domain.common.image.repository.ImageRepository;
+import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -19,8 +23,13 @@ public class ImageService {
 
     private final S3Service s3Service;
 
-    public String createImageName(MultipartFile file) throws IOException {
-        return getImageName(file);
+    private final ImageRepository imageRepository;
+
+    @Transactional
+    public void createImage(MultipartFile file, SalePost salePost) throws IOException {
+        String imageName = getImageName(file);
+
+        imageRepository.save(new Image(imageName, salePost));
     }
 
     private String getImageName(MultipartFile file) throws IOException {
