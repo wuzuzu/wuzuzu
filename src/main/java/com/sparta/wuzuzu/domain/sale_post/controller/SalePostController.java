@@ -45,7 +45,7 @@ public class SalePostController {
 
     // 게시물 상세 조회 : QueryDSL 사용하기, 조회시 동시성 제어로 조회수 증가
     @GetMapping("/{salePostId}")
-    public ResponseEntity<CommonResponse<SalePostVo>> getPost(
+    public ResponseEntity<CommonResponse<SalePostVo>> getSalePost(
         @PathVariable Long salePostId
     ){
         SalePostVo response = salePostService.getSalePost(salePostId);
@@ -53,7 +53,7 @@ public class SalePostController {
     }
 
     @PutMapping("/{salePostId}")
-    public ResponseEntity<Void> updatePost(
+    public ResponseEntity<Void> updateSalePost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long salePostId,
         @Valid @RequestBody SalePostRequest requestDto
@@ -63,7 +63,7 @@ public class SalePostController {
     }
 
     @PostMapping("/{salePostId}/delete")
-    public ResponseEntity<Void> deletePost(
+    public ResponseEntity<Void> deleteSalePost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long salePostId
     ){
