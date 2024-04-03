@@ -1,7 +1,7 @@
-package com.sparta.wuzuzu.domain.comment.entity;
+package com.sparta.wuzuzu.domain.favorite.entity;
 
-import com.sparta.wuzuzu.domain.common.entity.Timestamped;
-import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
+import com.sparta.wuzuzu.domain.favorite.dto.request.FavoriteRequest;
+import com.sparta.wuzuzu.domain.favorite.dto.response.FavoriteResponse;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -14,33 +14,44 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
+@Getter
 @NoArgsConstructor
-@Table(name = "comments")
-public class Comment extends Timestamped {
+@AllArgsConstructor
+@Builder
+@Table(name = "favorites")
+public class Favorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long favoriteId;
 
     @Column(nullable = false)
-    private String contents;
+    private String spotName;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "communityPosts_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private CommunityPosts communityPosts;
-
-    public Comment(CommunityPosts communityPosts, User user, String contents) {
-        this.communityPosts = communityPosts;
+    public Favorite(FavoriteRequest request, User user) {
+        this.spotName = request.getSpotName();
+        this.address = request.getAddress();
+        this.category = request.getCategory();
         this.user = user;
-        this.contents = contents;
+    }
+
+    public FavoriteResponse createResponseFavorite() {
+        return new FavoriteResponse(this.spotName, this.address, this.category);
     }
 }

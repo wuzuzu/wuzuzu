@@ -61,6 +61,10 @@ dependencies {
     implementation 'org.thymeleaf:thymeleaf-spring5:3.1.0.RELEASE'
     implementation group: 'ognl', name: 'ognl', version: '3.4.2'
 
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
 }
 
 tasks.named('test') {
