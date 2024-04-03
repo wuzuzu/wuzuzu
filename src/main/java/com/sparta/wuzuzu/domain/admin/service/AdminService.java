@@ -19,4 +19,9 @@ public class AdminService {
         List<User> userList = userRepository.findAll();
         return userList.stream().map(UserInformReadResponse::new).collect(Collectors.toList());
     }
+
+    public UserInformReadResponse readUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->new IllegalArgumentException("해당 회원은 존재하지 않습니다."));
+        return new UserInformReadResponse(user);
+    }
 }
