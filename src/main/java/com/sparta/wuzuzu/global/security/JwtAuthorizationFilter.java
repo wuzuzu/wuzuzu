@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.global.security;
 
+import com.sparta.wuzuzu.global.jwt.JwtTokenBlacklist;
 import com.sparta.wuzuzu.global.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -24,6 +25,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final JwtTokenBlacklist jwtTokenBlacklist;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
@@ -38,6 +40,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
 
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+            if(jwtTokenBlacklist.isBlacklisted(tokenValue)){
+                log.info("로그아웃 된 토큰입니다.");
+                return;
+            }
 
             // 만료된 토큰일 경우 RefreshToken 검사
             if (!jwtUtil.isAccessTokenExpired(tokenValue)) { // 만료되지 않은 경우에만 RefreshToken 검사 수행

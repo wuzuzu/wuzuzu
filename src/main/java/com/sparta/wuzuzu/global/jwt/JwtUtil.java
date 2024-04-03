@@ -83,14 +83,6 @@ public class JwtUtil {
         return refreshToken;
     }
 
-    public String getCurrentUser(String email) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        if (!userDetails.equals(authentication.getDetails()))
-            return null;
-        return email;
-    }
-
     public String getRefreshToken(String email) {
         return refreshTokenRedisTemplate.opsForValue().get(email);
     }

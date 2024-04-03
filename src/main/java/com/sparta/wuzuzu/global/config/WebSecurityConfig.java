@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.global.config;
 
+import com.sparta.wuzuzu.global.jwt.JwtTokenBlacklist;
 import com.sparta.wuzuzu.global.jwt.JwtUtil;
 import com.sparta.wuzuzu.global.security.JwtAuthenticationFilter;
 import com.sparta.wuzuzu.global.security.JwtAuthorizationFilter;
@@ -26,6 +27,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtTokenBlacklist jwtTokenBlacklist;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,7 +48,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, jwtTokenBlacklist);
     }
 
     @Bean
