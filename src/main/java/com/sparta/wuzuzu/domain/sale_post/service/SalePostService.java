@@ -107,7 +107,7 @@ public class SalePostService {
         }
     }
 
-    public void deleteImage(User user, Long salePostId, String key) throws IOException {
+    public void deleteImage(User user, Long salePostId, String key){
         SalePost salePost = checkSalePost(user, salePostId);
         imageService.deleteImage(key, salePost);
     }

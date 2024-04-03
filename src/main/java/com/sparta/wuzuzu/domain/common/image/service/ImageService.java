@@ -4,6 +4,7 @@ import com.sparta.wuzuzu.domain.common.image.entity.Image;
 import com.sparta.wuzuzu.domain.common.image.repository.ImageRepository;
 import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,16 +27,35 @@ public class ImageService {
     private final ImageRepository imageRepository;
 
     @Transactional
-    public void createImage(MultipartFile file, SalePost salePost) throws IOException {
+    public void createImage(MultipartFile file, Object object) throws IOException {
         String imageName = getImageName(file);
-
-        imageRepository.save(new Image(imageName, salePost));
+        imageRepository.save(new Image(imageName, object));
     }
 
     @Transactional
-    public void deleteImage(String url, SalePost salePost){
-        // SalePost 객체의 url 삭제 로직 추가하기
+    public void deleteImage(String url, Object object){
+        Optional<Image> imageUrlToDelete;
 
+        // Object 에 속한 이미지 목록에서 해당 URL 을 가진 이미지 탐색
+        if(object instanceof SalePost salePost){
+            imageUrlToDelete = salePost.getImageUrl().stream()
+                .filter(imageUrl -> imageUrl.getImageUrl().equals(uploadPath + url))
+                .findFirst();
+        } else {
+            throw new IllegalArgumentException("Object 가 잘못되었습니다.");
+        }
+
+        if (imageUrlToDelete.isPresent()) {
+            // 해당 URL 을 가진 이미지가 존재하면 삭제
+            Image image = imageUrlToDelete.get();
+            salePost.getImageUrl().remove(image);
+            imageRepository.delete(image);
+        }else {
+            // 해당 URL 을 가진 이미지가 없는 경우 예외 발생
+            throw new IllegalArgumentException("SalePost 에 해당 URL 을 가진 이미지가 없습니다: " + uploadPath + url);
+        }
+
+        // S3 에 이미지 제거 요청
         s3Service.delete(url);
     }
 

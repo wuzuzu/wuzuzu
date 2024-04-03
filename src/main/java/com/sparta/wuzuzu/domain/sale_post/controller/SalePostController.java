@@ -90,7 +90,7 @@ public class SalePostController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long salePostId,
         @PathVariable String key
-    ) throws IOException {
+    ) {
         salePostService.deleteImage(userDetails.getUser(), salePostId, key);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }

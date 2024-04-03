@@ -43,7 +43,6 @@ public class S3Service {
         try {
             // deleteObject(버킷명, 키값)으로 객체 삭제
             amazonS3.deleteObject(bucket, key);
-
         } catch (AmazonServiceException e) {
             log.error(e.toString());
         }

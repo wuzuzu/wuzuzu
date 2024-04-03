@@ -35,8 +35,10 @@ public class Image extends Timestamped {
     @JoinColumn(name = "salePost_id")
     private SalePost salePost;
 
-    public Image(String imageUrl, SalePost salePost) {
-        this.imageUrl = imageUrl;
-        this.salePost = salePost;
+    public Image(String imageName, Object object) {
+        this.imageUrl = imageName;
+        if(object instanceof SalePost){
+            this.salePost = (SalePost) object;
+        }
     }
 }
