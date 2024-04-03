@@ -1,32 +1,40 @@
 package com.sparta.wuzuzu.global.jwt;
 
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
+import com.sparta.wuzuzu.global.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j(topic = "JwtUtil")
+@RequiredArgsConstructor
 @Component
 public class JwtUtil {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    private final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    private final long REFRESH_TOKEN_TIME = 60 * 60 * 24 * 1000L;
+    private final RedisTemplate<String, String> refreshTokenRedisTemplate;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @PostConstruct
     public void init() {
@@ -34,18 +42,73 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // 토큰 생성
-    public String createToken(String username, UserRole role) {
+    // ACCESS 토큰 생성
+    public String createAccessToken(String email, UserRole role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
-            Jwts.builder()
-                .setSubject(username)
-                .claim(AUTHORIZATION_KEY, role)
-                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
-                .setIssuedAt(date)
-                .signWith(key, signatureAlgorithm)
-                .compact();
+                Jwts.builder()
+                        .setSubject(email)
+                        .claim(AUTHORIZATION_KEY, role)
+                        .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+    }
+
+    // REFRESH 토큰 생성
+    public String createRefreshToken(String email, UserRole role) {
+        Date date = new Date();
+
+        String refreshToken = BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(email)
+                        .claim(AUTHORIZATION_KEY, role)
+                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+
+        // redis에 저장
+        refreshTokenRedisTemplate.opsForValue().set(
+                email,
+                refreshToken,
+                REFRESH_TOKEN_TIME,
+                TimeUnit.MILLISECONDS
+        );
+
+        return refreshToken;
+    }
+
+    public String getRefreshToken(String email) {
+        return refreshTokenRedisTemplate.opsForValue().get(email);
+    }
+
+    // RefreshToken으로 AccessToken 재발급
+    public String generateAccessTokenFromRefreshToken(String refreshToken) {
+        // refreshToken에서 사용자 정보 추출
+        Claims refreshTokenClaims = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(refreshToken).getBody();
+        String email = refreshTokenClaims.getSubject();
+        UserRole role = UserRole.valueOf(
+                (String) refreshTokenClaims.get(AUTHORIZATION_KEY));
+
+        // 새로운 accessToken 생성
+        return createAccessToken(email, role);
+    }
+
+    // 토큰 만료 확인
+    public boolean isAccessTokenExpired(String accessToken) {
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            Date expiration = claims.getExpiration();
+            return expiration != null && expiration.after(new Date()); // 토큰 만료 시간과 현재 시간을 비교하여 유효 여부 반환
+        } catch (ExpiredJwtException e) {
+            return false; // 만료된 토큰
+        } catch (JwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+            return false; // 유효하지 않은 토큰
+        }
     }
 
     // header 에서 JWT 가져오기

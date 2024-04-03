@@ -20,4 +20,9 @@ public class ViewController {
     public String chatting() {
         return "chatting";
     }
+
+    @GetMapping("/map")
+    public String map() {
+        return "map";
+    }
 }

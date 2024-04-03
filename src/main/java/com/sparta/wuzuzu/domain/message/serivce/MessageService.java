@@ -30,6 +30,8 @@ public class MessageService {
             throw new IllegalArgumentException("메시지 입력값 Empty");
         }
 
+        token = token.substring(7);
+
         User user = ((UserDetailsImpl) userDetailsService.loadUserByUsername(
             jwtUtil.getUserInfoFromToken(token).getSubject())).getUser();
 

@@ -47,4 +47,23 @@ public class GlobalExceptionHandler {
             .build();
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler(ValidateUserException.class)
+    public ResponseEntity<ExceptionResponse> handleValidateUserException(ValidateUserException ex) {
+        ExceptionResponse response = ExceptionResponse.builder()
+            .msg(ex.getMessage())
+            .httpCode(HttpStatus.FORBIDDEN.value())
+            .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+    @ExceptionHandler(ValidateAdminException.class)
+    public ResponseEntity<ExceptionResponse> ValidationAdminException(MethodArgumentNotValidException ex) {
+        ExceptionResponse response = ExceptionResponse.builder()
+            .msg(Objects.requireNonNull(ex.getFieldError()).getDefaultMessage())
+            .httpCode(HttpStatus.FORBIDDEN.value())
+            .build();
+        return ResponseEntity.badRequest().body(response);
+    }
+
+
 }
