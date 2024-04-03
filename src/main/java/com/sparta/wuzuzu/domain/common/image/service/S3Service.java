@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.common.image.service;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.io.IOException;
@@ -35,5 +36,16 @@ public class S3Service {
         // getUrl : 업로드된 객체의 URL(AWS S3에 업로드된 파일에 대한 고유한 위치) 가져오기
         // decode: url 안의 한글 or 특수문자 깨짐 방지
         return URLDecoder.decode(amazonS3.getUrl(bucket, s3FileName).toString(), "utf-8");
+    }
+
+    /* 파일 삭제 */
+    public void delete(String key){
+        try {
+            // deleteObject(버킷명, 키값)으로 객체 삭제
+            amazonS3.deleteObject(bucket, key);
+
+        } catch (AmazonServiceException e) {
+            log.error(e.toString());
+        }
     }
 }

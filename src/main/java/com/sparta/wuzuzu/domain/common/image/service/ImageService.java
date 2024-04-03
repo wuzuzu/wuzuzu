@@ -32,6 +32,13 @@ public class ImageService {
         imageRepository.save(new Image(imageName, salePost));
     }
 
+    @Transactional
+    public void deleteImage(String url, SalePost salePost){
+        // SalePost 객체의 url 삭제 로직 추가하기
+
+        s3Service.delete(url);
+    }
+
     private String getImageName(MultipartFile file) throws IOException {
         if (file != null) {
             // UUID.randomUUID() : UUID 클래스를 이용해 시간과 공간을 기반으로 128비트의 고유한 식별자 생성

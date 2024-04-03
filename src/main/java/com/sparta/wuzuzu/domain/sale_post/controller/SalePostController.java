@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,7 +82,16 @@ public class SalePostController {
         @RequestPart(value = "image", required = false) List<MultipartFile> images
     ) throws IOException {
         salePostService.uploadImage(userDetails.getUser(), salePostId, images);
+        return ResponseEntity.status(HttpStatus.OK.value()).build();
+    }
 
+    @DeleteMapping("/{salePostId}/multipart-files/{key}")
+    public ResponseEntity<Void> deleteImage(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long salePostId,
+        @PathVariable String key
+    ) throws IOException {
+        salePostService.deleteImage(userDetails.getUser(), salePostId, key);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 }

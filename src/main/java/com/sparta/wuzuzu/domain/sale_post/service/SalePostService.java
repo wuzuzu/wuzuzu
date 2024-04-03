@@ -107,6 +107,11 @@ public class SalePostService {
         }
     }
 
+    public void deleteImage(User user, Long salePostId, String key) throws IOException {
+        SalePost salePost = checkSalePost(user, salePostId);
+        imageService.deleteImage(key, salePost);
+    }
+
     private SalePost checkSalePost(User user, Long salePostId){
         SalePost salePost = salePostRepository.findById(salePostId).orElseThrow(
             () -> new IllegalArgumentException("post is empty.")
