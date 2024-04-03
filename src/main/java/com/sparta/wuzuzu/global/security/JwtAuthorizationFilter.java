@@ -18,16 +18,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@RequiredArgsConstructor
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
@@ -37,11 +33,28 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(tokenValue)) {
 
             if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
+                log.error("Access Token Error");
                 return;
             }
 
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+            // 만료된 토큰일 경우 RefreshToken 검사
+            if (!jwtUtil.isAccessTokenExpired(tokenValue)) { // 만료되지 않은 경우에만 RefreshToken 검사 수행
+                String refreshTokenValue = jwtUtil.getRefreshToken(info.getSubject());
+                if (StringUtils.hasText(refreshTokenValue) && jwtUtil.validateToken(refreshTokenValue)) {
+                    // 새로운 accessToken 생성
+                    log.info("새로운 accessToken 생성");
+                    String newAccessToken = jwtUtil.generateAccessTokenFromRefreshToken(refreshTokenValue);
+                    tokenValue = newAccessToken.substring(7);
+                    info = jwtUtil.getUserInfoFromToken(tokenValue);
+                    // 새로운 accessToken을 클라이언트에 반환
+                    res.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
+                } else {
+                    log.error("RefreshToken이 유효하지 않습니다.");
+                    return;
+                }
+            }
 
             try {
                 setAuthentication(info.getSubject());
@@ -55,17 +68,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     // 인증 처리
-    public void setAuthentication(String username) {
+    public void setAuthentication(String email) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(username);
+        Authentication authentication = createAuthentication(email);
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
     }
 
     // 인증 객체 생성
-    private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    private Authentication createAuthentication(String email) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

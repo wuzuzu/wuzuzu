@@ -56,15 +56,15 @@ public class WebSecurityConfig {
 
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) ->
-            sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
-            authorizeHttpRequests
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
-                .requestMatchers("/api/v1/users/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                .anyRequest().permitAll()
+                authorizeHttpRequests
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                        .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
+                        .requestMatchers("/api/v1/users/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                        .anyRequest().permitAll()
         );
 
         // 필터 관리
