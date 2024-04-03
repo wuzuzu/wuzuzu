@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "likePost")
-public class Post_likes {
+@Table(name = "likePosts")
+public class Postlikes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long likeId;
@@ -29,7 +29,7 @@ public class Post_likes {
     @JoinColumn(name = "community_postsid", nullable = false)
     private CommunityPosts communityPosts;
 
-    public Post_likes(User user, CommunityPosts communityPosts) {
+    public Postlikes(User user, CommunityPosts communityPosts) {
         this.user = user;
         this.communityPosts = communityPosts;
     }

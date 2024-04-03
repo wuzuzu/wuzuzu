@@ -3,10 +3,10 @@ package com.sparta.wuzuzu.domain.community_posts.service;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostGet;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityCategory;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
-import com.sparta.wuzuzu.domain.community_posts.entity.Community_Category;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostsRepository;
-import com.sparta.wuzuzu.domain.community_posts.repository.Community_CategoryRepository;
+import com.sparta.wuzuzu.domain.community_posts.repository.CommunityCategoryRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
 import java.util.NoSuchElementException;
@@ -23,12 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommunityPostsService {
 
     private final CommunityPostsRepository communityPostsRepository;
-    private final Community_CategoryRepository community_CategoryRepository;
+    private final CommunityCategoryRepository community_CategoryRepository;
 
     public CommunityPostsResponse saveCommunityPosts(CommunityPostsRequest communityPostsRequest,
         User user) {
 
-        Community_Category community_Category = community_CategoryRepository.findByNameEquals(
+        CommunityCategory community_Category = community_CategoryRepository.findByNameEquals(
                 communityPostsRequest.getCategoryName())
             .orElseThrow();
         if (community_Category.getStatus() == false) {

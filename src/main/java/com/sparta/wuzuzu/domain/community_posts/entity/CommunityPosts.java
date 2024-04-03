@@ -47,13 +47,13 @@ public class CommunityPosts extends Timestamped {
     private User user;
 
     @OneToMany(mappedBy = "communityPosts", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post_likes> postlikesList = new ArrayList<>();
+    private List<Postlikes> postlikesList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "category", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Community_Category category;
+    private CommunityCategory category;
 
-    public CommunityPosts(String title, Community_Category category, String content, User user) {
+    public CommunityPosts(String title, CommunityCategory category, String content, User user) {
         this.title = title;
         this.category = category;
         this.content = content;
@@ -81,7 +81,7 @@ public class CommunityPosts extends Timestamped {
         return this.user.getUserId().equals(loginUserId);
     }
 
-    public void updateCommunityPosts(String title, Community_Category category, String content) {
+    public void updateCommunityPosts(String title, CommunityCategory category, String content) {
         this.title = title;
         this.content = content;
         this.category = category;

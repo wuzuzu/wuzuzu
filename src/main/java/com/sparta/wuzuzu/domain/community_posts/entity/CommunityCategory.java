@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Community_Category {
+public class CommunityCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Community_Category {
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityPosts> communityPosts;
 
-    public Community_Category(String name) {
+    public CommunityCategory(String name) {
         this.name = name;
     }
 
