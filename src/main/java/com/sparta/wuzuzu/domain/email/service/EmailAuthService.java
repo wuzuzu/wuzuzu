@@ -6,6 +6,7 @@ import com.sparta.wuzuzu.domain.user.repository.UserRepository;
 import com.sparta.wuzuzu.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import java.util.Random;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EmailAuthService {
 
