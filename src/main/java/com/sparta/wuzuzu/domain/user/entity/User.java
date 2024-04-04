@@ -82,4 +82,8 @@ public class User extends Timestamped {
     public void plusCount(User user){
         user.numberOfCount += 1;
     }
+
+    public void updateUserRole(User user, UserRole role){
+        user.role = role;
+    }
 }
