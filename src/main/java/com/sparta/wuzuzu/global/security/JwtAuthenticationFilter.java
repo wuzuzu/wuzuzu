@@ -49,14 +49,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRole role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
+        UserRole role;
+
+        if (userDetails.getUser() != null) {
+            role = userDetails.getUser().getRole();
+        } else if (userDetails.getAdmin() != null) {
+            role = userDetails.getAdmin().getRole();
+        } else {
+            throw new IllegalStateException("User or Admin not found");
+        }
 
         // AccessToken 생성
-        String accessToken = jwtUtil.createAccessToken(email, role);
+        String accessToken = jwtUtil.createAccessToken(userDetails.getUsername(), role);
 
         // RefreshToken 생성
-        String refreshToken = jwtUtil.createRefreshToken(email, role);
+        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUsername(), role);
 
         // 응답에 map형식으로 AccessToken, RefreshToken 추가
         setTokenResponse(response, accessToken, refreshToken);

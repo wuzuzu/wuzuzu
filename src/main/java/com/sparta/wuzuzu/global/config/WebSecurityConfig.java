@@ -2,7 +2,6 @@ package com.sparta.wuzuzu.global.config;
 
 import com.sparta.wuzuzu.global.jwt.JwtTokenBlacklist;
 import com.sparta.wuzuzu.global.jwt.JwtUtil;
-import com.sparta.wuzuzu.global.security.AdminAuthenticationFilter;
 import com.sparta.wuzuzu.global.security.JwtAuthenticationFilter;
 import com.sparta.wuzuzu.global.security.JwtAuthorizationFilter;
 import com.sparta.wuzuzu.global.security.UserDetailsServiceImpl;
@@ -45,13 +44,6 @@ public class WebSecurityConfig {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
-        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
-        return filter;
-    }
-
-    @Bean
-    public AdminAuthenticationFilter adminAuthenticationFilter() throws Exception {
-        AdminAuthenticationFilter filter = new AdminAuthenticationFilter(jwtUtil);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
