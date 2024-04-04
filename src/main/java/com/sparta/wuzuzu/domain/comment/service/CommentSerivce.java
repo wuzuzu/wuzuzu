@@ -5,7 +5,7 @@ import com.sparta.wuzuzu.domain.comment.dto.CommentRequest;
 import com.sparta.wuzuzu.domain.comment.dto.CommentResponse;
 import com.sparta.wuzuzu.domain.comment.entity.Comment;
 import com.sparta.wuzuzu.domain.comment.repository.CommentRepository;
-import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostsRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
@@ -24,16 +24,16 @@ public class CommentSerivce {
     private final CommentRepository commentRepository;
 
     public CommentResponse createComment(Long postid, User user, CommentRequest commentRequest) {
-        CommunityPosts communityPosts = communityPostsRepository.findById(postid).orElseThrow(
+        CommunityPost communityPost = communityPostsRepository.findById(postid).orElseThrow(
             NoSuchElementException::new);
-        Comment comment = new Comment(communityPosts, user, commentRequest.getContents());
+        Comment comment = new Comment(communityPost, user, commentRequest.getContents());
         commentRepository.save(comment);
         return new CommentResponse(comment);
     }
 
     public List<CommentResponse> getCommentByCommunityPost(Long postid) {
 
-        List<Comment> commentsList = commentRepository.findAllByCommunityPostsIdOrderByCreatedAtDesc(
+        List<Comment> commentsList = commentRepository.findAllByCommunityPostIdOrderByCreatedAtDesc(
             postid);
         if (commentsList.isEmpty()) {
             throw new NoSuchElementException();

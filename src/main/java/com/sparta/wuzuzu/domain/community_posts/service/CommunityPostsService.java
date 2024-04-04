@@ -1,14 +1,18 @@
 package com.sparta.wuzuzu.domain.community_posts.service;
 
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostGet;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListRequest;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityCategory;
-import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostsRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityCategoryRepository;
+import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostsRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
+import com.sparta.wuzuzu.global.util.PagingUtil;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +28,7 @@ public class CommunityPostsService {
 
     private final CommunityPostsRepository communityPostsRepository;
     private final CommunityCategoryRepository community_CategoryRepository;
+    private final CustomCommunityPostsRepository customCommunityPostsRepository;
 
     public CommunityPostsResponse saveCommunityPosts(CommunityPostsRequest communityPostsRequest,
         User user) {
@@ -35,7 +40,7 @@ public class CommunityPostsService {
             throw new NoSuchElementException();
         }
 
-        communityPostsRepository.save(new CommunityPosts(
+        communityPostsRepository.save(new CommunityPost(
                 communityPostsRequest.getTitle(),
                 community_Category,
                 communityPostsRequest.getContent(),
@@ -53,7 +58,7 @@ public class CommunityPostsService {
     @Transactional
     public CommunityPostsResponse updateCommunityPosts(CommunityPostsRequest communityPostsRequest,
         Long userId, Long communityPostsId) {
-        CommunityPosts post = communityPostsRepository.findById(communityPostsId).orElseThrow();
+        CommunityPost post = communityPostsRepository.findById(communityPostsId).orElseThrow();
         post.validateUser(userId);
         post.updateCommunityPosts(
             communityPostsRequest.getTitle(),
@@ -85,7 +90,7 @@ public class CommunityPostsService {
         Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<CommunityPosts> posts = communityPostsRepository.findByTitleContaining(keyword,
+        Page<CommunityPost> posts = communityPostsRepository.findByTitleContaining(keyword,
             pageable);
 
         if (posts.isEmpty()) {
@@ -105,7 +110,7 @@ public class CommunityPostsService {
         String sortBy, boolean isAsc) {
         Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<CommunityPosts> posts = communityPostsRepository.findByCategoryName(categoryName,
+        Page<CommunityPost> posts = communityPostsRepository.findByCategoryName(categoryName,
             pageable);
         if (posts.isEmpty()) {
             throw new NoSuchElementException("해당 카테고리의 글이 없습니다.");
@@ -119,9 +124,25 @@ public class CommunityPostsService {
             build());
 
     }
+
+    public CommunityPostsListResponse searchCommunityPosts(CommunityPostsListRequest request) {
+        if (request.getColumn() == null) {
+            request.setColumn("createdDate");
+        }
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(), Sort.by(request.getSortDirection(), request.getColumn()));
+        Page<CommunityPostsResponse> postsPage = customCommunityPostsRepository.findByConditions(request.getKeyword(), request.getCategoryName(), pageable);
+
+        PagingUtil pagingUtil = new PagingUtil(postsPage.getTotalElements(), postsPage.getTotalPages(), request.getPage(), request.getPageSize());
+
+        return CommunityPostsListResponse.builder()
+            .postList(postsPage.getContent())
+            .pagingUtil(pagingUtil)
+            .build();
+    }
     @Transactional
     public CommunityPostsResponse getDetail(Long communitypostsId) {
-        CommunityPosts post = communityPostsRepository.findById(communitypostsId)
+        CommunityPost post = communityPostsRepository.findById(communitypostsId)
             .orElseThrow(() -> new NoSuchElementException("해당 글을 찾을 수 없습니다."));
         post.increaseViews();
         return CommunityPostsResponse.builder().

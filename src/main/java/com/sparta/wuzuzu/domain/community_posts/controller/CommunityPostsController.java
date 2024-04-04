@@ -1,6 +1,8 @@
 package com.sparta.wuzuzu.domain.community_posts.controller;
 
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostGet;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListRequest;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
 import com.sparta.wuzuzu.domain.community_posts.service.CommunityPostsService;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +42,7 @@ public class CommunityPostsController {
         return new ResponseEntity<>(communityPostsResponse, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{communityposts_id}")
+    @PatchMapping("/{communitypostsId}")
     public ResponseEntity<CommunityPostsResponse> updateCommunityPost(
         @Valid @RequestBody CommunityPostsRequest communityPostsRequest,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -72,7 +75,7 @@ public class CommunityPostsController {
         return communityPostsService.getPostsByKeyword(keyword, page - 1, size, sortBy, isAsc);
     }
 
-    @GetMapping("/category")
+    @GetMapping("/read/category")
     public Page<CommunityPostsResponse> getPostsByCategory(
         @RequestParam String categoryName,
         @RequestParam(value = "page", defaultValue = "1") int page,
@@ -83,12 +86,17 @@ public class CommunityPostsController {
         return communityPostsService.getPostsByCategory(categoryName, page-1, size, sortBy, isAsc);
     }
 
-    @GetMapping("/read/{communityposts_id}")
+    @GetMapping("/search")
+    public ResponseEntity<CommunityPostsListResponse> searchCommunityPosts(@ModelAttribute CommunityPostsListRequest request) {
+        return ResponseEntity.ok(communityPostsService.searchCommunityPosts(request));
+    }
+
+    @GetMapping("/read/{communitypostsId}")
     public ResponseEntity<CommunityPostsResponse> readDetail(@PathVariable Long communityposts_id) {
         return ResponseEntity.ok().body(communityPostsService.getDetail(communityposts_id));
     }
 
-    @DeleteMapping("/{communityposts_id}")
+    @DeleteMapping("/{communitypostsId}")
     public ResponseEntity<Void> deleteCommunityPosts(
         @PathVariable Long communityposts_id,
         @AuthenticationPrincipal UserDetailsImpl userDetails

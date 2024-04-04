@@ -1,7 +1,7 @@
 package com.sparta.wuzuzu.domain.comment.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
-import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPosts;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -36,10 +36,10 @@ public class Comment extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "communityPosts_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private CommunityPosts communityPosts;
+    private CommunityPost communityPost;
 
-    public Comment(CommunityPosts communityPosts, User user, String contents) {
-        this.communityPosts = communityPosts;
+    public Comment(CommunityPost communityPost, User user, String contents) {
+        this.communityPost = communityPost;
         this.user = user;
         this.contents = contents;
     }
