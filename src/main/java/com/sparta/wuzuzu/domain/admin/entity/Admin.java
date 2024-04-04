@@ -1,7 +1,6 @@
 package com.sparta.wuzuzu.domain.admin.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
-import com.sparta.wuzuzu.domain.email.dto.VerifyRequest;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,11 +27,11 @@ public class Admin extends Timestamped {
     private String password;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
-    public void updateAfterAuth(String password, UserRole role) {
-        this.password = password;
-        this.role = role;
+    public void updateAfterAuth(Admin admin, String password, UserRole role) {
+        admin.password = password;
+        admin.role = role;
     }
 }

@@ -8,6 +8,7 @@ import com.sparta.wuzuzu.domain.user.repository.UserRepository;
 import com.sparta.wuzuzu.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import java.util.Random;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EmailAuthService {
 
@@ -69,19 +71,21 @@ public class EmailAuthService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         String codeFromEmail = redisUtil.getData(adminVerifyRequest.getMail());
 
+        if (codeFromEmail == null)
+            throw new IllegalArgumentException("존재하지 않습니다.");
+
         if(admin.getRole().equals(UserRole.ADMIN)){
             throw new IllegalArgumentException("이미 인증된 회원입니다.");
         }
 
-        if (codeFromEmail == null)
-            throw new IllegalArgumentException("존재하지 않습니다.");
 
         if(!codeFromEmail.equals(adminVerifyRequest.getVerifyCode())){
             throw new IllegalArgumentException("잘못된 인증 코드입니다.");
         }
 
         String wuzuzuPassword = createWuzuzuPassword(admin.getEmail());
-        admin.updateAfterAuth(wuzuzuPassword, UserRole.ADMIN);
+        admin.updateAfterAuth(admin, passwordEncoder.encode(wuzuzuPassword), UserRole.ADMIN);
+        System.out.println(adminVerifyRequest.getVerifyCode());
 
         return wuzuzuPassword;
     }

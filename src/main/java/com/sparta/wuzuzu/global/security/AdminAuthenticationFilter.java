@@ -2,14 +2,12 @@ package com.sparta.wuzuzu.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.wuzuzu.domain.admin.dto.AdminLoginRequest;
-import com.sparta.wuzuzu.domain.user.dto.LoginRequest;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
 import com.sparta.wuzuzu.global.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +38,7 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
                             requestDto.getAdminEmail(),
-                            requestDto.getCurrentTime(),
+                            requestDto.getPassword(),
                             null
                     )
             );
@@ -54,6 +52,10 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRole role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+
+        if(!role.equals(UserRole.ADMIN)){
+            return;
+        }
 
         // AccessToken 생성
         String accessToken = jwtUtil.createAccessToken(email, role);

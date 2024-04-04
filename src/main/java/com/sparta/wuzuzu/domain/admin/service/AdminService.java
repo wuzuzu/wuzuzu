@@ -3,6 +3,7 @@ package com.sparta.wuzuzu.domain.admin.service;
 import com.sparta.wuzuzu.domain.admin.dto.UserInformReadResponse;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AdminService {
 

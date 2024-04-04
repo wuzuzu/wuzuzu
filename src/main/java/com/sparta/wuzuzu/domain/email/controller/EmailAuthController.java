@@ -39,7 +39,7 @@ public class EmailAuthController {
         return CommonResponse.ofDataWithHttpStatus("관리자 인증 요청 이메일 인증 코드 발송", HttpStatus.OK);
     }
 
-    @PostMapping("/admins/{adminId}/verify")
+    @PatchMapping("/admins/{adminId}/verify")
     public ResponseEntity<CommonResponse<String>> responseAdminVerify(@PathVariable Long adminId, @RequestBody AdminVerifyRequest adminVerifyRequest){
         String wuzuzuPassword = emailAuthService.verifyAdminEmailCode(adminId, adminVerifyRequest);
         return CommonResponse.ofDataWithHttpStatus(wuzuzuPassword, HttpStatus.OK);
