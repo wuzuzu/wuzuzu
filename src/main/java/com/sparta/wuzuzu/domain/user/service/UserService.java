@@ -50,19 +50,20 @@ public class UserService {
 
     public void reportUser(ReportUserRequest reportUserRequest) {
         User user = userRepository.findById(reportUserRequest.getReportUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-        if (!user.getBlocked())
+        if (user.getBlocked())
             throw new IllegalArgumentException("이미 차단된 사용자입니다.");
 
-        if (user.getNumberOfCount() == 10) {
+        int limitedCount = 10;
+        if (user.getNumberOfCount() == limitedCount) {
             user.beBlocked(user, true);
             return;
         }
 
-        if (user.getNumberOfCount() < 10) {
+        if (user.getNumberOfCount() < limitedCount) {
             user.plusCount(user);
         }
 
-        if (user.getNumberOfCount() >= 10) {
+        if (user.getNumberOfCount() >= limitedCount) {
             user.beBlocked(user, true);
         }
     }

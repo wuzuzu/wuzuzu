@@ -6,10 +6,12 @@ import com.sparta.wuzuzu.domain.user.dto.SignUpRequest;
 import com.sparta.wuzuzu.domain.user.dto.SignUpResponse;
 import com.sparta.wuzuzu.domain.user.service.UserService;
 import com.sparta.wuzuzu.global.jwt.JwtTokenBlacklist;
+import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,12 @@ public class UserController {
         return CommonResponse.ofDataWithHttpStatus(signUpResponse, HttpStatus.OK);
     }
 
+    @PostMapping("/registration")
+    public ResponseEntity<CommonResponse<String>> reportUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ReportUserRequest reportUserRequest){
+        userService.reportUser(reportUserRequest);
+        return CommonResponse.ofDataWithHttpStatus("신고 완료", HttpStatus.OK);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<CommonResponse<String>> logout(HttpServletRequest request) {
         String token = extractTokenFromHeader(request);
@@ -39,11 +47,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/registration")
-    public ResponseEntity<CommonResponse<String>> reportUser(@RequestBody ReportUserRequest reportUserRequest){
-        userService.reportUser(reportUserRequest);
-        return CommonResponse.ofDataWithHttpStatus("신고 완료", HttpStatus.OK);
-    }
 
     private String extractTokenFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");

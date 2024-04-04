@@ -41,9 +41,11 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
+    // true : block, false : unblock
     @Column(columnDefinition = "TINYINT(1) default 0")
     private Boolean blocked;
 
+    // 신고 +1 누적 count 10회 시 block
     @Column(nullable = false)
     private int numberOfCount;
 
