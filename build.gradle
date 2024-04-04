@@ -56,16 +56,18 @@ dependencies {
     // json
     implementation 'org.json:json:20230227'
 
-    // WebSocket
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.webjars:sockjs-client:1.5.1'
-    implementation 'org.webjars:stomp-websocket:2.3.4'
-
     //email
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.thymeleaf:thymeleaf-spring5:3.1.0.RELEASE'
     implementation group: 'ognl', name: 'ognl', version: '3.4.2'
 
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+
+    // S3
+    implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
 }
 
 tasks.named('test') {

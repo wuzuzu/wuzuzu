@@ -3,7 +3,6 @@ package com.sparta.wuzuzu.domain.dibs.controller;
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
 import com.sparta.wuzuzu.domain.dibs.dto.DibsVo;
 import com.sparta.wuzuzu.domain.dibs.service.DibsService;
-import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
