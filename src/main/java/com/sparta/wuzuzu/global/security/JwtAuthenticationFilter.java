@@ -59,11 +59,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtUtil.createRefreshToken(email, role);
 
         // 응답에 map형식으로 AccessToken, RefreshToken 추가
-        setTokenResponse(request, response, accessToken, refreshToken, email);
+        setTokenResponse(response, accessToken, refreshToken);
     }
 
-    private void setTokenResponse(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken, String email) throws IOException {
-        request.setAttribute("email", email);
+    private void setTokenResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
 
