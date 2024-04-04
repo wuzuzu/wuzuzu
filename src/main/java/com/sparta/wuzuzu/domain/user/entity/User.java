@@ -58,4 +58,8 @@ public class User extends Timestamped {
         user.petName = myInformUpdateRequest.getPetName();
         user.petType = myInformUpdateRequest.getPetType();
     }
+
+    public void updatePassword(User user, String passwordToEncrypt) {
+        user.password = passwordToEncrypt;
+    }
 }

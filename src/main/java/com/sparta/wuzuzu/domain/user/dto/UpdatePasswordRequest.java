@@ -4,17 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class MyInformUpdateRequest {
+public class UpdatePasswordRequest {
 
     private String currentPassword;
 
     @NotBlank
-    private String address;
+    private String newPassword;
 
     @NotBlank
-    private String userName;
-
-    private String petName;
-
-    private String petType;
+    private String confirmPassword;
 }
