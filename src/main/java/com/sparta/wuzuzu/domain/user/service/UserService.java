@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.user.service;
 
+import com.sparta.wuzuzu.domain.user.dto.ReportUserRequest;
 import com.sparta.wuzuzu.domain.user.dto.SignUpRequest;
 import com.sparta.wuzuzu.domain.user.dto.SignUpResponse;
 import com.sparta.wuzuzu.domain.user.entity.User;
@@ -31,17 +32,38 @@ public class UserService {
         }
 
         User user = User.builder().
-            email(signUpRequest.getEmail())
-            .password(passwordEncoder.encode(signUpRequest.getPassword()))
-            .userName(signUpRequest.getUserName())
-            .address(signUpRequest.getAddress())
-            .petName(signUpRequest.getPetName())
-            .petType(signUpRequest.getPetType())
-            .role(UserRole.USER)
-            .build();
+                email(signUpRequest.getEmail())
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                .userName(signUpRequest.getUserName())
+                .address(signUpRequest.getAddress())
+                .petName(signUpRequest.getPetName())
+                .petType(signUpRequest.getPetType())
+                .role(UserRole.USER)
+                .blocked(false)
+                .numberOfCount(0)
+                .build();
 
         userRepository.save(user);
 
         return new SignUpResponse(user.getUserId(), user.getEmail());
+    }
+
+    public void reportUser(ReportUserRequest reportUserRequest) {
+        User user = userRepository.findById(reportUserRequest.getReportUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        if (!user.getBlocked())
+            throw new IllegalArgumentException("이미 차단된 사용자입니다.");
+
+        if (user.getNumberOfCount() == 10) {
+            user.beBlocked(user, true);
+            return;
+        }
+
+        if (user.getNumberOfCount() < 10) {
+            user.plusCount(user);
+        }
+
+        if (user.getNumberOfCount() >= 10) {
+            user.beBlocked(user, true);
+        }
     }
 }

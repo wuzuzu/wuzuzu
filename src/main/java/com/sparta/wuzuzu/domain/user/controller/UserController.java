@@ -1,6 +1,7 @@
 package com.sparta.wuzuzu.domain.user.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
+import com.sparta.wuzuzu.domain.user.dto.ReportUserRequest;
 import com.sparta.wuzuzu.domain.user.dto.SignUpRequest;
 import com.sparta.wuzuzu.domain.user.dto.SignUpResponse;
 import com.sparta.wuzuzu.domain.user.service.UserService;
@@ -38,6 +39,12 @@ public class UserController {
         }
     }
 
+    @PostMapping("/registration")
+    public ResponseEntity<CommonResponse<String>> reportUser(@RequestBody ReportUserRequest reportUserRequest){
+        userService.reportUser(reportUserRequest);
+        return CommonResponse.ofDataWithHttpStatus("신고 완료", HttpStatus.OK);
+    }
+
     private String extractTokenFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
@@ -45,5 +52,4 @@ public class UserController {
         }
         return null;
     }
-
 }
