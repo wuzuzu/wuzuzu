@@ -30,17 +30,15 @@ public class FavoriteController {
     public ResponseEntity<CommonResponse<String>> createFavorite(
         @RequestBody FavoriteRequest request,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        favoriteService.createFavorite(
-            request, userDetails.getUser());
+        favoriteService.createFavorite(request, userDetails.getUser());
         return CommonResponse.ofDataWithHttpStatus("즐겨찾기 추가 성공", HttpStatus.CREATED);
     }
 
     // 즐겨찾기 삭제
     @DeleteMapping("/{favoriteId}")
-    public ResponseEntity<CommonResponse<String>> deleteFavorite(
-        @PathVariable Long favoriteId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        favoriteService.deleteFavorite(
-            favoriteId, userDetails.getUser());
+    public ResponseEntity<CommonResponse<String>> deleteFavorite(@PathVariable Long favoriteId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        favoriteService.deleteFavorite(favoriteId, userDetails.getUser());
         return CommonResponse.ofDataWithHttpStatus("즐겨찾기 삭제 성공", HttpStatus.NO_CONTENT);
     }
 
@@ -53,12 +51,12 @@ public class FavoriteController {
         return CommonResponse.ofDataWithHttpStatus(favoriteResponseList, HttpStatus.OK);
     }
 
-    // 즐겨찾기 전체 조회
+    // 즐겨찾기 카테고리별 조회
     @GetMapping("/{category}")
-    public ResponseEntity<CommonResponse<List<FavoriteResponse>>> getFavoritecategory(
+    public ResponseEntity<CommonResponse<List<FavoriteResponse>>> getFavoriteCategory(
         @PathVariable String category, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<FavoriteResponse> favoriteResponseList = favoriteService.getFavoritecategory(
-            category, userDetails.getUser());
+        List<FavoriteResponse> favoriteResponseList = favoriteService.getFavoriteCategory(category,
+            userDetails.getUser());
         return CommonResponse.ofDataWithHttpStatus(favoriteResponseList, HttpStatus.OK);
     }
 }
