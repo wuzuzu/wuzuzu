@@ -26,4 +26,13 @@ public class AdminService {
         User user = userRepository.findById(userId).orElseThrow(() ->new IllegalArgumentException("해당 회원은 존재하지 않습니다."));
         return new UserInformReadResponse(user);
     }
+
+    public void blockedUser(Long userId) {
+        User user= userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 회원은 존재하지 않습니다."));
+
+        if(user.getBlocked())
+            throw new IllegalArgumentException("이미 차단된 회원입니다.");
+
+        user.beBlocked(user, true);
+    }
 }

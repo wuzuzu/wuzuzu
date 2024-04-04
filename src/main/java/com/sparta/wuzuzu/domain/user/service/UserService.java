@@ -31,14 +31,16 @@ public class UserService {
         }
 
         User user = User.builder().
-            email(signUpRequest.getEmail())
-            .password(passwordEncoder.encode(signUpRequest.getPassword()))
-            .userName(signUpRequest.getUserName())
-            .address(signUpRequest.getAddress())
-            .petName(signUpRequest.getPetName())
-            .petType(signUpRequest.getPetType())
-            .role(UserRole.USER)
-            .build();
+                email(signUpRequest.getEmail())
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                .userName(signUpRequest.getUserName())
+                .address(signUpRequest.getAddress())
+                .petName(signUpRequest.getPetName())
+                .petType(signUpRequest.getPetType())
+                .role(UserRole.USER)
+                .blocked(false)
+                .numberOfCount(0)
+                .build();
 
         userRepository.save(user);
 

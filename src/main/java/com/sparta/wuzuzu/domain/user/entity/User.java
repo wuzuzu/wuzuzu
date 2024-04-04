@@ -41,8 +41,16 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
+    // true : block, false : unblock
+    @Column(columnDefinition = "TINYINT(1) default 0")
+    private Boolean blocked;
+
+    // 신고 +1 누적 count 10회 시 block
+    @Column(nullable = false)
+    private int numberOfCount;
+
     @Builder
-    public User(String email, String password, String userName, String address, String petName, String petType, UserRole role) {
+    public User(String email, String password, String userName, String address, String petName, String petType, UserRole role, Boolean blocked, int numberOfCount) {
         this.email = email;
         this.password = password;
         this.userName = userName;
@@ -50,6 +58,8 @@ public class User extends Timestamped {
         this.petName = petName;
         this.petType = petType;
         this.role = role;
+        this.blocked = blocked;
+        this.numberOfCount = numberOfCount;
     }
 
     public void update(User user, MyInformUpdateRequest myInformUpdateRequest) {
@@ -61,5 +71,9 @@ public class User extends Timestamped {
 
     public void updatePassword(User user, String passwordToEncrypt) {
         user.password = passwordToEncrypt;
+    }
+
+    public void beBlocked(User user, Boolean blocked){
+        user.blocked = blocked;
     }
 }

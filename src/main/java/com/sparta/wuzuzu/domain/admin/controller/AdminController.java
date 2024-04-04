@@ -37,6 +37,12 @@ public class AdminController {
         return CommonResponse.ofDataWithHttpStatus(user, HttpStatus.OK);
     }
 
+    @PatchMapping("/users/{userId}")
+    public ResponseEntity<CommonResponse<String>> blockedUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long userId){
+        adminService.blockedUser(userId);
+        return CommonResponse.ofDataWithHttpStatus(userId + "차단 성공", HttpStatus.OK);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<CommonResponse<String>> logout(HttpServletRequest request) {
         String token = extractTokenFromHeader(request);
