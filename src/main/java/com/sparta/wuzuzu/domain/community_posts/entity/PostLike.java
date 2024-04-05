@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "likePosts")
-public class Postlikes {
+public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long likeId;
@@ -27,21 +27,21 @@ public class Postlikes {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_postsid", nullable = false)
-    private CommunityPosts communityPosts;
+    private CommunityPost communityPost;
 
-    public Postlikes(User user, CommunityPosts communityPosts) {
+    public PostLike(User user, CommunityPost communityPost) {
         this.user = user;
-        this.communityPosts = communityPosts;
+        this.communityPost = communityPost;
     }
 
-    public void addLike(CommunityPosts communityPosts) {
-        this.communityPosts = communityPosts;
-        communityPosts.getPostlikesList().add(this);
+    public void addLike(CommunityPost communityPost) {
+        this.communityPost = communityPost;
+        communityPost.getPostLikeList().add(this);
     }
 
-    public void removeLike(CommunityPosts communityPosts) {
-        this.communityPosts = communityPosts;
-        communityPosts.getPostlikesList().remove(this);
+    public void removeLike(CommunityPost communityPost) {
+        this.communityPost = communityPost;
+        communityPost.getPostLikeList().remove(this);
     }
 }
 
