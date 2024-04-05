@@ -50,7 +50,9 @@ public class User extends Timestamped {
     private int numberOfCount;
 
     @Builder
-    public User(String email, String password, String userName, String address, String petName, String petType, UserRole role, Boolean blocked, int numberOfCount) {
+    public User(String email, String password, String userName,
+                String address, String petName, String petType,
+                UserRole role, Boolean blocked, int numberOfCount) {
         this.email = email;
         this.password = password;
         this.userName = userName;
@@ -75,5 +77,13 @@ public class User extends Timestamped {
 
     public void beBlocked(User user, Boolean blocked){
         user.blocked = blocked;
+    }
+
+    public void plusCount(User user){
+        user.numberOfCount += 1;
+    }
+
+    public void updateUserRole(User user, UserRole role){
+        user.role = role;
     }
 }

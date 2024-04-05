@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.user.service;
 
+import com.sparta.wuzuzu.domain.user.dto.ReportUserRequest;
 import com.sparta.wuzuzu.domain.user.dto.SignUpRequest;
 import com.sparta.wuzuzu.domain.user.dto.SignUpResponse;
 import com.sparta.wuzuzu.domain.user.entity.User;
@@ -37,7 +38,7 @@ public class UserService {
                 .address(signUpRequest.getAddress())
                 .petName(signUpRequest.getPetName())
                 .petType(signUpRequest.getPetType())
-                .role(UserRole.USER)
+                .role(UserRole.BEFORE_USER)
                 .blocked(false)
                 .numberOfCount(0)
                 .build();
@@ -45,5 +46,25 @@ public class UserService {
         userRepository.save(user);
 
         return new SignUpResponse(user.getUserId(), user.getEmail());
+    }
+
+    public void reportUser(ReportUserRequest reportUserRequest) {
+        User user = userRepository.findById(reportUserRequest.getReportUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        if (user.getBlocked())
+            throw new IllegalArgumentException("이미 차단된 사용자입니다.");
+
+        int limitedCount = 10;
+        if (user.getNumberOfCount() == limitedCount) {
+            user.beBlocked(user, true);
+            return;
+        }
+
+        if (user.getNumberOfCount() < limitedCount) {
+            user.plusCount(user);
+        }
+
+        if (user.getNumberOfCount() >= limitedCount) {
+            user.beBlocked(user, true);
+        }
     }
 }
