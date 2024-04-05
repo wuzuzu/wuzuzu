@@ -1,13 +1,8 @@
 package com.sparta.wuzuzu.domain.admin.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.sparta.wuzuzu.domain.user.entity.UserRole;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,4 +25,13 @@ public class Admin extends Timestamped {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
+    public void updateAfterAuth(Admin admin, String password, UserRole role) {
+        admin.password = password;
+        admin.role = role;
+    }
 }

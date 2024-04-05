@@ -23,7 +23,7 @@ public class UserService {
 
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         String confirmEmail = signUpRequest.getEmail();
-        if (userRepository.findByEmail(confirmEmail).isPresent()) {
+        if (userRepository.findByEmail(confirmEmail) != null) {
             throw new IllegalArgumentException("중복된 이메일 입니다.");
         }
 

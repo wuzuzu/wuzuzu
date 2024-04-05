@@ -50,7 +50,8 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, jwtTokenBlacklist);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService,
+                jwtTokenBlacklist);
     }
 
     @Bean
@@ -68,12 +69,18 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
                         .requestMatchers("/api/v1/users/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers("/api/v1/admins/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers("/api/v1/email/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
                         .anyRequest().permitAll()
         );
 
+        http.formLogin((formLogin) ->
+                formLogin
+                        .loginPage("/user/login-page").permitAll()
+        );
+
         // 필터 관리
-        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
