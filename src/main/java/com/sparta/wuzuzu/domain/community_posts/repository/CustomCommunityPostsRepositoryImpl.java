@@ -24,6 +24,11 @@ import org.springframework.util.StringUtils;
 @Repository
 public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsRepository {
 
+    public static final String TITLE = "title";
+    public static final String VIEWS = "views";
+    public static final String LIKE_COUNT = "likeCount";
+    public static final String CREATED_AT = "createdAt";
+
     private final JPAQueryFactory queryFactory;
     QUser user = QUser.user;
 
@@ -86,16 +91,16 @@ public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsR
     private OrderSpecifier<?> getOrderSpecifier(Sort.Order order) {
         QCommunityPost communityPost = QCommunityPost.communityPost;
 
-        if ("title".equals(order.getProperty())) {
+        if (TITLE.equals(order.getProperty())) {
             return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
                 communityPost.title);
-        } else if ("views".equals(order.getProperty())) {
+        } else if (VIEWS.equals(order.getProperty())) {
             return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
                 communityPost.views);
-        } else if ("likeCount".equals(order.getProperty())) {
+        } else if (LIKE_COUNT.equals(order.getProperty())) {
             return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
                 communityPost.likeCount);
-        } else if ("createdAt".equals(order.getProperty())) {
+        } else if (CREATED_AT .equals(order.getProperty())) {
             return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
                 communityPost.createdAt);
         } else {
