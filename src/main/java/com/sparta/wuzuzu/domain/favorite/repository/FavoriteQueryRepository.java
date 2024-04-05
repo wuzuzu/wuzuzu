@@ -16,8 +16,9 @@ public class FavoriteQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private final QFavorite qFavorite = QFavorite.favorite;
+
     public Boolean existFavorite(FavoriteRequest request) {
-        QFavorite qFavorite = new QFavorite("f");
         Integer fetchOne = jpaQueryFactory.selectOne().from(qFavorite).where(
             qFavorite.spotName.eq(request.getSpotName())
                 .and(qFavorite.category.eq(request.getCategory()))
@@ -26,8 +27,6 @@ public class FavoriteQueryRepository {
     }
 
     public List<FavoriteResponse> getFavoritecategory(String category, User user) {
-        QFavorite qFavorite = new QFavorite("f");
-
         return jpaQueryFactory.selectFrom(qFavorite)
             .where(qFavorite.user.userId.eq(user.getUserId()).and(qFavorite.category.eq(category)))
             .stream().map(Favorite::createResponseFavorite).toList();
