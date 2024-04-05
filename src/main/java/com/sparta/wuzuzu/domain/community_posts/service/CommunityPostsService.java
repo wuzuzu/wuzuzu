@@ -1,6 +1,5 @@
 package com.sparta.wuzuzu.domain.community_posts.service;
 
-import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostGet;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
@@ -73,73 +72,26 @@ public class CommunityPostsService {
 
     }
 
-    public Page<CommunityPostGet> getCommunityPosts(int page, int size, String sortBy,
-        boolean isAsc) {
-        Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        // CommunityPosts의 Page를 CommunityPostGet의 Page로 변환
-        return communityPostsRepository.findAll(pageable)
-            .map(communityPosts -> new CommunityPostGet(communityPosts.getTitle(),
-                communityPosts.getViews(), communityPosts.getLikesCount()));
-    }
-
-    public Page<CommunityPostsResponse> getPostsByKeyword(String keyword, int page, int size,
-        String sortBy,
-        boolean isAsc) {
-
-        Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        Page<CommunityPost> posts = communityPostsRepository.findByTitleContaining(keyword,
-            pageable);
-
-        if (posts.isEmpty()) {
-            throw new NoSuchElementException("다음 키워드를 포함한 제목이 없습니다. " + keyword);
-        }
-
-        return posts.map(communityPosts -> CommunityPostsResponse.builder().
-            title(communityPosts.getTitle()).
-            username(communityPosts.getUser().getUserName()).
-            contents(communityPosts.getContent()).
-            views(communityPosts.getViews()).
-            build());
-
-    }
-
-    public Page<CommunityPostsResponse> getPostsByCategory(String categoryName, int page, int size,
-        String sortBy, boolean isAsc) {
-        Sort sort = isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<CommunityPost> posts = communityPostsRepository.findByCategoryName(categoryName,
-            pageable);
-        if (posts.isEmpty()) {
-            throw new NoSuchElementException("해당 카테고리의 글이 없습니다.");
-        }
-
-        return posts.map(communityPosts -> CommunityPostsResponse.builder().
-            title(communityPosts.getTitle()).
-            username(communityPosts.getUser().getUserName()).
-            contents(communityPosts.getContent()).
-            views(communityPosts.getViews()).
-            build());
-
-    }
 
     public CommunityPostsListResponse searchCommunityPosts(CommunityPostsListRequest request) {
         if (request.getColumn() == null) {
             request.setColumn("createdDate");
         }
 
-        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(), Sort.by(request.getSortDirection(), request.getColumn()));
-        Page<CommunityPostsResponse> postsPage = customCommunityPostsRepository.findByConditions(request.getKeyword(), request.getCategoryName(), pageable);
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(),
+            Sort.by(request.getSortDirection(), request.getColumn()));
+        Page<CommunityPostsResponse> postsPage = customCommunityPostsRepository.findByConditions(
+            request.getKeyword(), request.getCategoryName(), pageable);
 
-        PagingUtil pagingUtil = new PagingUtil(postsPage.getTotalElements(), postsPage.getTotalPages(), request.getPage(), request.getPageSize());
+        PagingUtil pagingUtil = new PagingUtil(postsPage.getTotalElements(),
+            postsPage.getTotalPages(), request.getPage(), request.getPageSize());
 
         return CommunityPostsListResponse.builder()
             .postList(postsPage.getContent())
             .pagingUtil(pagingUtil)
             .build();
     }
+
     @Transactional
     public CommunityPostsResponse getDetail(Long communitypostsId) {
         CommunityPost post = communityPostsRepository.findById(communitypostsId)

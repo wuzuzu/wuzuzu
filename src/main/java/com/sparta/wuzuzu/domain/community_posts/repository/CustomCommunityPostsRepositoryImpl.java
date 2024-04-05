@@ -1,10 +1,15 @@
 package com.sparta.wuzuzu.domain.community_posts.repository;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.community_posts.entity.QCommunityPost;
 import com.sparta.wuzuzu.domain.user.entity.QUser;
 import jakarta.persistence.EntityManager;
@@ -12,6 +17,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -26,32 +32,42 @@ public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsR
     }
 
     @Override
-    public Page<CommunityPostsResponse> findByConditions(String keyword, String categoryName, Pageable pageable) {
+    public Page<CommunityPostsResponse> findByConditions(String keyword, String categoryName,
+        Pageable pageable) {
         QCommunityPost communityPost = QCommunityPost.communityPost;
         QUser user = QUser.user;
 
-        QueryResults<CommunityPostsResponse> results = queryFactory
+        JPAQuery<CommunityPostsResponse> query = queryFactory
             .select(Projections.constructor(CommunityPostsResponse.class,
                 communityPost.title,
-                user.userName,
+                user.userName.as("userName"),
                 communityPost.content,
                 communityPost.likeCount,
                 communityPost.views))
             .from(communityPost)
-            .leftJoin(communityPost.user)
+            .leftJoin(communityPost.user, user)
             .where(
                 keywordIs(keyword),
                 categoryIs(categoryName)
             )
             .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .orderBy(communityPost.createdAt.desc())
-            .fetchResults();
+            .limit(pageable.getPageSize());
+
+        Sort.Order order = pageable.getSort().iterator().next();
+
+        // 정렬 조건을 생성
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(order);
+
+        // 쿼리에 정렬 조건 적용
+        query.orderBy(orderSpecifier);
+
+        QueryResults<CommunityPostsResponse> results = query.fetchResults();
 
         List<CommunityPostsResponse> content = results.getResults();
         long total = results.getTotal();
         return new PageImpl<>(content, pageable, total);
     }
+
 
     private BooleanExpression keywordIs(String keyword) {
         if (StringUtils.hasText(keyword)) {
@@ -66,5 +82,28 @@ public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsR
         }
         return null;
     }
+
+    private OrderSpecifier<?> getOrderSpecifier(Sort.Order order) {
+        QCommunityPost communityPost = QCommunityPost.communityPost;
+
+        if ("title".equals(order.getProperty())) {
+            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                communityPost.title);
+        } else if ("views".equals(order.getProperty())) {
+            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                communityPost.views);
+        } else if ("likeCount".equals(order.getProperty())) {
+            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                communityPost.likeCount);
+        } else if ("createdAt".equals(order.getProperty())) {
+            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                communityPost.createdAt);
+        } else {
+            // 예외 처리
+            throw new IllegalArgumentException(
+                "해당 정렬기준은 제공하지 않습니다: " + order.getProperty());
+        }
+    }
+
 }
 

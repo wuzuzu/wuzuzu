@@ -33,7 +33,7 @@ public class CommentSerivce {
 
     public List<CommentResponse> getCommentByCommunityPost(Long postid) {
 
-        List<Comment> commentsList = commentRepository.findAllByCommunityPostIdOrderByCreatedAtDesc(
+        List<Comment> commentsList = commentRepository.findAllByCommunityPost_CommunitypostIdOrderByCreatedAtDesc(
             postid);
         if (commentsList.isEmpty()) {
             throw new NoSuchElementException();
