@@ -23,13 +23,12 @@ public class EmailAuthController {
     private final EmailAuthService emailAuthService;
 
     @PostMapping("/users/auth")
-    public ResponseEntity<CommonResponse<String>> sendEmail(@RequestBody @Validated SignUpRequest signUpRequest) throws MessagingException {
-        emailAuthService.sendEmail(signUpRequest.getEmail());
+    public ResponseEntity<CommonResponse<String>> sendEmail(@RequestBody @Validated EmailRequest emailRequest) throws MessagingException {
+        emailAuthService.sendEmail(emailRequest.getMail());
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.ofData("인증 메일 발송 성공"));
     }
 
     // 발송된 코드 인증
-    @Secured("ROLE_BEFORE_USER")
     @PostMapping("/users/verify")
     public ResponseEntity<CommonResponse<String>> verify(@RequestBody VerifyRequest verifyRequest) {
          EmailAuthResponse emailAuthResponse = emailAuthService.verifyEmailCode(verifyRequest);

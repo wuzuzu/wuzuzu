@@ -5,7 +5,9 @@ import com.sparta.wuzuzu.domain.admin.entity.Admin;
 import com.sparta.wuzuzu.domain.admin.repository.AdminRepository;
 import com.sparta.wuzuzu.domain.email.dto.EmailAuthResponse;
 import com.sparta.wuzuzu.domain.email.dto.VerifyRequest;
+import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
+import com.sparta.wuzuzu.domain.user.repository.UserRepository;
 import com.sparta.wuzuzu.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -30,12 +32,17 @@ public class EmailAuthService {
 
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
+    private final UserRepository userRepository;
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private static final String fromEmail = "9noeyni9@gmail.com";
 
     //인증 코드 이메일 발송
     public void sendEmail(String toEmail) throws MessagingException {
+        User user = userRepository.findByEmail(toEmail);
+        if(user != null)
+            throw new IllegalArgumentException("이미 존재하는 회원입니다. 기존 아이디로 로그인해주세요");
+
         if (redisUtil.existData(toEmail)) {
             redisUtil.deleteData(toEmail);
         }
@@ -156,7 +163,8 @@ public class EmailAuthService {
         message.setSubject("[wuzuzu] 이메일 인증");
         message.setFrom(fromEmail);
 
-        if (Objects.equals(adminRepository.findByEmail(email).getEmail(), email)) {
+        Admin admin = adminRepository.findByEmail(email);
+        if (admin != null && admin.getEmail().equals(email)) {
             message.setText(setContext("Admin" + authCode), "utf-8", "html");
             redisUtil.setDataExpire(email, "Admin" + authCode, 60 * 30L);
             return message;
