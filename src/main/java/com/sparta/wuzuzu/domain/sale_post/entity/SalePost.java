@@ -90,11 +90,11 @@ public class SalePost extends Timestamped {
         views++;
     }
 
-    public void goodsOrder(Long count){
-        stock -= count;
-    }
-
     public void delete() {
         status = false;
+    }
+
+    public void updateStock(Long stock) {
+        this.stock = stock;
     }
 }
