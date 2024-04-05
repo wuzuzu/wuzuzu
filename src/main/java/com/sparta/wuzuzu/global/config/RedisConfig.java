@@ -41,4 +41,13 @@ public class RedisConfig {
 
         return redisTemplate;
     }
+
+    @Bean("concurrencyControlRedisTemplate")
+    public RedisTemplate<String, Object> concurrencyControlRedisTemplate() {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
+    }
 }
