@@ -1,8 +1,12 @@
 package com.sparta.wuzuzu.domain.email.service;
 
+import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.domain.user.entity.UserRole;
+import com.sparta.wuzuzu.domain.user.repository.UserRepository;
 import com.sparta.wuzuzu.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -14,33 +18,45 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import java.util.Random;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EmailAuthService {
 
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
+    private final UserRepository userRepository;
     private static final String fromEmail = "9noeyni9@gmail.com";
 
     //인증 코드 이메일 발송
-    public void sendEmail(String toEmail) throws MessagingException {
-        if (redisUtil.existData(toEmail)) {
-            redisUtil.deleteData(toEmail);
+    public void sendEmail(User user) throws MessagingException {
+        user = userRepository.findById(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        if (user.getRole().equals(UserRole.USER))
+            throw new IllegalArgumentException("이미 인증된 회원입니다.");
+
+        if (redisUtil.existData(user.getEmail())) {
+            redisUtil.deleteData(user.getEmail());
         }
 
         // 이메일 폼 생성
-        MimeMessage emailForm = createEmailForm(toEmail);
+        MimeMessage emailForm = createEmailForm(user.getEmail());
 
         // 이메일 발송
         javaMailSender.send(emailForm);
     }
 
-    public boolean verifyEmailCode(String mail, String verifyCode) {
-        String codeFromEmail = redisUtil.getData(mail);
+    public boolean verifyEmailCode(User user, String verifyCode) {
+        user = userRepository.findById(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        if(codeFromEmail == null)
+        String codeFromEmail = redisUtil.getData(user.getEmail());
+
+        if (codeFromEmail == null)
             return false;
 
-        return codeFromEmail.equals(verifyCode);
+        if (!codeFromEmail.equals(verifyCode)) {
+            return false;
+        }
+        user.updateUserRole(user, UserRole.USER);
+        return true;
     }
 
     // 코드 생성
