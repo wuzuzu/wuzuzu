@@ -23,18 +23,18 @@ public class CommentSerivce {
     private final CommunityPostsRepository communityPostsRepository;
     private final CommentRepository commentRepository;
 
-    public CommentResponse createComment(Long postid, User user, CommentRequest commentRequest) {
-        CommunityPost communityPost = communityPostsRepository.findById(postid).orElseThrow(
+    public CommentResponse createComment(Long postId, User user, CommentRequest commentRequest) {
+        CommunityPost communityPost = communityPostsRepository.findById(postId).orElseThrow(
             NoSuchElementException::new);
         Comment comment = new Comment(communityPost, user, commentRequest.getContents());
         commentRepository.save(comment);
         return new CommentResponse(comment);
     }
 
-    public List<CommentResponse> getCommentByCommunityPost(Long postid) {
+    public List<CommentResponse> getCommentByCommunityPost(Long postId) {
 
-        List<Comment> commentsList = commentRepository.findAllByCommunityPost_CommunitypostIdOrderByCreatedAtDesc(
-            postid);
+        List<Comment> commentsList = commentRepository.findAllByCommunityPost_CommunityPostIdOrderByCreatedAtDesc(
+            postId);
         if (commentsList.isEmpty()) {
             throw new NoSuchElementException();
         }

@@ -39,14 +39,14 @@ public class CommunityPostsController {
         return new ResponseEntity<>(communityPostsResponse, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{communitypostsId}")
+    @PatchMapping("/{communityPostsId}")
     public ResponseEntity<CommunityPostsResponse> updateCommunityPost(
         @Valid @RequestBody CommunityPostsRequest communityPostsRequest,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long communityposts_id
+        @PathVariable Long communityPostsId
     ) {
         CommunityPostsResponse communityPostsResponse = communityPostsService.updateCommunityPosts(
-            communityPostsRequest, userDetails.getUser().getUserId(), communityposts_id);
+            communityPostsRequest, userDetails.getUser().getUserId(), communityPostsId);
 
         return new ResponseEntity<>(communityPostsResponse, HttpStatus.OK);
     }
@@ -56,17 +56,17 @@ public class CommunityPostsController {
         return ResponseEntity.ok(communityPostsService.searchCommunityPosts(request));
     }
 
-    @GetMapping("/read/{communitypostsId}")
-    public ResponseEntity<CommunityPostsResponse> readDetail(@PathVariable Long communitypostsId) {
-        return ResponseEntity.ok().body(communityPostsService.getDetail(communitypostsId));
+    @GetMapping("/read/{communityPostsId}")
+    public ResponseEntity<CommunityPostsResponse> readDetail(@PathVariable Long communityPostsId) {
+        return ResponseEntity.ok().body(communityPostsService.getDetail(communityPostsId));
     }
 
-    @DeleteMapping("/{communitypostsId}")
+    @DeleteMapping("/{communityPostsId}")
     public ResponseEntity<Void> deleteCommunityPosts(
-        @PathVariable Long communityposts_id,
+        @PathVariable Long communityPostsId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        communityPostsService.deleteCommunityPost(communityposts_id, userDetails.getUser());
+        communityPostsService.deleteCommunityPost(communityPostsId, userDetails.getUser());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

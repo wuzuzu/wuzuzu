@@ -28,7 +28,7 @@ public class CommunityPost extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long communitypostId;
+    private Long communityPostId;
 
     @Column(nullable = false)
     private String title;

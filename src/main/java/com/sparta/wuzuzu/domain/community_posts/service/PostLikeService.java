@@ -19,8 +19,8 @@ public class PostLikeService {
     private final PostLikeRepository post_likeRepository;
 
     @Transactional
-    public PostLikeResponse createLike(Long communitypostId, User user) {
-        CommunityPost post = communityPostsRepository.findById(communitypostId)
+    public PostLikeResponse createLike(Long communityPostId, User user) {
+        CommunityPost post = communityPostsRepository.findById(communityPostId)
             .orElseThrow(() -> new NotFoundCommunityPostException());
 
         // 이미 좋아요가 존재하면 삭제
