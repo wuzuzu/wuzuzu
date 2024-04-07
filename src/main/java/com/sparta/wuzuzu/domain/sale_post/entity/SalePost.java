@@ -2,6 +2,7 @@ package com.sparta.wuzuzu.domain.sale_post.entity;
 
 import com.sparta.wuzuzu.domain.category.entity.Category;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.common.image.entity.Image;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -14,7 +15,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -61,6 +64,9 @@ public class SalePost extends Timestamped {
     @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category;
 
+    @OneToMany(mappedBy = "salePost")
+    private List<Image> imageUrl;
+
     public SalePost(User user, SalePostRequest requestDto, Category category) {
         this.user = user;
         this.title = requestDto.getTitle();
@@ -84,11 +90,11 @@ public class SalePost extends Timestamped {
         views++;
     }
 
-    public void goodsOrder(Long count){
-        stock -= count;
-    }
-
     public void delete() {
         status = false;
+    }
+
+    public void updateStock(Long stock) {
+        this.stock = stock;
     }
 }

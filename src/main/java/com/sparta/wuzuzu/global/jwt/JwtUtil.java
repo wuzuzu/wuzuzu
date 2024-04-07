@@ -1,7 +1,6 @@
 package com.sparta.wuzuzu.global.jwt;
 
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
-import com.sparta.wuzuzu.global.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -34,7 +33,6 @@ public class JwtUtil {
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @PostConstruct
     public void init() {

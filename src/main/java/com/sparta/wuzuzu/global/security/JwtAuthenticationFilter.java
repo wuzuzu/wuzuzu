@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/v1/users/login");
+        setFilterProcessesUrl("/api/v1/login");
     }
 
     @Override
@@ -49,21 +49,28 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRole role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
+        UserRole role;
+
+        if (userDetails.getUser() != null) {
+            role = userDetails.getUser().getRole();
+        } else if (userDetails.getAdmin() != null) {
+            role = userDetails.getAdmin().getRole();
+        } else {
+            throw new IllegalStateException("User or Admin not found");
+        }
 
         // AccessToken 생성
-        String accessToken = jwtUtil.createAccessToken(email, role);
+        String accessToken = jwtUtil.createAccessToken(userDetails.getUsername(), role);
 
         // RefreshToken 생성
-        String refreshToken = jwtUtil.createRefreshToken(email, role);
+        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUsername(), role);
 
         // 응답에 map형식으로 AccessToken, RefreshToken 추가
-        setTokenResponse(request, response, accessToken, refreshToken, email);
+        setTokenResponse(response, accessToken, refreshToken);
     }
 
-    private void setTokenResponse(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken, String email) throws IOException {
-        request.setAttribute("email", email);
+    private void setTokenResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
 

@@ -24,11 +24,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "community_posts")
-public class CommunityPosts extends Timestamped {
+public class CommunityPost extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long communityPostId;
 
     @Column(nullable = false)
     private String title;
@@ -46,14 +46,14 @@ public class CommunityPosts extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
-    @OneToMany(mappedBy = "communityPosts", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Postlikes> postlikesList = new ArrayList<>();
+    @OneToMany(mappedBy = "communityPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLike> postLikeList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "category", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CommunityCategory category;
 
-    public CommunityPosts(String title, CommunityCategory category, String content, User user) {
+    public CommunityPost(String title, CommunityCategory category, String content, User user) {
         this.title = title;
         this.category = category;
         this.content = content;
@@ -62,7 +62,7 @@ public class CommunityPosts extends Timestamped {
     }
 
     public int getLikesCount() {
-        return postlikesList.size();
+        return postLikeList.size();
     }
 
     public void addLike() {

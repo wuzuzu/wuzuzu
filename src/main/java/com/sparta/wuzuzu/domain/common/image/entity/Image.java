@@ -1,11 +1,15 @@
 package com.sparta.wuzuzu.domain.common.image.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,11 +29,16 @@ public class Image extends Timestamped {
     private Long imageId;
 
     @Column(nullable = false)
-    private String name;
+    private String imageUrl;
 
-    @Column(nullable = false)
-    private String filePath;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "salePost_id")
+    private SalePost salePost;
 
-    @Column(nullable = false)
-    private String type;
+    public Image(String imageName, Object object) {
+        this.imageUrl = imageName;
+        if(object instanceof SalePost){
+            this.salePost = (SalePost) object;
+        }
+    }
 }

@@ -5,6 +5,7 @@ import com.sparta.wuzuzu.domain.category.dto.CategoryResponse;
 import com.sparta.wuzuzu.domain.category.entity.Category;
 import com.sparta.wuzuzu.domain.category.repository.CategoryRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.domain.user.entity.UserRole;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,8 +19,8 @@ public class CategoryService {
     public final CategoryRepository categoryRepository;
 
     @Transactional
-    public void createCategory(User testUser, CategoryRequest requestDto) {
-        validationAdmin(testUser);
+    public void createCategory(User user, CategoryRequest requestDto) {
+        validationAdmin(user);
 
         Optional<Category> category = categoryRepository.findByName(requestDto.getName());
 
@@ -47,8 +48,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public void updatePost(User testUser, Long categoryId, CategoryRequest requestDto) {
-        validationAdmin(testUser);
+    public void updatePost(User user, Long categoryId, CategoryRequest requestDto) {
+        validationAdmin(user);
 
         Category category = categoryRepository.findById(categoryId).orElseThrow(
             () -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")
@@ -58,8 +59,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public void deletePost(User testUser, Long categoryId) {
-        validationAdmin(testUser);
+    public void deletePost(User user, Long categoryId) {
+        validationAdmin(user);
 
         Category category = categoryRepository.findById(categoryId).orElseThrow(
             () -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")
@@ -73,6 +74,8 @@ public class CategoryService {
     }
 
     private void validationAdmin(User user){
-        System.out.println("Admin 검증 로직 -> Admin 이 아니면 Throw");
+        if(!user.getRole().equals(UserRole.ADMIN)){
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
     }
 }
