@@ -1,6 +1,8 @@
 package com.sparta.wuzuzu.global.jwt;
 
+import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
+import com.sparta.wuzuzu.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -41,13 +43,14 @@ public class JwtUtil {
     }
 
     // ACCESS 토큰 생성
-    public String createAccessToken(String email, UserRole role) {
+    public String createAccessToken(User user) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(email)
-                        .claim(AUTHORIZATION_KEY, role)
+                        .setSubject(user.getEmail())
+                        .claim("userId",user.getUserId())
+                        .claim(AUTHORIZATION_KEY, user.getRole())
                         .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
@@ -55,13 +58,14 @@ public class JwtUtil {
     }
 
     // REFRESH 토큰 생성
-    public String createRefreshToken(String email, UserRole role) {
+    public String createRefreshToken(User user) {
         Date date = new Date();
 
         String refreshToken = BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(email)
-                        .claim(AUTHORIZATION_KEY, role)
+                        .setSubject(user.getEmail())
+                        .claim("userId",user.getUserId())
+                        .claim(AUTHORIZATION_KEY, user.getRole())
                         .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
@@ -69,7 +73,7 @@ public class JwtUtil {
 
         // redis에 저장
         refreshTokenRedisTemplate.opsForValue().set(
-                email,
+                user.getEmail(),
                 refreshToken,
                 REFRESH_TOKEN_TIME,
                 TimeUnit.MILLISECONDS
@@ -90,9 +94,10 @@ public class JwtUtil {
         String email = refreshTokenClaims.getSubject();
         UserRole role = UserRole.valueOf(
                 (String) refreshTokenClaims.get(AUTHORIZATION_KEY));
+        User user = new User(email, role);
 
         // 새로운 accessToken 생성
-        return createAccessToken(email, role);
+        return createAccessToken(user);
     }
 
     // 토큰 만료 확인
