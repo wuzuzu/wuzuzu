@@ -1,7 +1,9 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Box, IconButton, MenuItem, Modal, Select} from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import ChattingRoomList from "./ChattingRoomList";
+import {getAllRooms, getMyRooms} from "./api/ChatRoomApi";
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -18,8 +20,50 @@ const style = {
 
 function ChattingApp() {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleOpen = () => {
+        setOpen(true)
+    };
+    const handleClose = () => {
+        setOpen(false)
+    };
+
+    const [roomList, setRoomList] = useState([]);
+    const [menuItem, setMenuItem] = useState("my");
+
+    // async/await 사용 예시
+    async function getMyRoomList() {
+        try {
+            const response = await getMyRooms();
+            setRoomList(response.data);
+            // 성공 처리
+        } catch (error) {
+            console.error("채팅방 목록을 가져오는데 실패했습니다.", error);
+            // 사용자에게 에러 메시지 표시 또는 필요한 조치 수행
+        }
+    }
+
+    async function getRoomList() {
+        try {
+            const response = await getAllRooms();
+            setRoomList(response.data);
+            // 성공 처리
+        } catch (error) {
+            console.error("채팅방 목록을 가져오는데 실패했습니다.", error);
+            // 사용자에게 에러 메시지 표시 또는 필요한 조치 수행
+        }
+    }
+
+    const handleChange = (event) => {
+        setMenuItem(event.target.value);
+    }
+
+    useEffect(() => {
+        if (menuItem === "my") {
+            getMyRoomList();
+        } else if (menuItem === "all") {
+            getRoomList();
+        }
+    }, [menuItem]);
 
     return (
         <div style={{position: 'fixed', bottom: '5%', right: '5%'}}>
@@ -38,13 +82,13 @@ function ChattingApp() {
                         labelId="demo-simple-select-filled-label"
                         id="demo-simple-select-filled"
                         defaultValue={"my"}
-                        // onChange={handleChange}
+                        onChange={handleChange}
                         sx={{width: "100%"}}
                     >
                         <MenuItem value={"my"}>내 채팅</MenuItem>
                         <MenuItem value={"all"}>모든 채팅</MenuItem>
                     </Select>
-                    <ChattingRoomList/>
+                    <ChattingRoomList props={roomList}/>
                 </Box>
             </Modal>
         </div>

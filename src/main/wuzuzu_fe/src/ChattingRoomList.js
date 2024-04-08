@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 import {
     AppBar,
-    Box, Fab,
+    Box,
+    Fab,
     IconButton,
     List,
     Paper,
@@ -13,7 +14,8 @@ import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreIcon from "@mui/icons-material/MoreVert";
 
-function ChattingRoomList() {
+function ChattingRoomList(props) {
+    const roomList = props.props;
 
     const StyledFab = styled(Fab)({
         position: 'absolute',
@@ -28,11 +30,13 @@ function ChattingRoomList() {
         <Box>
             <Paper>
                 <List sx={{mb: 2}}>
-                    <ChattingRoom props={{
-                        avatar: "",
-                        primary: "Primary",
-                        secondary: "Secondary"
-                    }}/>
+                    {
+                        roomList.map((room) => {
+                            return (
+                                <ChattingRoom props={room}/>
+                            )
+                        })
+                    }
                 </List>
             </Paper>
             <AppBar position="fixed" color="primary"
@@ -52,7 +56,8 @@ function ChattingRoomList() {
                 </Toolbar>
             </AppBar>
         </Box>
-    );
+    )
+        ;
 }
 
 export default ChattingRoomList;

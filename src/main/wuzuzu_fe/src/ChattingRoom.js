@@ -4,17 +4,14 @@ import Avatar from "@mui/material/Avatar";
 
 function ChattingRoom(props) {
     const room = props.props;
-    const avatar = room.src;
-    const primary = room.primary;
-    const secondary = room.secondary;
 
     return (
         <ListItemButton>
             <ListItemAvatar>
-                <Avatar alt="Profile Picture" src={avatar}/>
+                <Avatar alt="Profile Picture" src=""/>
             </ListItemAvatar>
-            <ListItemText primary={primary}
-                          secondary={secondary}/>
+            <ListItemText primary={room.chatRoomName}
+                          secondary={room.description}/>
         </ListItemButton>
     );
 }
