@@ -61,10 +61,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
 
         // AccessToken 생성
-        String accessToken = jwtUtil.createAccessToken(userDetails.getUsername(), role);
+        String accessToken = jwtUtil.createAccessToken(userDetails.getUser());
 
         // RefreshToken 생성
-        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUsername(), role);
+        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUser());
 
         // 응답에 map형식으로 AccessToken, RefreshToken 추가
         setTokenResponse(response, accessToken, refreshToken);
