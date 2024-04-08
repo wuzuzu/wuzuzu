@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.global.security;
 
+import com.sparta.wuzuzu.domain.admin.entity.Admin;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,32 +12,57 @@ import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private User user;
+    private Admin admin;
 
     public UserDetailsImpl(User user) {
         this.user = user;
+    }
+
+    public UserDetailsImpl(Admin admin) {
+        this.admin = admin;
     }
 
     public User getUser() {
         return user;
     }
 
+    public Admin getAdmin() {
+        return admin;
+    }
+
     @Override
     public String getPassword() {
-        return user.getPassword();
+        if (user != null) {
+            return user.getPassword();
+        } else if (admin != null) {
+            return admin.getPassword();
+        }
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        if (user != null) {
+            return user.getEmail();
+        } else if (admin != null) {
+            return admin.getEmail();
+        }
+        return null;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        UserRole role = user.getRole();
-        String authority = role.getAuthority();
+        UserRole role;
+        if (user != null) {
+            role = user.getRole();
+        } else if (admin != null) {
+            role = admin.getRole();
+        } else {
+            return null;
+        }
 
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.getAuthority());
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(simpleGrantedAuthority);
 

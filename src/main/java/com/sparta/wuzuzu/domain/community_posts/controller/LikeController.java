@@ -19,11 +19,11 @@ public class LikeController {
 
     private final PostLikeService likeService;
 
-    @PostMapping("/{communitypostId}/likes")
-    public ResponseEntity<PostLikeResponse> createLike(@PathVariable Long communitypostId,
+    @PostMapping("/{communityPostId}/likes")
+    public ResponseEntity<PostLikeResponse> createLike(@PathVariable Long communityPostId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok()
-            .body(likeService.createLike(communitypostId, userDetails.getUser()));
+            .body(likeService.createLike(communityPostId, userDetails.getUser()));
     }
 
 }

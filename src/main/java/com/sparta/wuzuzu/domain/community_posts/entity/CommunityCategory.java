@@ -27,7 +27,7 @@ public class CommunityCategory {
     private Boolean status = true;
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommunityPosts> communityPosts;
+    private List<CommunityPost> communityPosts;
 
     public CommunityCategory(String name) {
         this.name = name;
