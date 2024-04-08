@@ -3,10 +3,7 @@ package com.sparta.wuzuzu.domain.user.entity;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
 import com.sparta.wuzuzu.domain.user.dto.MyInformUpdateRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -18,6 +15,7 @@ public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -49,6 +47,7 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private int numberOfCount;
 
+
     @Builder
     public User(String email, String password, String userName,
                 String address, String petName, String petType,
@@ -64,6 +63,14 @@ public class User extends Timestamped {
         this.numberOfCount = numberOfCount;
     }
 
+    public User(String email, UserRole role){
+        this.email = email;
+        this.role = role;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
     public void update(User user, MyInformUpdateRequest myInformUpdateRequest) {
         user.address = myInformUpdateRequest.getAddress();
         user.userName = myInformUpdateRequest.getUserName();
