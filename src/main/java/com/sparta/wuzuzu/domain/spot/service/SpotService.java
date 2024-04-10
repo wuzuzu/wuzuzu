@@ -38,7 +38,7 @@ public class SpotService {
     public List<CategorySpotResponse> getCategorySpot(String keyword, Integer page) {
 
         // api 요청
-        JSONArray items = requsetSearchApi(keyword, page, 15);
+        JSONArray items = requsetSearchApi(keyword, page, 10);
 
         //dto 변환
         List<CategorySpotResponse> itemDtoList = new ArrayList<>();
