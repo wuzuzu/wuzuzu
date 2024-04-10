@@ -6,8 +6,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
-import MyMessage from "../MyMessage";
-import OtherMessage from "../OtherMessage";
+import MyMessage from "./MyMessage";
+import OtherMessage from "./OtherMessage";
 
 export default function ChattingRoom({
     room,
@@ -64,7 +64,7 @@ export default function ChattingRoom({
                 });
                 setMessageInput('');
             } catch (error) {
-                console.log("메세지 전송 실패 : " + error);
+                alert("메세지 전송 실패");
             }
         }
     }

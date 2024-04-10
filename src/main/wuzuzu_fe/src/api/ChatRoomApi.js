@@ -9,3 +9,7 @@ export const getMyRooms = async () => {
 export const getAllRooms = async () => {
     return apiClient.get(startUrl + `/chat-rooms`);
 }
+
+export const createChatRoom = async (chatRoom) => {
+    return apiClient.post(startUrl + `/chat-rooms`, chatRoom);
+}

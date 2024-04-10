@@ -2,9 +2,10 @@ import React, {useEffect, useState} from "react";
 import ChattingRoomInfoList from "./ChattingRoomInfoList";
 import {Modal} from "@mui/joy";
 import ChattingRoom from "./ChattingRoom";
-import {chatRoomList, messageList} from "./ChatRoomDummyData";
 import * as StompJs from "@stomp/stompjs";
 import {getRoomMessages} from "../api/MessageApi";
+import CreateChattingRoom from "./CreateChattingRoom";
+import {createChatRoom} from "../api/ChatRoomApi";
 
 export const style = {
     position: 'absolute',
@@ -64,17 +65,15 @@ function ChattingApp({open, handleClose}) {
                         setRoomMessages(response.data.data);
                         setState(appStatusKey.채팅방입장);
                     } catch (error) {
-                        console.error("채팅 목록을 가져오는데 실패했습니다.", error);
+                        alert("채팅방 정보 로드에 실패했습니다.");
                     }
                 },
                 onWebSocketError: error => {
-                    console.error('Error with websocket', error);
+                    alert('웹 소켓 에러');
                     setCurrentRoom(null);
                 },
                 onStompError: frame => {
-                    console.error(
-                        'Broker reported error: ' + frame.headers['message']);
-                    console.error('Additional details: ' + frame.body);
+                    alert('웹 소켓 에러');
                     setCurrentRoom(-1);
                 },
             });
@@ -97,15 +96,34 @@ function ChattingApp({open, handleClose}) {
         setCurrentRoom(null);
     }
 
+    const handleCreateChatRoomClick = () => {
+        setState(appStatusKey.채팅방생성중);
+    }
+
+    const onCreate = async (newRoom) => {
+        try {
+            const response = await createChatRoom(newRoom);
+            alert("[" + response.data.chatRoomName + "] 채팅방 생성 완료!");
+        } catch (error) {
+            alert("채팅방 생성 실패");
+        } finally {
+            setState(appStatusKey.채팅방조회중);
+        }
+    }
+
     function switchUI() {
         switch (state) {
             case appStatusKey.채팅방조회중 :
                 return <ChattingRoomInfoList
                     handleClose={handleClose}
                     handleEnterClick={handleEnterClick}
+                    handleCreateChatRoomClick={handleCreateChatRoomClick}
                 />
             case appStatusKey.채팅방생성중 :
-                return null;
+                return <CreateChattingRoom
+                    onCreate={onCreate}
+                    handleBackClick={handleBackClick}
+                />
             case appStatusKey.채팅방입장 :
                 return <ChattingRoom
                     room={currentRoom}

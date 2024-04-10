@@ -6,6 +6,7 @@ import {
     Button,
     IconButton,
     List,
+    Menu,
     MenuItem,
     Select,
     Skeleton,
@@ -18,11 +19,24 @@ import {listStyle, style} from "./ChattingApp";
 import ChattingRoomInfo from "./ChattingRoomInfo";
 import {ModalDialog} from "@mui/joy";
 
-function ChattingRoomInfoList({handleClose, handleEnterClick}) {
+function ChattingRoomInfoList({
+    handleClose,
+    handleEnterClick,
+    handleCreateChatRoomClick
+}) {
 
     const [menuItem, setMenuItem] = useState("my");
     const [roomList, setRoomList] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleMenuClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
     async function getMyRoomList() {
         try {
@@ -75,6 +89,7 @@ function ChattingRoomInfoList({handleClose, handleEnterClick}) {
                 defaultValue={"my"}
                 onChange={handleChange}
                 sx={{width: "100%", bgcolor: "#F2F5A9"}}
+                disabled={roomList === null}
             >
                 <MenuItem value={"my"}>내 채팅</MenuItem>
                 <MenuItem value={"all"}>모든 채팅</MenuItem>
@@ -121,7 +136,8 @@ function ChattingRoomInfoList({handleClose, handleEnterClick}) {
                     <Button
                         variant="contained"
                         sx={{mr: "10px"}}
-                        onClick={() => handleEnterClick(roomList[selectedIndex])}
+                        onClick={() => handleEnterClick(
+                            roomList[selectedIndex])}
                         disabled={selectedIndex === -1}
                     >
                         입장
@@ -132,12 +148,41 @@ function ChattingRoomInfoList({handleClose, handleEnterClick}) {
                         variant="standard"
                         sx={{flexGrow: 1}}
                     />
-                    <IconButton color="inherit">
+                    <IconButton color="inherit"
+                                disabled={roomList === null}
+                    >
                         <SearchIcon/>
                     </IconButton>
-                    <IconButton color="inherit">
+                    <IconButton color="inherit"
+                                id="basic-button"
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleMenuClick}
+                                disabled={roomList === null}
+                    >
                         <MoreIcon/>
                     </IconButton>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem onClick={handleCreateChatRoomClick}>방
+                            생성</MenuItem>
+                    </Menu>
                 </Toolbar>
             </AppBar>
         </ModalDialog>
