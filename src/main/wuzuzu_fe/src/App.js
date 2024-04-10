@@ -1,9 +1,8 @@
 import React from 'react';
 // import SignUp from './components/SignUp';
 // import Login from "./components/Longin";
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Routes} from 'react-router-dom';
 import ChattingAppButton from "./Chatting/ChattingAppButton";
-import LogInForm from "./LogInForm";
 
 // import Main from "./components/Main";
 
@@ -12,7 +11,6 @@ function App() {
         <div>
             <BrowserRouter>
                 <Routes>
-                    <Route exact path="/" element={<LogInForm/>}/>
                     {/*<Route path="/signup" element={<SignUp/>}/>*/}
                     {/*<Route path="/Main" element={<Main/>}/>*/}
                 </Routes>
