@@ -62,6 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // AccessToken 생성
         String accessToken = jwtUtil.createAccessToken(userDetails.getUser());
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
 
         // RefreshToken 생성
         String refreshToken = jwtUtil.createRefreshToken(userDetails.getUser());
