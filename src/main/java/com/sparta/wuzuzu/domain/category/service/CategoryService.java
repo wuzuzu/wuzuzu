@@ -74,8 +74,8 @@ public class CategoryService {
     }
 
     private void validationAdmin(User user){
-        if(!user.getRole().equals(UserRole.ADMIN)){
-            throw new IllegalArgumentException("권한이 없습니다.");
-        }
+//        if(!user.getRole().equals(UserRole.ADMIN)){
+//            throw new IllegalArgumentException("권한이 없습니다.");
+//        }
     }
 }
