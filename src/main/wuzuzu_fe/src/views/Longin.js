@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {FormHelperText, styled} from "@mui/material";
+import axios from "axios";
 
 const FormHelperTexts = styled(FormHelperText)`
   width: 100%;
@@ -22,34 +23,26 @@ const FormHelperTexts = styled(FormHelperText)`
   color: #d32f2f !important;
 `;
 
+
 const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [registerError, setRegisterError] = useState('');
 
-  const handleLogin = async () => {
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      // Call your API here to perform the login
-      const response = await fetch('/api/v1/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        localStorage.setItem('Authorization', response.headers.get("Authorization"));
-        navigate('/Main')
-        // Handle successful login (e.g., set user state, redirect, etc.)
-      } else {
-        console.error('no');
-        setRegisterError('로그인에 실패하였습니다. 다시한번 확인해 주세요.');
-      }
+      const result = await axios.post('/api/v1/login',
+          {email: email, password: password});
+      localStorage.setItem("Authorization", result.data.accessToken);
+      localStorage.setItem("userId", result.data.userId);
+      localStorage.setItem("userName", result.data.userName);
+      // alert('로그인 완료되었습니다.');
+      navigate("/Main");
     } catch (error) {
-      console.error('Error logging in:', error);
-
+      setRegisterError('로그인에 실패하였습니다. 다시한번 확인해 주세요.');
     }
   };
 
