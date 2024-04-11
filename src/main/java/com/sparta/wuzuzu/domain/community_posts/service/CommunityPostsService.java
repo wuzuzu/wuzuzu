@@ -30,28 +30,29 @@ import org.springframework.web.multipart.MultipartFile;
 public class CommunityPostsService {
 
     private final CommunityPostRepository communityPostRepository;
-    private final CommunityCategoryRepository community_CategoryRepository;
+    private final CommunityCategoryRepository communityCategoryRepository;
     private final CustomCommunityPostRepository customCommunityPostRepository;
     private final ImageService imageService;
     public CommunityPostResponse saveCommunityPosts(CommunityPostRequest communityPostRequest,
         User user) {
 
-        CommunityCategory community_Category = community_CategoryRepository.findByNameEquals(
+        CommunityCategory communityCategory = communityCategoryRepository.findByNameEquals(
                 communityPostRequest.getCategoryName())
             .orElseThrow();
-        if (community_Category.getStatus() == false) {
+        if (communityCategory.getStatus() == false) {
             throw new NoSuchElementException();
         }
 
         communityPostRepository.save(new CommunityPost(
                 communityPostRequest.getTitle(),
-                community_Category,
+                communityCategory,
                 communityPostRequest.getContent(),
                 user
             )
         );
         return CommunityPostResponse.builder().
             title(communityPostRequest.getTitle()).
+            categoryName(communityPostRequest.getCategoryName()).
             username(user.getUserName()).
             contents(communityPostRequest.getContent()).
             build();
@@ -65,11 +66,12 @@ public class CommunityPostsService {
         post.validateUser(userId);
         post.updateCommunityPosts(
             communityPostRequest.getTitle(),
-            community_CategoryRepository.findByNameEquals(communityPostRequest.getCategoryName())
+            communityCategoryRepository.findByNameEquals(communityPostRequest.getCategoryName())
                 .orElseThrow(),
             communityPostRequest.getContent());
         return CommunityPostResponse.builder().
             title(post.getTitle()).
+            categoryName(post.getCategory().getName()).
             username(post.getUser().getUserName()).
             contents(post.getContent()).
             build();

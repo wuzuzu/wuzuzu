@@ -15,6 +15,7 @@ public class CommunityPostResponse {
 
     private String title;
     private String username;
+    private String categoryName;
     private String contents;
     private Long likeCount;
     private Long views;

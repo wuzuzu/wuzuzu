@@ -44,6 +44,7 @@ public class CustomCommunityPostRepositoryImpl implements CustomCommunityPostRep
             .select(Projections.constructor(CommunityPostResponse.class,
                 communityPost.title,
                 user.userName.as("userName"),
+                communityPost.category.name.as("categoryName"),
                 communityPost.content,
                 communityPost.likeCount,
                 communityPost.views))
