@@ -38,8 +38,7 @@ public class MessageService {
         Message message = messageRepository.save(
             new Message(request.getContent(), user.getUserId(), roomId));
 
-        return new GetMessageResponse(user.getUserName(), message.getMessageId(),
-            message.getContent());
+        return new GetMessageResponse(user.getUserName(), message);
     }
 
     public List<GetMessageResponse> getRoomMessages(Long roomId) {
