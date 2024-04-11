@@ -1,25 +1,23 @@
-import logo from './logo.svg';
 import React from 'react';
-import SignUp from './components/SignUp';
-import Login from "./components/Longin";
-import {
-  BrowserRouter,
-  BrowserRouter as Router,
-  Route, Routes,
-  Switch
-} from 'react-router-dom';
-import Main from "./components/Main";
+// import SignUp from './components/SignUp';
+// import Login from "./components/Longin";
+import {BrowserRouter, Routes} from 'react-router-dom';
+import ChattingAppButton from "./Chatting/ChattingAppButton";
+
+// import Main from "./components/Main";
 
 function App() {
-  return (
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/" element={<Login/>} />
-          <Route path="/signup" element={<SignUp/>} />
-          <Route path="/Main" element={<Main/>} />
-        </Routes>
-      </BrowserRouter>
-  );
+    return (
+        <div>
+            <BrowserRouter>
+                <Routes>
+                    {/*<Route path="/signup" element={<SignUp/>}/>*/}
+                    {/*<Route path="/Main" element={<Main/>}/>*/}
+                </Routes>
+            </BrowserRouter>
+            <ChattingAppButton/>
+        </div>
+    );
 }
 
 // import './App.css';
