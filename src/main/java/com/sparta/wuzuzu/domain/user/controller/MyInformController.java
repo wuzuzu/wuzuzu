@@ -15,21 +15,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users/{userId}")
+@RequestMapping("/api/v1/users")
 public class MyInformController {
 
     private final MyInformService myInformService;
 
     @GetMapping
-    public ResponseEntity<CommonResponse<MyInformReadResponse>> readMyInform(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                             @PathVariable Long userId) {
+    public ResponseEntity<CommonResponse<MyInformReadResponse>> readMyInform(@AuthenticationPrincipal UserDetailsImpl userDetails
+                                                                             ) {
         MyInformReadResponse myInformReadResponse = myInformService.readMyInform(userDetails.getUser());
         return CommonResponse.ofDataWithHttpStatus(myInformReadResponse, HttpStatus.OK);
     }
 
     @PatchMapping
     public ResponseEntity<CommonResponse<MyInformReadResponse>> updateMyInform(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                                 @PathVariable Long userId,
                                                                                  @RequestBody @Validated MyInformUpdateRequest myInformUpdateRequest) {
         MyInformReadResponse myInformReadResponse = myInformService.updateMyInform(userDetails.getUser(), myInformUpdateRequest);
         return CommonResponse.ofDataWithHttpStatus(myInformReadResponse, HttpStatus.OK);
@@ -37,7 +36,6 @@ public class MyInformController {
 
     @PatchMapping("/password")
     public ResponseEntity<CommonResponse<Void>> updatePassword(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                               @PathVariable Long userId,
                                                                                @RequestBody @Validated UpdatePasswordRequest updatePasswordRequest){
         myInformService.updatePassword(userDetails.getUser(), updatePasswordRequest);
         return ResponseEntity.status(HttpStatus.OK.value()).body(CommonResponse.<Void>builder().build());
