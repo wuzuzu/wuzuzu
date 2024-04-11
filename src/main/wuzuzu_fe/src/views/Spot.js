@@ -1,5 +1,7 @@
+// YourComponent.js
+
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, List, ListItem, ListItemText, MenuItem, Select } from '@mui/material';
 
 const YourComponent = () => {
@@ -50,6 +52,11 @@ const YourComponent = () => {
     navigate(-1);
   };
 
+  const handleItemClick = (spotName, address, selectedOption) => {
+    // 클릭한 항목의 spotName과 address를 상세 페이지로 전달하고, 상세 페이지로 이동
+    navigate('/SpotDetail', { state: { spotName, address ,selectedOption} });
+  };
+
   return (
       <Box>
         <Button onClick={handleGoBack}>이전 페이지로 돌아가기</Button>
@@ -69,7 +76,7 @@ const YourComponent = () => {
             {items.length > 0 ? (
                 <List style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
                   {items.map((item, index) => (
-                      <ListItem key={index}>
+                      <ListItem key={index} button onClick={() => handleItemClick(item.spotName, item.address,selectedOption )}>
                         <ListItemText primary={item.spotName} secondary={item.address} />
                       </ListItem>
                   ))}

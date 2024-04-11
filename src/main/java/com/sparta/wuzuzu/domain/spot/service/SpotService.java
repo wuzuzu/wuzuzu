@@ -57,18 +57,18 @@ public class SpotService {
      * @param keyword 매장 이름
      * @return SpotAddressResponse 장소 정보
      */
-    public List<SpotDetailResponse> getSpotDetail(String keyword) {
+    public SpotDetailResponse getSpotDetail(String keyword) {
         //api 요청
         JSONArray items = requsetSearchApi(keyword, 1, 1);
 
-        //dto변환
-        List<SpotDetailResponse> itemDtoList = new ArrayList<>();
-
-        for (Object item : items) {
-            SpotDetailResponse itemDto = new SpotDetailResponse((JSONObject) item);
-            itemDtoList.add(itemDto);
-        }
-        return itemDtoList;
+//        //dto변환
+//        List<SpotDetailResponse> itemDtoList = new ArrayList<>();
+//
+//        for (Object item : items) {
+//            SpotDetailResponse itemDto = new SpotDetailResponse((JSONObject) item);
+//            itemDtoList.add(itemDto);
+//        }
+        return new SpotDetailResponse((JSONObject) items.get(0));
     }
 
 
