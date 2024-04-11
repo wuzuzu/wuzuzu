@@ -1,6 +1,8 @@
 package com.sparta.wuzuzu.domain.community_posts.entity;
 
+import com.sparta.wuzuzu.domain.comment.entity.Comment;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.common.image.entity.Image;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,23 +13,32 @@ import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "community_posts")
+@AllArgsConstructor
+@Builder
+@Table(name = "community_posts", indexes = {
+    @Index(name = "idx_like_count", columnList = "likeCount"),
+    @Index(name = "idx_views", columnList = "views")
+})
 public class CommunityPost extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "communitypost_id")
     private Long communityPostId;
 
     @Column(nullable = false)
@@ -53,6 +64,12 @@ public class CommunityPost extends Timestamped {
     @JoinColumn(name = "category", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CommunityCategory category;
 
+    @OneToMany(mappedBy = "communityPost")
+    private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "communityPost")
+    private List<Image> imageUrl;
+
     public CommunityPost(String title, CommunityCategory category, String content, User user) {
         this.title = title;
         this.category = category;
@@ -73,7 +90,7 @@ public class CommunityPost extends Timestamped {
         this.likeCount = Math.max(0, this.likeCount - 1); // 0 미만으로 내려가지 않도록 보장
     }
 
-    public void increaseViews(){
+    public void increaseViews() {
         views++;
     }
 

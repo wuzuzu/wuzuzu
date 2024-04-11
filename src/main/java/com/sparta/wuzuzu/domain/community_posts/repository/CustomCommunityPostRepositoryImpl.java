@@ -5,11 +5,9 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
-import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.QCommunityPost;
 import com.sparta.wuzuzu.domain.user.entity.QUser;
 import jakarta.persistence.EntityManager;
@@ -22,7 +20,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 @Repository
-public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsRepository {
+public class CustomCommunityPostRepositoryImpl implements CustomCommunityPostRepository {
 
     public static final String TITLE = "title";
     public static final String VIEWS = "views";
@@ -32,18 +30,18 @@ public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsR
     private final JPAQueryFactory queryFactory;
     QUser user = QUser.user;
 
-    public CustomCommunityPostsRepositoryImpl(EntityManager em) {
+    public CustomCommunityPostRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
     @Override
-    public Page<CommunityPostsResponse> findByConditions(String keyword, String categoryName,
+    public Page<CommunityPostResponse> findByConditions(String keyword, String categoryName,
         Pageable pageable) {
         QCommunityPost communityPost = QCommunityPost.communityPost;
         QUser user = QUser.user;
 
-        JPAQuery<CommunityPostsResponse> query = queryFactory
-            .select(Projections.constructor(CommunityPostsResponse.class,
+        JPAQuery<CommunityPostResponse> query = queryFactory
+            .select(Projections.constructor(CommunityPostResponse.class,
                 communityPost.title,
                 user.userName.as("userName"),
                 communityPost.content,
@@ -66,9 +64,9 @@ public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsR
         // 쿼리에 정렬 조건 적용
         query.orderBy(orderSpecifier);
 
-        QueryResults<CommunityPostsResponse> results = query.fetchResults();
+        QueryResults<CommunityPostResponse> results = query.fetchResults();
 
-        List<CommunityPostsResponse> content = results.getResults();
+        List<CommunityPostResponse> content = results.getResults();
         long total = results.getTotal();
         return new PageImpl<>(content, pageable, total);
     }
@@ -91,22 +89,18 @@ public class CustomCommunityPostsRepositoryImpl implements CustomCommunityPostsR
     private OrderSpecifier<?> getOrderSpecifier(Sort.Order order) {
         QCommunityPost communityPost = QCommunityPost.communityPost;
 
-        if (TITLE.equals(order.getProperty())) {
-            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
-                communityPost.title);
-        } else if (VIEWS.equals(order.getProperty())) {
-            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
-                communityPost.views);
-        } else if (LIKE_COUNT.equals(order.getProperty())) {
-            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
-                communityPost.likeCount);
-        } else if (CREATED_AT .equals(order.getProperty())) {
-            return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
-                communityPost.createdAt);
-        } else {
-            // 예외 처리
-            throw new IllegalArgumentException(
-                "해당 정렬기준은 제공하지 않습니다: " + order.getProperty());
+        switch (order.getProperty()) {
+            case TITLE:
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.title);
+            case VIEWS:
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.views);
+            case LIKE_COUNT:
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.likeCount);
+            case CREATED_AT:
+                // createdAt 컬럼에 인덱스가 적용되어 있으므로, 이 컬럼을 기준으로 정렬할 때 쿼리 성능이 향상됩니다.
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.createdAt);
+            default:
+                throw new IllegalArgumentException("정렬 기준이 유효하지 않습니다: " + order.getProperty());
         }
     }
 
