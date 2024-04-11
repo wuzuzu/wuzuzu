@@ -9,6 +9,7 @@ import Favorite from "./views/Favorite";
 import SpotDetail from "./views/SpotDetail";
 import ChattingAppButton from "./Chatting/ChattingAppButton";
 
+// import Main from "./components/Main";
 
 function App() {
     return (
@@ -28,4 +29,5 @@ function App() {
         </div>
     );
 }
+
 export default App;
