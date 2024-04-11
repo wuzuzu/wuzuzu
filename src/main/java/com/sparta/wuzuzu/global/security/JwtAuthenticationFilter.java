@@ -2,6 +2,7 @@ package com.sparta.wuzuzu.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.wuzuzu.domain.user.dto.LoginRequest;
+import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
 import com.sparta.wuzuzu.global.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -61,22 +62,26 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
 
         // AccessToken 생성
-        String accessToken = jwtUtil.createAccessToken(userDetails.getUsername(), role);
+        String accessToken = jwtUtil.createAccessToken(userDetails.getUser());
 
         // RefreshToken 생성
-        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUsername(), role);
+        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUser());
 
         // 응답에 map형식으로 AccessToken, RefreshToken 추가
-        setTokenResponse(response, accessToken, refreshToken);
+        setTokenResponse(response, accessToken, refreshToken, userDetails.getUser());
     }
 
-    private void setTokenResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    private void setTokenResponse(HttpServletResponse response, String accessToken, String refreshToken,
+        User user) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
 
         Map<String, Object> result = new HashMap<>();
         result.put("accessToken", accessToken);
         result.put("refreshToken", refreshToken);
+        result.put("userId", user.getUserId());
+        result.put("userName", user.getUserName());
 
         ResponseEntity<Map<String, Object>> responseEntity = ResponseEntity.ok(result);
         response.getWriter().println(objectMapper.writeValueAsString(responseEntity.getBody()));

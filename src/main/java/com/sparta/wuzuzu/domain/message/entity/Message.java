@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.message.entity;
 
+import com.sparta.wuzuzu.domain.common.entity.Timestamped;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "messages")
-public class Message {
+public class Message extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -28,11 +28,13 @@ public class ChatRoomService {
         StringBuilder sb = new StringBuilder();
         int i = 0;
 
-        for (i = 0; i < request.getChatRoomTags().size() - 1; i++) {
-            sb.append(request.getChatRoomTags().get(i)).append(",");
-        }
+        if(request.getChatRoomTags() != null && !request.getChatRoomTags().isEmpty()) {
+            for (i = 0; i < request.getChatRoomTags().size() - 1; i++) {
+                sb.append(request.getChatRoomTags().get(i)).append(",");
+            }
 
-        sb.append(request.getChatRoomTags().get(i));
+            sb.append(request.getChatRoomTags().get(i));
+        }
 
         ChatRoom chatRoom = chatRoomRepository.save(
             ChatRoom.builder()

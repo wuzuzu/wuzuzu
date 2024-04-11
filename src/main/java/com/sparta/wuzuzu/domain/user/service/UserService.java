@@ -38,7 +38,7 @@ public class UserService {
                 .address(signUpRequest.getAddress())
                 .petName(signUpRequest.getPetName())
                 .petType(signUpRequest.getPetType())
-                .role(UserRole.BEFORE_USER)
+                .role(UserRole.USER)
                 .blocked(false)
                 .numberOfCount(0)
                 .build();

@@ -3,8 +3,8 @@ package com.sparta.wuzuzu.domain.email.service;
 import com.sparta.wuzuzu.domain.admin.dto.AdminVerifyRequest;
 import com.sparta.wuzuzu.domain.admin.entity.Admin;
 import com.sparta.wuzuzu.domain.admin.repository.AdminRepository;
-import com.sparta.wuzuzu.domain.user.entity.UserRole;
-import com.sparta.wuzuzu.domain.user.repository.UserRepository;
+import com.sparta.wuzuzu.domain.email.dto.EmailAuthResponse;
+import com.sparta.wuzuzu.domain.email.dto.VerifyRequest;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
 import com.sparta.wuzuzu.domain.user.repository.UserRepository;
@@ -32,41 +32,37 @@ public class EmailAuthService {
 
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
+    private final UserRepository userRepository;
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
     private static final String fromEmail = "9noeyni9@gmail.com";
 
     //인증 코드 이메일 발송
-    public void sendEmail(User user) throws MessagingException {
-        user = userRepository.findById(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        if (user.getRole().equals(UserRole.USER))
-            throw new IllegalArgumentException("이미 인증된 회원입니다.");
+    public void sendEmail(String toEmail) throws MessagingException {
+        User user = userRepository.findByEmail(toEmail);
+        if(user != null)
+            throw new IllegalArgumentException("이미 존재하는 회원입니다. 기존 아이디로 로그인해주세요");
 
-        if (redisUtil.existData(user.getEmail())) {
-            redisUtil.deleteData(user.getEmail());
+        if (redisUtil.existData(toEmail)) {
+            redisUtil.deleteData(toEmail);
         }
 
         // 이메일 폼 생성
-        MimeMessage emailForm = createEmailForm(user.getEmail());
+        MimeMessage emailForm = createEmailForm(toEmail);
 
         // 이메일 발송
         javaMailSender.send(emailForm);
     }
 
-    public boolean verifyEmailCode(User user, String verifyCode) {
-        user = userRepository.findById(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-        String codeFromEmail = redisUtil.getData(user.getEmail());
+    public EmailAuthResponse verifyEmailCode(VerifyRequest verifyRequest) {
+        String codeFromEmail = redisUtil.getData(verifyRequest.getMail());
 
         if (codeFromEmail == null)
-            return false;
+            return new EmailAuthResponse(null, false);
 
-        if (!codeFromEmail.equals(verifyCode)) {
-            return false;
-        }
-        user.updateUserRole(user, UserRole.USER);
-        return true;
+        return codeFromEmail.equals(verifyRequest.getVerifyCode()) ?
+                new EmailAuthResponse(verifyRequest.getMail(), true) :
+                new EmailAuthResponse(null, false);
     }
 
     public void sendAdminEmail(Long adminId, String toEmail) throws MessagingException {
@@ -88,12 +84,12 @@ public class EmailAuthService {
         if (codeFromEmail == null)
             throw new IllegalArgumentException("존재하지 않습니다.");
 
-        if(admin.getRole().equals(UserRole.ADMIN)){
+        if (admin.getRole().equals(UserRole.ADMIN)) {
             throw new IllegalArgumentException("이미 인증된 회원입니다.");
         }
 
 
-        if(!codeFromEmail.equals(adminVerifyRequest.getVerifyCode())){
+        if (!codeFromEmail.equals(adminVerifyRequest.getVerifyCode())) {
             throw new IllegalArgumentException("잘못된 인증 코드입니다.");
         }
 
@@ -119,7 +115,7 @@ public class EmailAuthService {
     }
 
     // 관리자 비밀번호 생성
-    private String createWuzuzuPassword(String email){
+    private String createWuzuzuPassword(String email) {
 
         //소문자, 대문자, 숫자
         final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -130,7 +126,7 @@ public class EmailAuthService {
 
         builder.append(array[0]);
 
-        for(int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             //무작위로 문자열의 인덱스 반환
             int index = rm.nextInt(chars.length());
             //index의 위치한 랜덤값
@@ -167,7 +163,8 @@ public class EmailAuthService {
         message.setSubject("[wuzuzu] 이메일 인증");
         message.setFrom(fromEmail);
 
-        if (Objects.equals(adminRepository.findByEmail(email).getEmail(), email)) {
+        Admin admin = adminRepository.findByEmail(email);
+        if (admin != null && admin.getEmail().equals(email)) {
             message.setText(setContext("Admin" + authCode), "utf-8", "html");
             redisUtil.setDataExpire(email, "Admin" + authCode, 60 * 30L);
             return message;

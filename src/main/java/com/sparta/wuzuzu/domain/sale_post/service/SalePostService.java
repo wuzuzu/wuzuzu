@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ public class SalePostService {
     private final SalePostQueryRepository salePostQueryRepository;
     private final CategoryRepository categoryRepository;
     private final ImageService imageService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Transactional
     public void createSalePost(
@@ -34,8 +36,13 @@ public class SalePostService {
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(
             () -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")
         );
+        createSalePostToRedis(user, requestDto, category);
+    }
 
-        salePostRepository.save(new SalePost(user, requestDto, category));
+    public void createSalePostToRedis(User user, SalePostRequest requestDto , Category category){
+        SalePost salePost = salePostRepository.save(new SalePost(user, requestDto, category));
+        // Redis 에 초기 세팅
+        redisTemplate.opsForValue().set("salePost:" + salePost.getSalePostId() + ":stock", String.valueOf(salePost.getStock()));
     }
 
     // 전체 게시글 : 제목, 조회수만 출력
