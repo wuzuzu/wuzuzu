@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FavoriteResponse {
 
+    private Long favoriteId;
     private String spotName;
     private String address;
     private String category;

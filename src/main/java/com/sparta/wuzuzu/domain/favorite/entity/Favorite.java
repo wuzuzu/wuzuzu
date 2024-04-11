@@ -52,6 +52,6 @@ public class Favorite {
     }
 
     public FavoriteResponse createResponseFavorite() {
-        return new FavoriteResponse(this.spotName, this.address, this.category);
+        return new FavoriteResponse(this.favoriteId, this.spotName, this.address, this.category);
     }
 }

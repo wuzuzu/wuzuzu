@@ -5,6 +5,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import Main from "./views/Main";
 import Mypage from "./views/Mypage";
 import Spot from "./views/Spot";
+import Favorite from "./views/Favorite";
 import SpotDetail from "./views/SpotDetail";
 import ChattingAppButton from "./Chatting/ChattingAppButton";
 
@@ -19,6 +20,7 @@ function App() {
                   <Route path="/Main" element={<Main/>}/>
                   <Route path="/Mypage" element={<Mypage/>}/>
                   <Route path="/Spot" element={<Spot/>}/>
+                  <Route path="/Favorite" element={<Favorite/>}/>
                   <Route path="/SpotDetail" element={<SpotDetail/>}/>
                 </Routes>
             </BrowserRouter>
