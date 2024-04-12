@@ -55,7 +55,7 @@ function ChattingApp({open, handleClose}) {
     useEffect(() => {
         if (currentRoom !== null && stompClient === null) {
             const client = new StompJs.Client({
-                brokerURL: 'ws://localhost:8080/gs-guide-websocket',
+                brokerURL: `ws://${window.location}/gs-guide-websocket`,
                 onConnect: async message => {
                     console.log(message);
                     client.subscribe(
