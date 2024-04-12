@@ -47,7 +47,8 @@ public class CustomCommunityPostRepositoryImpl implements CustomCommunityPostRep
                 communityPost.category.name.as("categoryName"),
                 communityPost.content,
                 communityPost.likeCount,
-                communityPost.views))
+                communityPost.views,
+                communityPost.commentList.size()))
             .from(communityPost)
             .leftJoin(communityPost.user, user)
             .where(

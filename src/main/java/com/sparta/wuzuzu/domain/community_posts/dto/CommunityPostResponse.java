@@ -19,5 +19,6 @@ public class CommunityPostResponse {
     private String contents;
     private Long likeCount;
     private Long views;
+    private Integer comments;
 
 }

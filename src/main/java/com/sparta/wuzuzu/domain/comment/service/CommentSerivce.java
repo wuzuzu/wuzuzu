@@ -27,6 +27,7 @@ public class CommentSerivce {
         CommunityPost communityPost = communityPostRepository.findById(postId).orElseThrow(
             NoSuchElementException::new);
         Comment comment = new Comment(communityPost, user, commentRequest.getContents());
+        communityPost.addComment();
         commentRepository.save(comment);
         return new CommentResponse(comment);
     }
@@ -46,7 +47,7 @@ public class CommentSerivce {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(NoSuchElementException::new);
         if (!comment.getUser().getUserId().equals(user.getUserId())) { throw new ValidateUserException();}
-
+        comment.getCommunityPost().removeComments();
         commentRepository.deleteById(commentId);
         }
     }

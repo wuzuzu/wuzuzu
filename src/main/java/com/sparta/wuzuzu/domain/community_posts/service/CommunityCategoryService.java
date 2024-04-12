@@ -23,10 +23,10 @@ public class CommunityCategoryService {
     public CommunityCategoryResponse createCategory(User user,
         CommunityCategoryRequest communityCategoryRequest) {
 
-        UserRole userRole = user.getRole();
-        if (userRole != UserRole.ADMIN) {
-            throw new ValidateAdminException();
-        }
+//        UserRole userRole = user.getRole();
+//        if (userRole != UserRole.ADMIN) {
+//            throw new ValidateAdminException();
+//        }
 
         CommunityCategory category = community_CategoryRepository
             .findByNameEquals(communityCategoryRequest.getName())

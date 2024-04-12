@@ -1,9 +1,11 @@
 package com.sparta.wuzuzu.domain.comment.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.wuzuzu.domain.comment.entity.Comment;
 import lombok.Getter;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentResponse {
 
     private Long commentId;

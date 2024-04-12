@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.StandardException;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;

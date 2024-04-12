@@ -108,6 +108,8 @@ public class CommunityPostsService {
             username(post.getUser().getUserName()).
             contents(post.getContent()).
             views(post.getViews()).
+            categoryName(post.getCategory().getName()).
+            comments(post.getCommentList().size()).
             build();
     }
 
