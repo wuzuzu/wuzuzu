@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,6 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j(topic = "JwtUtil")
-@RequiredArgsConstructor
 @Component
 public class JwtUtil {
 
@@ -35,6 +35,10 @@ public class JwtUtil {
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    public JwtUtil(@Qualifier("refreshTokenRedisTemplate") RedisTemplate<String, String> refreshTokenRedisTemplate) {
+        this.refreshTokenRedisTemplate = refreshTokenRedisTemplate;
+    }
 
     @PostConstruct
     public void init() {

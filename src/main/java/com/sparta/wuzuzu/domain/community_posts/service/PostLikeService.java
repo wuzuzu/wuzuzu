@@ -3,7 +3,7 @@ package com.sparta.wuzuzu.domain.community_posts.service;
 import com.sparta.wuzuzu.domain.community_posts.dto.PostLikeResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.community_posts.entity.PostLike;
-import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostsRepository;
+import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.PostLikeRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.global.exception.NotFoundCommunityPostException;
@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PostLikeService {
 
-    private final CommunityPostsRepository communityPostsRepository;
+    private final CommunityPostRepository communityPostRepository;
     private final PostLikeRepository post_likeRepository;
 
     @Transactional
     public PostLikeResponse createLike(Long communityPostId, User user) {
-        CommunityPost post = communityPostsRepository.findById(communityPostId)
+        CommunityPost post = communityPostRepository.findById(communityPostId)
             .orElseThrow(() -> new NotFoundCommunityPostException());
 
         // 이미 좋아요가 존재하면 삭제
@@ -28,13 +28,13 @@ public class PostLikeService {
             PostLike like = post_likeRepository.findByUserAndCommunityPost(user, post).get();
             like.removeLike(post);//게시글 좋아요 리스트에서 제거.
             post.removeLike();
-            communityPostsRepository.save(post);
+            communityPostRepository.save(post);
             return new PostLikeResponse("좋아요가 취소되었습니다");
         } else {
             PostLike like = new PostLike(user, post);
             like.addLike(post); // 게시글에 좋아요 추가(리스트 형태)
             post.addLike();
-            communityPostsRepository.save(post);
+            communityPostRepository.save(post);
 
             return new PostLikeResponse(like, "좋아요 하셨습니다");
 

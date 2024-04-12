@@ -31,9 +31,9 @@ public class SpotController {
 
     // 상세조회
     @GetMapping("/detail/{storeName}")
-    public ResponseEntity<CommonResponse<List<SpotDetailResponse>>> getSpotDetail(
+    public ResponseEntity<CommonResponse<SpotDetailResponse>> getSpotDetail(
         @PathVariable String storeName) {
-        List<SpotDetailResponse> spotDetailResponseList = SpotService.getSpotDetail(
+        SpotDetailResponse spotDetailResponseList = SpotService.getSpotDetail(
             storeName);
         return CommonResponse.ofDataWithHttpStatus(spotDetailResponseList, HttpStatus.OK);
     }

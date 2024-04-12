@@ -95,6 +95,10 @@ const Mypage = () => {
     }
   };
 
+  const handleFavorite = () => {
+    navigate("/Favorite");
+  };
+
   // 초기 값 뿌리기
   useEffect(() => {
     const requestOptions = {
@@ -141,6 +145,12 @@ const Mypage = () => {
           <CardActions>
             <Button fullWidth variant="text">
               Upload picture
+            </Button>
+          </CardActions>
+
+          <CardActions>
+            <Button fullWidth variant="text" onClick={handleFavorite}>
+              즐겨 찾기
             </Button>
           </CardActions>
 

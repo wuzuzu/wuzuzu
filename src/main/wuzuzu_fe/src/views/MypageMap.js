@@ -111,7 +111,7 @@ const MypageMap = () => {
             bounds = new kakao.maps.LatLngBounds();
 
         // 검색 결과 목록에 추가된 항목들을 제거합니다
-        removeAllChildNods(listEl);
+        // removeAllChildNods(listEl);
 
         // 지도에 표시되고 있는 마커를 제거합니다
         removeMarker();
@@ -230,10 +230,10 @@ const MypageMap = () => {
             fragment = document.createDocumentFragment(),
             i;
 
-        // 기존에 추가된 페이지번호를 삭제합니다
-        while (paginationEl.hasChildNodes()) {
-          paginationEl.removeChild(paginationEl.lastChild);
-        }
+        // // 기존에 추가된 페이지번호를 삭제합니다
+        // while (paginationEl.hasChildNodes()) {
+        //   paginationEl.removeChild(paginationEl.lastChild);
+        // }
 
         for (i = 1; i <= pagination.last; i++) {
           var el = document.createElement("a");
@@ -269,11 +269,11 @@ const MypageMap = () => {
       }
 
       // 검색결과 목록의 자식 Element를 제거하는 함수입니다
-      function removeAllChildNods(el) {
-        while (el.hasChildNodes()) {
-          el.removeChild(el.lastChild);
-        }
-      }
+      // function removeAllChildNods(el) {
+      //   while (el.hasChildNodes()) {
+      //     el.removeChild(el.lastChild);
+      //   }
+      // }
     } catch (err) {
       console.log(err);
     }
