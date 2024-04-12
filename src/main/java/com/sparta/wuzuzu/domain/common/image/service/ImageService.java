@@ -2,6 +2,7 @@ package com.sparta.wuzuzu.domain.common.image.service;
 
 import com.sparta.wuzuzu.domain.common.image.entity.Image;
 import com.sparta.wuzuzu.domain.common.image.repository.ImageRepository;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import java.io.IOException;
 import java.util.Optional;
@@ -41,18 +42,33 @@ public class ImageService {
             imageUrlToDelete = salePost.getImageUrl().stream()
                 .filter(imageUrl -> imageUrl.getImageUrl().equals(uploadPath + url))
                 .findFirst();
-        } else {
+            if (imageUrlToDelete.isPresent()) {
+                // 해당 URL 을 가진 이미지가 존재하면 SalePost 에서 삭제
+                Image image = imageUrlToDelete.get();
+                salePost.getImageUrl().remove(image);
+                imageRepository.delete(image);
+            }
+        }
+
+        else if(object instanceof CommunityPost communityPost){
+            imageUrlToDelete = communityPost.getImageUrl().stream()
+                .filter(imageUrl -> imageUrl.getImageUrl().equals(uploadPath + url))
+                .findFirst();
+            if (imageUrlToDelete.isPresent()) {
+                // 해당 URL 을 가진 이미지가 존재하면 CommunityPost 에서 삭제
+                Image image = imageUrlToDelete.get();
+                communityPost.getImageUrl().remove(image);
+                imageRepository.delete(image);
+            }
+        }
+
+        else {
             throw new IllegalArgumentException("Object 가 잘못되었습니다.");
         }
 
-        if (imageUrlToDelete.isPresent()) {
-            // 해당 URL 을 가진 이미지가 존재하면 삭제
-            Image image = imageUrlToDelete.get();
-            salePost.getImageUrl().remove(image);
-            imageRepository.delete(image);
-        }else {
+        if (imageUrlToDelete.isEmpty()) {
             // 해당 URL 을 가진 이미지가 없는 경우 예외 발생
-            throw new IllegalArgumentException("SalePost 에 해당 URL 을 가진 이미지가 없습니다: " + uploadPath + url);
+            throw new IllegalArgumentException("해당 URL 을 가진 이미지가 없습니다: " + uploadPath + url);
         }
 
         // S3 에 이미지 제거 요청

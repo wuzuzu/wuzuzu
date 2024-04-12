@@ -1,12 +1,14 @@
 package com.sparta.wuzuzu.domain.community_posts.controller;
 
-import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListRequest;
-import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsListResponse;
-import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsRequest;
-import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostsResponse;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListRequest;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListResponse;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostRequest;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostResponse;
 import com.sparta.wuzuzu.domain.community_posts.service.CommunityPostsService;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/api/v1/communityposts")
 @RestController
@@ -29,35 +33,55 @@ public class CommunityPostsController {
     private final CommunityPostsService communityPostsService;
 
     @PostMapping
-    public ResponseEntity<CommunityPostsResponse> saveCommunityPosts(
-        @RequestBody @Valid CommunityPostsRequest communityPostsRequest,
+    public ResponseEntity<CommunityPostResponse> saveCommunityPosts(
+        @RequestBody @Valid CommunityPostRequest communityPostRequest,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        CommunityPostsResponse communityPostsResponse = communityPostsService.saveCommunityPosts(
-            communityPostsRequest,
+        CommunityPostResponse communityPostResponse = communityPostsService.saveCommunityPosts(
+            communityPostRequest,
             userDetails.getUser());
 
-        return new ResponseEntity<>(communityPostsResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(communityPostResponse, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{communityPostsId}")
-    public ResponseEntity<CommunityPostsResponse> updateCommunityPost(
-        @Valid @RequestBody CommunityPostsRequest communityPostsRequest,
+    public ResponseEntity<CommunityPostResponse> updateCommunityPost(
+        @Valid @RequestBody CommunityPostRequest communityPostRequest,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long communityPostsId
     ) {
-        CommunityPostsResponse communityPostsResponse = communityPostsService.updateCommunityPosts(
-            communityPostsRequest, userDetails.getUser().getUserId(), communityPostsId);
+        CommunityPostResponse communityPostResponse = communityPostsService.updateCommunityPosts(
+            communityPostRequest, userDetails.getUser().getUserId(), communityPostsId);
 
-        return new ResponseEntity<>(communityPostsResponse, HttpStatus.OK);
+        return new ResponseEntity<>(communityPostResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/{communityPostsId}/multipart-files")
+    public ResponseEntity<Void> uploadImage(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long communityPostsId,
+        @RequestPart(value = "image", required = false) List<MultipartFile> images
+    ) throws IOException {
+        communityPostsService.uploadImage(userDetails.getUser(), communityPostsId, images);
+        return ResponseEntity.status(HttpStatus.OK.value()).build();
+    }
+
+    @DeleteMapping("/{communityPostId}/multipart-files/{key}")
+    public ResponseEntity<Void> deleteImage(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long communityPostId,
+        @PathVariable String key
+    ) {
+        communityPostsService.deleteImage(userDetails.getUser(), communityPostId, key);
+        return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 
     @GetMapping("/search")
-    public ResponseEntity<CommunityPostsListResponse> searchCommunityPosts(@ModelAttribute CommunityPostsListRequest request) {
+    public ResponseEntity<CommunityPostListResponse> searchCommunityPosts(@ModelAttribute CommunityPostListRequest request) {
         return ResponseEntity.ok(communityPostsService.searchCommunityPosts(request));
     }
 
     @GetMapping("/read/{communityPostsId}")
-    public ResponseEntity<CommunityPostsResponse> readDetail(@PathVariable Long communityPostsId) {
+    public ResponseEntity<CommunityPostResponse> readDetail(@PathVariable Long communityPostsId) {
         return ResponseEntity.ok().body(communityPostsService.getDetail(communityPostsId));
     }
 

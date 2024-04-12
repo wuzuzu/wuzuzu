@@ -1,6 +1,7 @@
 package com.sparta.wuzuzu.domain.common.image.entity;
 
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
+import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,10 +36,16 @@ public class Image extends Timestamped {
     @JoinColumn(name = "salePost_id")
     private SalePost salePost;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "communityPost_id")
+    private CommunityPost communityPost;
+
     public Image(String imageName, Object object) {
         this.imageUrl = imageName;
         if(object instanceof SalePost){
             this.salePost = (SalePost) object;
+        } else if (object instanceof CommunityPost) {
+            this.communityPost = (CommunityPost) object;
         }
     }
 }
