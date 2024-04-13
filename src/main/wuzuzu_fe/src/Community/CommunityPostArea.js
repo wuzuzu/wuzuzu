@@ -1,9 +1,12 @@
 import {
     Box,
     Button,
+    FormControl,
     Grid,
     IconButton,
+    MenuItem,
     Pagination,
+    Select,
     TextField
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
@@ -86,6 +89,7 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
         setSearchParams((prevParams) => ({
             ...prevParams,
             // column: selectedSearchOption,
+            searchOption: selectedSearchOption,
             keyword: keyword,
         }));
     }
