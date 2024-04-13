@@ -56,7 +56,7 @@ export default function ChattingRoom({
                 stompClient.publish({
                     destination: `/app/chat-rooms/${room.chatRoomId}/messages`,
                     headers: {
-                        Authorization: localStorage.getItem("access_token")
+                        Authorization: localStorage.getItem("Authorization")
                     },
                     body: JSON.stringify({
                         content: messageInput

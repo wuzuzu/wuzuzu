@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommunityPostResponse {
 
+    private Long communityPostId;
     private String title;
     private String username;
     private String categoryName;
@@ -20,5 +21,5 @@ public class CommunityPostResponse {
     private Long likeCount;
     private Long views;
     private Integer comments;
-
+    private String image;
 }

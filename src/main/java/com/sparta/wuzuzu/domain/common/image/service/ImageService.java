@@ -75,6 +75,10 @@ public class ImageService {
         s3Service.delete(url);
     }
 
+    public Image getImageByCommunityPost(CommunityPost communityPost) {
+        return imageRepository.findByCommunityPost(communityPost);
+    }
+
     private String getImageName(MultipartFile file) throws IOException {
         if (file != null) {
             // UUID.randomUUID() : UUID 클래스를 이용해 시간과 공간을 기반으로 128비트의 고유한 식별자 생성

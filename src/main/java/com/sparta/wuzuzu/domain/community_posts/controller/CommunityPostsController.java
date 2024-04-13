@@ -59,9 +59,9 @@ public class CommunityPostsController {
     public ResponseEntity<Void> uploadImage(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long communityPostsId,
-        @RequestPart(value = "image", required = false) List<MultipartFile> images
+        @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
-        communityPostsService.uploadImage(userDetails.getUser(), communityPostsId, images);
+        communityPostsService.uploadImage(userDetails.getUser(), communityPostsId, image);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 
