@@ -26,8 +26,8 @@ public class ListRequest {
 
     public void setPage(Integer page) {
         this.page = page - 1;
-        if (page < 10) {
-            this.page = 10;
+        if (this.page < 0) {
+            this.page = 0;
         }
     }
 

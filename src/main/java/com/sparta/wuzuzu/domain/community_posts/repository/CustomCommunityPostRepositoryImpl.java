@@ -1,5 +1,7 @@
 package com.sparta.wuzuzu.domain.community_posts.repository;
 
+import static com.sparta.wuzuzu.domain.common.image.entity.QImage.*;
+
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -7,6 +9,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.wuzuzu.domain.common.image.entity.QImage;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.QCommunityPost;
 import com.sparta.wuzuzu.domain.user.entity.QUser;
@@ -42,22 +45,24 @@ public class CustomCommunityPostRepositoryImpl implements CustomCommunityPostRep
 
         JPAQuery<CommunityPostResponse> query = queryFactory
             .select(Projections.constructor(CommunityPostResponse.class,
+                communityPost.communityPostId,
                 communityPost.title,
                 user.userName.as("userName"),
                 communityPost.category.name.as("categoryName"),
                 communityPost.content,
                 communityPost.likeCount,
                 communityPost.views,
-                communityPost.commentList.size()))
+                communityPost.commentList.size(),
+                image.imageUrl.as("image")))
             .from(communityPost)
             .leftJoin(communityPost.user, user)
+            .leftJoin(image).on(image.communityPost.communityPostId.eq(communityPost.communityPostId))
             .where(
                 keywordIs(keyword),
                 categoryIs(categoryName)
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize());
-
         Sort.Order order = pageable.getSort().iterator().next();
 
         // 정렬 조건을 생성
