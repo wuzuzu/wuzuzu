@@ -2,6 +2,7 @@ package com.sparta.wuzuzu.domain.community_posts.service;
 
 import com.sparta.wuzuzu.domain.common.image.entity.Image;
 import com.sparta.wuzuzu.domain.common.image.service.ImageService;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostDetailResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostRequest;
@@ -11,6 +12,7 @@ import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityCategoryRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostRepository;
+import com.sparta.wuzuzu.domain.community_posts.repository.PostLikeRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
 import com.sparta.wuzuzu.global.util.PagingUtil;
@@ -33,6 +35,7 @@ public class CommunityPostsService {
     private final CommunityCategoryRepository communityCategoryRepository;
     private final CustomCommunityPostRepository customCommunityPostRepository;
     private final ImageService imageService;
+    private final PostLikeRepository postLikeRepository;
 
     public CommunityPostResponse saveCommunityPosts(CommunityPostRequest communityPostRequest,
         User user) {
@@ -58,7 +61,6 @@ public class CommunityPostsService {
             username(user.getUserName()).
             contents(communityPost.getContent()).
             build();
-
     }
 
     @Transactional
@@ -77,7 +79,6 @@ public class CommunityPostsService {
             username(post.getUser().getUserName()).
             contents(post.getContent()).
             build();
-
     }
 
 
@@ -101,8 +102,8 @@ public class CommunityPostsService {
     }
 
     @Transactional
-    public CommunityPostResponse getDetail(Long communitypostsId) {
-        CommunityPost post = communityPostRepository.findById(communitypostsId)
+    public CommunityPostDetailResponse getDetail(Long communityPostId, User user) {
+        CommunityPost post = communityPostRepository.findById(communityPostId)
             .orElseThrow(() -> new NoSuchElementException("해당 글을 찾을 수 없습니다."));
 
         String imageUrl = null;
@@ -113,7 +114,10 @@ public class CommunityPostsService {
 
         post.increaseViews();
 
-        return CommunityPostResponse.builder().
+        Boolean isLiked = postLikeRepository.findByUserAndCommunityPost(user, post).isPresent();
+
+        return CommunityPostDetailResponse.builder().
+            communityPostId(post.getCommunityPostId()).
             title(post.getTitle()).
             username(post.getUser().getUserName()).
             contents(post.getContent()).
@@ -121,6 +125,8 @@ public class CommunityPostsService {
             categoryName(post.getCategory().getName()).
             comments(post.getCommentList().size()).
             image(imageUrl).
+            likeCount(post.getLikeCount()).
+            isLiked(isLiked).
             build();
     }
 
@@ -132,7 +138,6 @@ public class CommunityPostsService {
 
         communityPostRepository.deleteById(communityPostsID); // 게시글 삭제
     }
-
 
     @Transactional
     public void uploadImage(User user, Long communityPostId, MultipartFile imageFile)

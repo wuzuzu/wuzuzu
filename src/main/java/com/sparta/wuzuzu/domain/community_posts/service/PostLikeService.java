@@ -29,15 +29,14 @@ public class PostLikeService {
             like.removeLike(post);//게시글 좋아요 리스트에서 제거.
             post.removeLike();
             communityPostRepository.save(post);
-            return new PostLikeResponse("좋아요가 취소되었습니다");
+            return new PostLikeResponse(false);
         } else {
             PostLike like = new PostLike(user, post);
             like.addLike(post); // 게시글에 좋아요 추가(리스트 형태)
             post.addLike();
             communityPostRepository.save(post);
 
-            return new PostLikeResponse(like, "좋아요 하셨습니다");
-
+            return new PostLikeResponse(true);
         }
     }
 

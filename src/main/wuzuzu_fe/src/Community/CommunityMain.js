@@ -3,6 +3,7 @@ import {Box, Typography,} from '@mui/material';
 import CommunityPostArea from "./CommunityPostArea";
 import CreateCommunityPost from "./CreateCommunityPost";
 import CommunityPostDetail from "./CommunityPostDetail";
+import {getPostDetail} from "../api/CommunityPostApi";
 
 export const communityAppState = {
     게시글조회중: 1,
@@ -24,9 +25,14 @@ function CommunityMain() {
         setSelectedPost(null);
     }
 
-    function handlePostClick(post) {
-        setSelectedPost(post);
-        setState(communityAppState.게시글상세조회중);
+    async function handlePostClick(post) {
+        try {
+            const response = await getPostDetail(post.communityPostId);
+            setSelectedPost(response.data);
+            setState(communityAppState.게시글상세조회중);
+        } catch (error) {
+            alert("글 상세 조회 실패");
+        }
     }
 
     function switchUI() {

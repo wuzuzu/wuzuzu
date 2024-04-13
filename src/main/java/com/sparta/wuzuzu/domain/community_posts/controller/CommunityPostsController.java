@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.community_posts.controller;
 
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostDetailResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostRequest;
@@ -8,7 +9,6 @@ import com.sparta.wuzuzu.domain.community_posts.service.CommunityPostsService;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,13 +76,17 @@ public class CommunityPostsController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<CommunityPostListResponse> searchCommunityPosts(@ModelAttribute CommunityPostListRequest request) {
+    public ResponseEntity<CommunityPostListResponse> searchCommunityPosts(
+        @ModelAttribute CommunityPostListRequest request) {
         return ResponseEntity.ok(communityPostsService.searchCommunityPosts(request));
     }
 
-    @GetMapping("/read/{communityPostsId}")
-    public ResponseEntity<CommunityPostResponse> readDetail(@PathVariable Long communityPostsId) {
-        return ResponseEntity.ok().body(communityPostsService.getDetail(communityPostsId));
+    @GetMapping("/{communityPostsId}")
+    public ResponseEntity<CommunityPostDetailResponse> readDetail(
+        @PathVariable Long communityPostsId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok()
+            .body(communityPostsService.getDetail(communityPostsId, userDetails.getUser()));
     }
 
     @DeleteMapping("/{communityPostsId}")
@@ -94,5 +98,4 @@ public class CommunityPostsController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
