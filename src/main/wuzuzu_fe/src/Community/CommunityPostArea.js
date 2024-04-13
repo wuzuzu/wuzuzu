@@ -35,15 +35,15 @@ export const category = [
 
 export const searchOptions = [
     {
-        value: "전체",
+        value: null,
         name: "전체",
     },
     {
-        value: "제목",
+        value: "title",
         name: "제목",
     },
     {
-        value: "내용",
+        value: "content",
         name: "내용",
     },
 ];
@@ -60,6 +60,7 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
     const handleCategoryClick = (category) => {
         setSelectedCategory(category);
         setCurrentPage(1);
+        setKeyword("");
         setSearchParams({
             categoryName: category,
             page: 1,
@@ -87,6 +88,7 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
     function onClickSearch() {
         setSearchParams((prevParams) => ({
             ...prevParams,
+            // column: selectedSearchOption,
             searchOption: selectedSearchOption,
             keyword: keyword,
         }));
@@ -134,36 +136,43 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
                 alignItems: 'center',
                 flexGrow: 1
             }}>
-                <FormControl variant="standard"
-                             sx={{mr: 'auto', minWidth: 120}}>
-                    <Select
-                        value={selectedSearchOption}
-                        onChange={handleSearchOptionChange}
-                        displayEmpty
-                    >
-                        {searchOptions.map(({value, name}) => (
-                            <MenuItem key={value} value={value}>
-                                {name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <TextField
-                    label="키워드 검색"
-                    variant="standard"
-                    sx={{flexGrow: 1, ml: 2}}
-                    value={keyword}
-                    onChange={(e) => {
-                        handleKeywordChange(e.target.value)
+                {/*<FormControl variant="standard"*/}
+                {/*             sx={{mr: 'auto', minWidth: 120}}>*/}
+                {/*    <Select*/}
+                {/*        value={selectedSearchOption}*/}
+                {/*        onChange={handleSearchOptionChange}*/}
+                {/*        displayEmpty*/}
+                {/*    >*/}
+                {/*        {searchOptions.map(({value, name}) => (*/}
+                {/*            <MenuItem key={value} value={value}>*/}
+                {/*                {name}*/}
+                {/*            </MenuItem>*/}
+                {/*        ))}*/}
+                {/*    </Select>*/}
+                {/*</FormControl>*/}
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        onClickSearch();
                     }}
-                />
-                <IconButton
-                    aria-label="search"
-                    sx={{width: '50px', height: '50px', mr: 2}}
-                    onClick={onClickSearch}
                 >
-                    <SearchIcon/>
-                </IconButton>
+                    <TextField
+                        label="키워드 검색"
+                        variant="standard"
+                        sx={{flexGrow: 1, ml: 2}}
+                        value={keyword}
+                        onChange={(e) => {
+                            handleKeywordChange(e.target.value)
+                        }}
+                    />
+                    <IconButton
+                        type="submit"
+                        aria-label="search"
+                        sx={{width: '50px', height: '50px', mr: 2}}
+                    >
+                        <SearchIcon/>
+                    </IconButton>
+                </form>
                 <Button variant="contained" sx={{ml: 'auto'}}
                         onClick={handleCreateClick}>
                     글 쓰기

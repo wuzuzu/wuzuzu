@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     Avatar,
     Box,
@@ -6,15 +6,33 @@ import {
     Card,
     CardContent,
     CardMedia,
+    IconButton,
     Typography,
 } from '@mui/material';
 import {
     Comment as CommentIcon,
     Favorite as FavoriteIcon,
+    FavoriteBorder as FavoriteBorderIcon,
     Visibility as VisibilityIcon
 } from '@mui/icons-material';
+import {likePost} from "../api/CommunityPostApi";
 
 function CommunityPostDetail({post, handleBackClick}) {
+
+    const [isLiked, setIsLiked] = useState(post.isLiked);
+    const [likeCount, setLikeCount] = useState(post.likeCount);
+
+    async function handlePostLike() {
+        try {
+            const response = await likePost(post.communityPostId);
+            console.log(response.data);
+            setIsLiked(response.data.isLiked);
+            setLikeCount(response.data.isLiked ? likeCount + 1 : likeCount - 1);
+        } catch (error) {
+            console.error('Error updating like status:', error);
+        }
+    }
+
     return (
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
             <Card sx={{maxWidth: '800px', width: '100%'}}>
@@ -53,9 +71,18 @@ function CommunityPostDetail({post, handleBackClick}) {
                         justifyContent: 'space-between'
                     }}>
                         <Box sx={{display: 'flex', alignItems: 'center'}}>
-                            <FavoriteIcon fontSize="small" sx={{mr: 1}}/>
+                            <IconButton onClick={handlePostLike}>
+                                {isLiked ? (
+                                    <FavoriteIcon fontSize="small"
+                                                  color="error"
+                                                  sx={{ml: 1, mr: 1}}/>
+                                ) : (
+                                    <FavoriteBorderIcon fontSize="small"
+                                                        sx={{ml: 1, mr: 1}}/>
+                                )}
+                            </IconButton>
                             <Typography
-                                variant="body2">{post.likeCount}</Typography>
+                                variant="body2">{likeCount}</Typography>
                             <VisibilityIcon fontSize="small"
                                             sx={{ml: 2, mr: 1}}/>
                             <Typography

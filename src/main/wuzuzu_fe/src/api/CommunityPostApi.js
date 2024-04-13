@@ -1,4 +1,5 @@
 import {apiClient} from "../Client";
+import communityPost from "../Community/CommunityPost";
 
 const startUrl = "/api/v1";
 
@@ -39,6 +40,14 @@ export const searchPosts = async (searchParams) => {
 
     return apiClient.get(startUrl + `/communityposts/search`, {params});
 };
+
+export const getPostDetail = async (communityPostId) => {
+    return apiClient.get(startUrl + `/communityposts/${communityPostId}`);
+}
+
+export const likePost = async (communityPostId) => {
+    return apiClient.post(startUrl + `/communityposts/${communityPostId}/likes`);
+}
 
 export const createCommunityPost = async (communityPost) => {
     return apiClient.post(startUrl + `/communityposts`, communityPost);
