@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.StandardException;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -25,8 +26,8 @@ public class ListRequest {
 
     public void setPage(Integer page) {
         this.page = page - 1;
-        if (page < 10) {
-            this.page = 10;
+        if (this.page < 0) {
+            this.page = 0;
         }
     }
 

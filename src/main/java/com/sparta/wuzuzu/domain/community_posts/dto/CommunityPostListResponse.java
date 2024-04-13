@@ -13,9 +13,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommunityPostsListResponse extends ListResponse {
+public class CommunityPostListResponse extends ListResponse {
 
-    private List<CommunityPostsResponse> postList;
+    private List<CommunityPostResponse> postList;
 
 }
 

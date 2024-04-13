@@ -6,7 +6,7 @@ import com.sparta.wuzuzu.domain.comment.dto.CommentResponse;
 import com.sparta.wuzuzu.domain.comment.entity.Comment;
 import com.sparta.wuzuzu.domain.comment.repository.CommentRepository;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
-import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostsRepository;
+import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
 import java.util.List;
@@ -20,13 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentSerivce {
 
-    private final CommunityPostsRepository communityPostsRepository;
+    private final CommunityPostRepository communityPostRepository;
     private final CommentRepository commentRepository;
 
     public CommentResponse createComment(Long postId, User user, CommentRequest commentRequest) {
-        CommunityPost communityPost = communityPostsRepository.findById(postId).orElseThrow(
+        CommunityPost communityPost = communityPostRepository.findById(postId).orElseThrow(
             NoSuchElementException::new);
         Comment comment = new Comment(communityPost, user, commentRequest.getContents());
+        communityPost.addComment();
         commentRepository.save(comment);
         return new CommentResponse(comment);
     }
@@ -46,7 +47,7 @@ public class CommentSerivce {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(NoSuchElementException::new);
         if (!comment.getUser().getUserId().equals(user.getUserId())) { throw new ValidateUserException();}
-
+        comment.getCommunityPost().removeComments();
         commentRepository.deleteById(commentId);
         }
     }

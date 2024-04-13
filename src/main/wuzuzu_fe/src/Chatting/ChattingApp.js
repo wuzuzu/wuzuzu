@@ -32,7 +32,7 @@ export const listStyle_mt = {
     mb: "50px"
 }
 
-export const appStatusKey = {
+export const chattingAppState = {
     채팅방조회중: 1,
     채팅방생성중: 2,
     채팅방입장: 3
@@ -41,13 +41,13 @@ export const appStatusKey = {
 function ChattingApp({open, handleClose}) {
 
     const [stompClient, setStompClient] = useState(null);
-    const [state, setState] = useState(appStatusKey.채팅방조회중);
+    const [state, setState] = useState(chattingAppState.채팅방조회중);
     const [currentRoom, setCurrentRoom] = useState(null);
     const [roomMessages, setRoomMessages] = useState([]);
     const [receiveMessage, setReceiveMessage] = useState(null);
 
     const handleEnterClick = (room) => {
-        if(room) {
+        if (room) {
             setCurrentRoom(room);
         }
     }
@@ -55,15 +55,17 @@ function ChattingApp({open, handleClose}) {
     useEffect(() => {
         if (currentRoom !== null && stompClient === null) {
             const client = new StompJs.Client({
-                brokerURL: 'ws://localhost:8080/gs-guide-websocket',
+                brokerURL: `ws://${window.location.hostname}:8080/gs-guide-websocket`,
                 onConnect: async message => {
                     console.log(message);
-                    client.subscribe(`/topic/chat-rooms/${currentRoom.chatRoomId}`,
+                    client.subscribe(
+                        `/topic/chat-rooms/${currentRoom.chatRoomId}`,
                         onMessageReceived);
                     try {
-                        const response = await getRoomMessages(currentRoom.chatRoomId);
+                        const response = await getRoomMessages(
+                            currentRoom.chatRoomId);
                         setRoomMessages(response.data.data);
-                        setState(appStatusKey.채팅방입장);
+                        setState(chattingAppState.채팅방입장);
                     } catch (error) {
                         alert("채팅방 정보 로드에 실패했습니다.");
                     }
@@ -92,12 +94,12 @@ function ChattingApp({open, handleClose}) {
     };
 
     const handleBackClick = () => {
-        setState(appStatusKey.채팅방조회중);
+        setState(chattingAppState.채팅방조회중);
         setCurrentRoom(null);
     }
 
     const handleCreateChatRoomClick = () => {
-        setState(appStatusKey.채팅방생성중);
+        setState(chattingAppState.채팅방생성중);
     }
 
     const onCreate = async (newRoom) => {
@@ -107,24 +109,24 @@ function ChattingApp({open, handleClose}) {
         } catch (error) {
             alert("채팅방 생성 실패");
         } finally {
-            setState(appStatusKey.채팅방조회중);
+            setState(chattingAppState.채팅방조회중);
         }
     }
 
     function switchUI() {
         switch (state) {
-            case appStatusKey.채팅방조회중 :
+            case chattingAppState.채팅방조회중 :
                 return <ChattingRoomInfoList
                     handleClose={handleClose}
                     handleEnterClick={handleEnterClick}
                     handleCreateChatRoomClick={handleCreateChatRoomClick}
                 />
-            case appStatusKey.채팅방생성중 :
+            case chattingAppState.채팅방생성중 :
                 return <CreateChattingRoom
                     onCreate={onCreate}
                     handleBackClick={handleBackClick}
                 />
-            case appStatusKey.채팅방입장 :
+            case chattingAppState.채팅방입장 :
                 return <ChattingRoom
                     room={currentRoom}
                     onBackClick={handleBackClick}

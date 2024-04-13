@@ -3,6 +3,8 @@ import "../assets/css/map.css";
 import React, {useEffect} from "react";
 import Swal from "sweetalert2";
 
+const { kakao } = window
+
 const getCurrentCoordinate = async () => {
   console.log("getCurrentCoordinate 함수 실행!!!");
   console.log("navigator.geolocation", navigator.geolocation);

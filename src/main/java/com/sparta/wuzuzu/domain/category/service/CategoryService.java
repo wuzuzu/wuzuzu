@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
+
     public final CategoryRepository categoryRepository;
 
     @Transactional
@@ -24,13 +25,13 @@ public class CategoryService {
 
         Optional<Category> category = categoryRepository.findByName(requestDto.getName());
 
-        if(category.isPresent()){
-            if(category.get().getStatus()){
+        if (category.isPresent()) {
+            if (category.get().getStatus()) {
                 throw new IllegalArgumentException("이미 존재하는 category");
-            } else{
+            } else {
                 category.get().reCreate();
             }
-        } else{
+        } else {
             categoryRepository.save(new Category(requestDto.getName()));
         }
     }
@@ -38,7 +39,7 @@ public class CategoryService {
     public List<CategoryResponse> getCategory() {
         List<Category> categoryList = categoryRepository.findAll();
 
-        if(categoryList.isEmpty()){
+        if (categoryList.isEmpty()) {
             throw new IllegalArgumentException("postList is empty.");
         }
 
@@ -66,14 +67,14 @@ public class CategoryService {
             () -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")
         );
 
-        if(!category.getStatus()){
+        if (!category.getStatus()) {
             throw new IllegalArgumentException("category is already deleted");
         }
 
         category.delete();
     }
 
-    private void validationAdmin(User user){
+    private void validationAdmin(User user) {
 //        if(!user.getRole().equals(UserRole.ADMIN)){
 //            throw new IllegalArgumentException("권한이 없습니다.");
 //        }
