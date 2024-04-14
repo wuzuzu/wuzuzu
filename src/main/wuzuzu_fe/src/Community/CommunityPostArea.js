@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import CommunityPost from "./CommunityPost";
-import {searchPosts} from "../api/CommunityPostApi";
+import {searchPosts} from "../api/CommunityApi";
 import SearchIcon from '@mui/icons-material/Search';
 
 export const category = [
