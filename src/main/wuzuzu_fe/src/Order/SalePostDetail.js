@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     Avatar,
     Box,
@@ -8,11 +8,35 @@ import {
     CardMedia,
     Chip,
     Divider,
+    MenuItem,
     Typography,
 } from '@mui/material';
 import {Visibility as VisibilityIcon} from '@mui/icons-material';
+import {requestPay} from "../Payment/Payment";
+import {TextField} from "@mui/material/";
 
 function SalePostDetail({post, handleBackClick}) {
+
+    const [quantity, setQuantity] = useState(1);
+
+    const handleQuantityChange = (event) => {
+        const value = parseInt(event.target.value);
+        if (value >= 1 && value <= post.stock) {
+            setQuantity(value);
+        }
+    };
+
+    const handleBuyClick = async () => {
+        const buyer = {
+            email: localStorage.getItem('email'),
+            userName: localStorage.getItem('userName'),
+        };
+        await requestPay({
+            user: buyer,
+            salePost: post,
+            count: quantity,
+        });
+    };
 
     return (
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
@@ -87,10 +111,26 @@ function SalePostDetail({post, handleBackClick}) {
                             목록으로
                         </Button>
                     </Box>
-                    <Button variant="contained" color="primary" fullWidth
-                            sx={{borderRadius: '20px'}}>
-                        구매하기
-                    </Button>
+                    <Box sx={{mb: 2, display: 'flex', alignItems: 'center'}}>
+                        <TextField
+                            type="number"
+                            value={quantity}
+                            onChange={handleQuantityChange}
+                            inputProps={{
+                                min: 1,
+                                max: post.stock,
+                            }}
+                            sx={{mr: 2, width: '100px'}}
+                        />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{borderRadius: '20px'}}
+                            onClick={handleBuyClick}
+                        >
+                            구매하기
+                        </Button>
+                    </Box>
                 </CardContent>
             </Card>
         </Box>
