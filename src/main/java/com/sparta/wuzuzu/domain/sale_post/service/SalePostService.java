@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class SalePostService {
+
     private final SalePostRepository salePostRepository;
     private final SalePostQueryRepository salePostQueryRepository;
     private final CategoryRepository categoryRepository;
@@ -29,33 +30,34 @@ public class SalePostService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Transactional
-    public void createSalePost(
+    public SalePostResponse createSalePost(
         User user,
         SalePostRequest requestDto
     ) {
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(
             () -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")
         );
-        createSalePostToRedis(user, requestDto, category);
+
+        return new SalePostResponse(createSalePostToRedis(user, requestDto, category));
     }
 
-    public void createSalePostToRedis(User user, SalePostRequest requestDto , Category category){
+    public SalePost createSalePostToRedis(User user, SalePostRequest requestDto,
+        Category category) {
         SalePost salePost = salePostRepository.save(new SalePost(user, requestDto, category));
+
         // Redis 에 초기 세팅
-        redisTemplate.opsForValue().set("salePost:" + salePost.getSalePostId() + ":stock", String.valueOf(salePost.getStock()));
+        redisTemplate.opsForValue().set("salePost:" + salePost.getSalePostId() + ":stock",
+            String.valueOf(salePost.getStock()));
+
+        return salePost;
     }
 
     // 전체 게시글 : 제목, 조회수만 출력
     // 전체 게시글 목록 조회 : createAt 기준으로 pageable 사용하기(미적용)
     // Category 와 User 의 name 을 가져오면서 N+1 문제 생김 -> QueryDSL 로 변경하기
     @Transactional
-    public List<SalePostResponse> getSalePosts()
-    {
+    public List<SalePostResponse> getSalePosts() {
         List<SalePost> salePostList = salePostRepository.findAllByStatusTrue();
-
-        if(salePostList.isEmpty()){
-            throw new IllegalArgumentException("postList is empty.");
-        }
 
         return salePostList.stream()
             .map(SalePostResponse::new)
@@ -72,7 +74,7 @@ public class SalePostService {
             () -> new IllegalArgumentException("post is empty.")
         );
 
-        if(!salePost.getStatus()){
+        if (!salePost.getStatus()) {
             throw new IllegalArgumentException("post is deleted");
         }
 
@@ -106,7 +108,8 @@ public class SalePostService {
     }
 
     @Transactional
-    public void uploadImage(User user, Long salePostId, List<MultipartFile> imageFiles) throws IOException {
+    public void uploadImage(User user, Long salePostId, List<MultipartFile> imageFiles)
+        throws IOException {
         SalePost salePost = checkSalePost(user, salePostId);
 
         for (MultipartFile imageFile : imageFiles) {
@@ -114,21 +117,21 @@ public class SalePostService {
         }
     }
 
-    public void deleteImage(User user, Long salePostId, String key){
+    public void deleteImage(User user, Long salePostId, String key) {
         SalePost salePost = checkSalePost(user, salePostId);
         imageService.deleteImage(key, salePost);
     }
 
-    private SalePost checkSalePost(User user, Long salePostId){
+    private SalePost checkSalePost(User user, Long salePostId) {
         SalePost salePost = salePostRepository.findById(salePostId).orElseThrow(
             () -> new IllegalArgumentException("post is empty.")
         );
 
-        if(!user.getUserId().equals(salePost.getUser().getUserId())){
+        if (!user.getUserId().equals(salePost.getUser().getUserId())) {
             throw new IllegalArgumentException("post is not yours");
         }
 
-        if(!salePost.getStatus()){
+        if (!salePost.getStatus()) {
             throw new IllegalArgumentException("post is already deleted.");
         }
 

@@ -1,9 +1,9 @@
 package com.sparta.wuzuzu.domain.sale_post.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
-import com.sparta.wuzuzu.domain.sale_post.dto.SalePostVo;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostResponse;
+import com.sparta.wuzuzu.domain.sale_post.dto.SalePostVo;
 import com.sparta.wuzuzu.domain.sale_post.service.SalePostService;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -26,23 +26,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/salePosts")
+@RequestMapping("/api/v1/sale-posts")
 public class SalePostController {
+
     private final SalePostService salePostService;
 
     @PostMapping
-    public ResponseEntity<Void> createSalePost(
+    public ResponseEntity<CommonResponse<SalePostResponse>> createSalePost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody SalePostRequest requestDto
-    ){
-        salePostService.createSalePost(userDetails.getUser(), requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED.value()).build();
+    ) {
+        SalePostResponse response = salePostService.createSalePost(userDetails.getUser(),
+            requestDto);
+        return CommonResponse.ofDataWithHttpStatus(response, HttpStatus.CREATED);
     }
 
     // 전체 게시글 목록 조회 : createAt 기준으로 pageable 사용하기
     @GetMapping
-    public ResponseEntity<CommonResponse<List<SalePostResponse>>> getSalePosts()
-    {
+    public ResponseEntity<CommonResponse<List<SalePostResponse>>> getSalePosts() {
         List<SalePostResponse> salePostResponseList = salePostService.getSalePosts();
         return CommonResponse.ofDataWithHttpStatus(salePostResponseList, HttpStatus.OK);
     }
@@ -51,7 +52,7 @@ public class SalePostController {
     @GetMapping("/{salePostId}")
     public ResponseEntity<CommonResponse<SalePostVo>> getSalePost(
         @PathVariable Long salePostId
-    ){
+    ) {
         SalePostVo response = salePostService.getSalePost(salePostId);
         return CommonResponse.ofDataWithHttpStatus(response, HttpStatus.OK);
     }
@@ -61,7 +62,7 @@ public class SalePostController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long salePostId,
         @Valid @RequestBody SalePostRequest requestDto
-    ){
+    ) {
         salePostService.updateSalePost(userDetails.getUser(), salePostId, requestDto);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
@@ -70,7 +71,7 @@ public class SalePostController {
     public ResponseEntity<Void> deleteSalePost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long salePostId
-    ){
+    ) {
         salePostService.deleteSalePost(userDetails.getUser(), salePostId);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
