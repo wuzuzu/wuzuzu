@@ -3,7 +3,7 @@ import {Box, Typography,} from '@mui/material';
 import CommunityPostArea from "./CommunityPostArea";
 import CreateCommunityPost from "./CreateCommunityPost";
 import CommunityPostDetail from "./CommunityPostDetail";
-import {getPostDetail} from "../api/CommunityPostApi";
+import {getPostDetail} from "../api/CommunityApi";
 
 export const communityAppState = {
     게시글조회중: 1,

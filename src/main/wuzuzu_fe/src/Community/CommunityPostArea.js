@@ -1,17 +1,14 @@
 import {
     Box,
     Button,
-    FormControl,
     Grid,
     IconButton,
-    MenuItem,
     Pagination,
-    Select,
     TextField
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import CommunityPost from "./CommunityPost";
-import {searchPosts} from "../api/CommunityPostApi";
+import {searchPosts} from "../api/CommunityApi";
 import SearchIcon from '@mui/icons-material/Search';
 
 export const category = [
@@ -89,7 +86,6 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
         setSearchParams((prevParams) => ({
             ...prevParams,
             // column: selectedSearchOption,
-            searchOption: selectedSearchOption,
             keyword: keyword,
         }));
     }

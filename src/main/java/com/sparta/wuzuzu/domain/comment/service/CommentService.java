@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CommentSerivce {
+public class CommentService {
 
     private final CommunityPostRepository communityPostRepository;
     private final CommentRepository commentRepository;
@@ -33,22 +33,23 @@ public class CommentSerivce {
     }
 
     public List<CommentResponse> getCommentByCommunityPost(Long postId) {
-
         List<Comment> commentsList = commentRepository.findAllByCommunityPost_CommunityPostIdOrderByCreatedAtDesc(
             postId);
-        if (commentsList.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        return commentsList.stream().map(s -> new CommentResponse(s)).collect(Collectors.toList());
+
+        return commentsList.stream().map(CommentResponse::new).collect(Collectors.toList());
     }
 
     @Transactional
     public void deleteComment(Long commentId, User user) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(NoSuchElementException::new);
-        if (!comment.getUser().getUserId().equals(user.getUserId())) { throw new ValidateUserException();}
+
+        if (!comment.getUser().getUserId().equals(user.getUserId())) {
+            throw new ValidateUserException();
+        }
+
         comment.getCommunityPost().removeComments();
         commentRepository.deleteById(commentId);
-        }
     }
+}
 
