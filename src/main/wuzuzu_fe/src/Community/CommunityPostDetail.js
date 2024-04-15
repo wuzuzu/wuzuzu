@@ -15,7 +15,8 @@ import {
     FavoriteBorder as FavoriteBorderIcon,
     Visibility as VisibilityIcon
 } from '@mui/icons-material';
-import {likePost} from "../api/CommunityPostApi";
+import {likePost} from "../api/CommunityApi";
+import CommentList from "./CommentList";
 
 function CommunityPostDetail({post, handleBackClick}) {
 
@@ -95,6 +96,7 @@ function CommunityPostDetail({post, handleBackClick}) {
                             목록으로
                         </Button>
                     </Box>
+                    <CommentList post={post}/>
                 </CardContent>
             </Card>
         </Box>

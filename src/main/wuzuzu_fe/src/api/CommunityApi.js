@@ -73,3 +73,15 @@ export const uploadImage = async (communityPostId, image) => {
         throw error;
     }
 };
+
+export const createComment = async (communityPostId, comment) => {
+    return apiClient.post(startUrl + `/comments/communityposts/${communityPostId}`, comment);
+}
+
+export const getComments = async (communityPostId) => {
+    return apiClient.get(startUrl + `/comments/communityposts/${communityPostId}`);
+}
+
+export const deleteComment = async (communityPostId, comment) => {
+    return apiClient.delete(startUrl + `/comments/${communityPostId}`);
+}

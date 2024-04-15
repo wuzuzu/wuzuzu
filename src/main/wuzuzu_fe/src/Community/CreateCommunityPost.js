@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {category} from "./CommunityPostArea";
-import {createCommunityPost, uploadImage} from "../api/CommunityPostApi";
+import {createCommunityPost, uploadImage} from "../api/CommunityApi";
 import {Add as AddIcon, Cancel as CancelIcon} from "@mui/icons-material";
 
 function CreateCommunityPost({handleBackClick}) {
