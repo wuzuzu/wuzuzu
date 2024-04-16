@@ -1,5 +1,9 @@
 package com.sparta.wuzuzu.domain.order.service;
 
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
 import com.sparta.wuzuzu.domain.order.dto.OrderRequest;
 import com.sparta.wuzuzu.domain.order.dto.OrdersVo;
 import com.sparta.wuzuzu.domain.order.entity.Order;
@@ -8,6 +12,8 @@ import com.sparta.wuzuzu.domain.order.repository.query.OrderQueryRepository;
 import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import com.sparta.wuzuzu.domain.sale_post.repository.SalePostRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -19,21 +25,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
     private final SalePostRepository salePostRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    private IamportClient iamportClient;
+
+    public void initIamPortClient(IamportClient iamportClient) {
+        this.iamportClient = iamportClient;
+    }
+
     // 주문 요청 : redis 활용해서 재고 감소(QueryDsL 로 탐색) + 주문 내역 저장
     @Transactional
-    public void createOrder(
+    public IamportResponse<Payment> createOrder(
         User user,
-        OrderRequest requestDto
-    ) {
+        OrderRequest requestDto,
+        String imp_uid
+    ) throws IamportResponseException, IOException {
         SalePost salePost = salePostRepository.findById(requestDto.getSalePostId()).orElseThrow(
             () -> new IllegalArgumentException("post is empty."));
 
-        if(salePost.getStock() < requestDto.getCount()){
+        if (salePost.getStock() < requestDto.getCount()) {
             throw new IllegalArgumentException("재고보다 주문 수량이 많습니다.");
         }
 
@@ -43,27 +57,40 @@ public class OrderService {
         // 트랜잭션 시작
         redisTemplate.watch(stockKey);
 
+        IamportResponse<Payment> response = null;
+
         try {
             // 현재 재고량 확인
             Object currentStockObj = redisTemplate.opsForValue().get(stockKey);
-            Long currentStock = (currentStockObj != null) ? Long.parseLong(currentStockObj.toString()) : 0L;
+            Long currentStock =
+                (currentStockObj != null) ? Long.parseLong(currentStockObj.toString()) : 0L;
 
             // 주문 가능 여부 확인
             if (currentStock < requestDto.getCount()) {
-                System.out.println("재고가 부족합니다.");
+                throw new IllegalArgumentException("재고가 부족합니다.");
             } else {
                 // 주문 저장
                 Order order = orderRepository.save(new Order(requestDto, user));
 
                 // Redis 에서 재고 감소
-                Long newStock = redisTemplate.opsForValue().increment(stockKey, -requestDto.getCount());
+                Long newStock = redisTemplate.opsForValue()
+                    .increment(stockKey, -requestDto.getCount());
 
                 // 변경된 SalePost 객체를 repository 에 저장
                 salePost.updateStock(newStock);
                 salePostRepository.save(salePost);
 
-                System.out.println("재고 감소: " + newStock); // 감소된 재고 확인용 코드
+                System.out.println("Decrease Stock : " + newStock); // 감소된 재고 확인용 코드
             }
+
+            response = iamportClient.paymentByImpUid(imp_uid);
+
+            if (!BigDecimal.valueOf(requestDto.getAmount())
+                .equals(response.getResponse().getAmount())) {
+                redisTemplate.discard();
+                throw new IllegalArgumentException("결제 실패 오류가 발생했습니다. 다시 시도해주세요.");
+            }
+
             // Redis 트랜잭션 실행
             redisTemplate.unwatch();
         } catch (OptimisticLockingFailureException ex) {
@@ -74,6 +101,8 @@ public class OrderService {
             redisTemplate.discard();
             throw new IllegalArgumentException("주문 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
         }
+
+        return response;
     }
 
     public List<OrdersVo> getOrders(
@@ -81,7 +110,7 @@ public class OrderService {
     ) {
         List<OrdersVo> orderList = orderQueryRepository.findAllOrders(user.getUserId());
 
-        if(orderList.isEmpty()){
+        if (orderList.isEmpty()) {
             throw new IllegalArgumentException("orderList is empty.");
         }
 
