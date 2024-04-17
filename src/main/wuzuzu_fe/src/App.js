@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import React from 'react';
 import SignUp from './views/SignUp';
 import Login from "./views/Longin";
@@ -11,7 +10,6 @@ import SpotDetail from "./views/SpotDetail";
 import ChattingAppButton from "./Chatting/ChattingAppButton";
 import CommunityMain from "./Community/CommunityMain";
 
-// import Main from "./components/Main";
 
 function App() {
     return (
@@ -32,5 +30,4 @@ function App() {
         </div>
     );
 }
-
 export default App;
