@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   Avatar,
@@ -15,11 +15,11 @@ import {
   Typography,
   Container,
 } from '@mui/material/';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import styled from 'styled-components';
 import Link from '@mui/material/Link';
+import { Modal } from "@mui/material";
 
-// mui의 css 우선순위가 높기때문에 important를 설정 - 실무하다 보면 종종 발생 우선순위 문제
 const FormHelperTexts = styled(FormHelperText)`
   width: 100%;
   padding-left: 16px;
@@ -35,13 +35,67 @@ const Register = () => {
   const theme = createTheme();
   const [checked, setChecked] = useState(false);
   const [emailError, setEmailError] = useState('');
-  // const [passwordState, setPasswordState] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [registerError, setRegisterError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [verifyCode, setVerificationCode] = useState('');
+  const [isVerified, setIsVerified] = useState(false); // 추가
   const navigate = useNavigate();
+  const [mail, setEmail] = useState('');
+
 
   const handleAgree = (event) => {
     setChecked(event.target.checked);
+  };
+
+
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleVerifyEmail = async () => {
+
+    // 인증번호 발송 로직
+    await axios
+    .post('/api/v1/email/users/auth', {mail})
+    .then(function (response) {
+        // 이메일 인증 모달 열기
+        setModalOpen(true);
+        console.log(response, '인증번호 발송 성공');
+
+    })
+    .catch(function (err) {
+      console.log(err);
+      setRegisterError(err.response.data.msg);
+    });
+
+  };
+
+
+  const handleCloseModal = () => {
+    // 모달 닫기
+    setModalOpen(false);
+    setIsVerified(true); // 모달이 닫힐 때 인증 완료로 설정
+  };
+
+  const handleVerificationCodeChange = (e) => {
+    // 인증번호 입력 시 상태 업데이트
+    setVerificationCode(e.target.value);
+  };
+
+  const handleVerifyCode = async () => {
+    // 서버에 인증번호를 전송하고 확인하는 로직을 구현하세요.
+    await axios
+    .post('/api/v1/email/users/verify', { mail, verifyCode })
+    .then(function (response) {
+      alert('인증번호 확인 완료!');
+      handleCloseModal();
+    })
+    .catch(function (error) {
+      console.error('인증번호 확인 에러:', error);
+      alert('인증번호 확인에 실패했습니다. 다시 시도해주세요.');
+    });
   };
 
   const onhandlePost = async (data) => {
@@ -134,8 +188,8 @@ const Register = () => {
 
   return (
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Container component="main" maxWidth="xs">
-          <CssBaseline/>
           <Box
               sx={{
                 marginTop: 8,
@@ -144,12 +198,11 @@ const Register = () => {
                 alignItems: 'center',
               }}
           >
-            <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}/>
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }} />
             <Typography component="h1" variant="h5">
               회원가입
             </Typography>
-            <Boxs component="form" noValidate onSubmit={handleSubmit}
-                  sx={{mt: 3}}>
+            <Boxs component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
               <FormControl component="fieldset" variant="standard">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
@@ -160,9 +213,14 @@ const Register = () => {
                         type="email"
                         id="email"
                         name="email"
-                        label="email"
-                        error={emailError !== '' || false}
+                        label="Email"
+                        error={emailError !== ''}
+                        value={mail}
+                        onChange={handleEmailChange}
                     />
+                    <Button variant="contained" onClick={handleVerifyEmail} fullWidth sx={{mt: 1, mb: 1}} style={{ backgroundColor: isVerified ? 'green' : undefined }}>
+                      {isVerified ? "인증되었습니다" : "인증하기"}
+                    </Button>
                   </Grid>
                   <FormHelperTexts>{emailError}</FormHelperTexts>
                   <Grid item xs={12}>
@@ -242,6 +300,7 @@ const Register = () => {
                     variant="contained"
                     sx={{mt: 3, mb: 2}}
                     size="large"
+                    disabled={!isVerified} // 인증되지 않았으면 비활성화
                 >
                   회원가입
                 </Button>
@@ -257,6 +316,41 @@ const Register = () => {
             </Boxs>
           </Box>
         </Container>
+        {/* 모달 */}
+        <Modal
+            open={modalOpen}
+            onClose={handleCloseModal}
+            aria-labelledby="verification-code-modal"
+            aria-describedby="enter-verification-code"
+        >
+          <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'white',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+                zIndex: 9999, // zIndex 추가
+              }}
+          >
+            <Typography id="verification-code-modal" variant="h6" component="h2" align="center">
+              인증번호 입력
+            </Typography>
+            <TextField
+                label="인증번호"
+                variant="outlined"
+                fullWidth
+                value={verifyCode}
+                onChange={handleVerificationCodeChange}
+            />
+            <Button variant="contained" onClick={handleVerifyCode} sx={{ mt: 2 }}>
+              확인
+            </Button>
+          </Box>
+        </Modal>
       </ThemeProvider>
   );
 };
