@@ -2,8 +2,10 @@ package com.sparta.wuzuzu.domain.order.service;
 
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import com.sparta.wuzuzu.domain.order.dto.CreateOrderMessage;
 import com.sparta.wuzuzu.domain.order.dto.OrderRequest;
 import com.sparta.wuzuzu.domain.order.dto.OrdersVo;
 import com.sparta.wuzuzu.domain.order.entity.Order;
@@ -12,16 +14,20 @@ import com.sparta.wuzuzu.domain.order.repository.query.OrderQueryRepository;
 import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
 import com.sparta.wuzuzu.domain.sale_post.repository.SalePostRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import io.awspring.cloud.sqs.annotation.SqsListener;
+import io.awspring.cloud.sqs.operations.SqsTemplate;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.OptimisticLockingFailureException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -30,6 +36,7 @@ public class OrderService {
     private final OrderQueryRepository orderQueryRepository;
     private final SalePostRepository salePostRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final SqsTemplate sqsTemplate;
 
     private IamportClient iamportClient;
 
@@ -37,72 +44,72 @@ public class OrderService {
         this.iamportClient = iamportClient;
     }
 
-    // 주문 요청 : redis 활용해서 재고 감소(QueryDsL 로 탐색) + 주문 내역 저장
-    @Transactional
-    public IamportResponse<Payment> createOrder(
-        User user,
-        OrderRequest requestDto,
-        String imp_uid
-    ) throws IamportResponseException, IOException {
-        SalePost salePost = salePostRepository.findById(requestDto.getSalePostId()).orElseThrow(
-            () -> new IllegalArgumentException("post is empty."));
+    @Value("${cloud.aws.sqs.queue.url}")
+    private String queueUrl;
 
-        if (salePost.getStock() < requestDto.getCount()) {
+    @Value("${cloud.aws.sqs.queue.name}")
+    private String queueName;
+
+    // 결제 완료 시 주문 생성 요청 및 SQS 로 주문 정보 메세지 송신
+    public IamportResponse<Payment> createOrder(User user, OrderRequest request, String imp_uid)
+        throws IamportResponseException, IOException {
+        sqsTemplate.send(to -> to
+            .queue(queueName)
+            .messageGroupId(String.valueOf(user.getUserId()))
+            .payload(new CreateOrderMessage(user, request, imp_uid))
+        );
+
+        IamportResponse<Payment> response = iamportClient.paymentByImpUid(imp_uid);
+
+        if (response == null || !response.getResponse().getAmount()
+            .equals(BigDecimal.valueOf(request.getAmount()))) {
+            cancelPayment(imp_uid, "결제 정보가 일치하지 않음.");
+        }
+
+        // SSE 구독
+
+        return iamportClient.paymentByImpUid(imp_uid);
+    }
+
+    // SQS 에서 메세지를 하나씩 수신해 주문 처리 
+    @SqsListener("${cloud.aws.sqs.queue.name}")
+    @Transactional
+    public void receiveOrderMessage(@Payload CreateOrderMessage message) {
+        OrderRequest orderRequest = message.getRequest();
+
+        SalePost salePost = salePostRepository.findById(orderRequest.getSalePostId()).orElseThrow(
+            () -> {
+                // 결제 취소 로직
+                cancelPayment(message.getImp_uid(), "상품이 존재하지 않음.");
+
+                return new IllegalArgumentException("post is empty.");
+            });
+
+        if (salePost.getStock() < orderRequest.getCount()) {
+            // 결제 취소 로직
+            cancelPayment(message.getImp_uid(), "재고보다 주문 수량이 많습니다.");
+
             throw new IllegalArgumentException("재고보다 주문 수량이 많습니다.");
         }
 
-        // 동시성 제어를 위한 키
-        String stockKey = "salePost:" + salePost.getSalePostId() + ":stock";
+        Order order = orderRepository.save(new Order(orderRequest, message.getUser()));
+        salePost.updateStock(salePost.getStock() - order.getCount());
+        // SSE 알림
 
-        // 트랜잭션 시작
-        redisTemplate.watch(stockKey);
+        log.info(salePost.getStock().toString());
+    }
 
-        IamportResponse<Payment> response = null;
-
+    // 결제 취소 메소드
+    private void cancelPayment(String imp_uid, String reason) {
+        CancelData cancelData = new CancelData(imp_uid, true);
+        cancelData.setReason(reason);
         try {
-            // 현재 재고량 확인
-            Object currentStockObj = redisTemplate.opsForValue().get(stockKey);
-            Long currentStock =
-                (currentStockObj != null) ? Long.parseLong(currentStockObj.toString()) : 0L;
+            iamportClient.cancelPaymentByImpUid(cancelData);
+        } catch (IamportResponseException | IOException e) {
+            // SSE 알림
 
-            // 주문 가능 여부 확인
-            if (currentStock < requestDto.getCount()) {
-                throw new IllegalArgumentException("재고가 부족합니다.");
-            } else {
-                // 주문 저장
-                Order order = orderRepository.save(new Order(requestDto, user));
-
-                // Redis 에서 재고 감소
-                Long newStock = redisTemplate.opsForValue()
-                    .increment(stockKey, -requestDto.getCount());
-
-                // 변경된 SalePost 객체를 repository 에 저장
-                salePost.updateStock(newStock);
-                salePostRepository.save(salePost);
-
-                System.out.println("Decrease Stock : " + newStock); // 감소된 재고 확인용 코드
-            }
-
-            response = iamportClient.paymentByImpUid(imp_uid);
-
-            if (!BigDecimal.valueOf(requestDto.getAmount())
-                .equals(response.getResponse().getAmount())) {
-                redisTemplate.discard();
-                throw new IllegalArgumentException("결제 실패 오류가 발생했습니다. 다시 시도해주세요.");
-            }
-
-            // Redis 트랜잭션 실행
-            redisTemplate.unwatch();
-        } catch (OptimisticLockingFailureException ex) {
-            // 동시성 제어 실패 처리
-            throw new IllegalArgumentException("주문 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
-        } catch (DataAccessException ex) {
-            // 데이터 액세스 예외 발생 시 롤백
-            redisTemplate.discard();
-            throw new IllegalArgumentException("주문 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+            throw new RuntimeException(e);
         }
-
-        return response;
     }
 
     public List<OrdersVo> getOrders(
