@@ -62,24 +62,20 @@ function CreateSalePost({handleBackClick}) {
 
         try {
             const response = await createSalePost({
-                title: title,
-                description: description,
-                goods: goods,
-                price: price,
-                stock: stock,
-                category: selectedCategory,
-            });
-
-            console.log(response);
-            const salePostId = response.data.data.salePostId;
-
-            if (salePostId && image) {
-                await uploadImage(salePostId, image);
-            }
+                    title: title,
+                    description: description,
+                    goods: goods,
+                    price: price,
+                    stock: stock,
+                    category: selectedCategory,
+                },
+                image
+            );
 
             handleBackClick();
         } catch (error) {
             console.error('Error creating post:', error);
+            alert("업로드 실패...")
         }
     };
 

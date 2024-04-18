@@ -34,10 +34,11 @@ public class SalePostController {
     @PostMapping
     public ResponseEntity<CommonResponse<SalePostResponse>> createSalePost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @Valid @RequestBody SalePostRequest requestDto
+        @Valid @RequestPart(value = "salePost") SalePostRequest requestDto,
+        @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         SalePostResponse response = salePostService.createSalePost(userDetails.getUser(),
-            requestDto);
+            requestDto, image);
         return CommonResponse.ofDataWithHttpStatus(response, HttpStatus.CREATED);
     }
 

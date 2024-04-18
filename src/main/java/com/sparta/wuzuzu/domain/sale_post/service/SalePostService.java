@@ -32,13 +32,25 @@ public class SalePostService {
     @Transactional
     public SalePostResponse createSalePost(
         User user,
-        SalePostRequest requestDto
-    ) {
+        SalePostRequest requestDto,
+        MultipartFile image) {
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(
             () -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")
         );
 
-        return new SalePostResponse(createSalePostToRedis(user, requestDto, category));
+        SalePost salePost = createSalePostToRedis(user, requestDto, category);
+
+        String imageUrl = null;
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                imageUrl = imageService.createImage(image, salePost);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return new SalePostResponse(salePost, imageUrl);
     }
 
     public SalePost createSalePostToRedis(User user, SalePostRequest requestDto,
