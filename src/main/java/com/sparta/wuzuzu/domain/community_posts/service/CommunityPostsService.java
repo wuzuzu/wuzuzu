@@ -38,12 +38,13 @@ public class CommunityPostsService {
     private final PostLikeRepository postLikeRepository;
 
     public CommunityPostResponse saveCommunityPosts(CommunityPostRequest communityPostRequest,
-        User user) {
+        MultipartFile image, User user) {
 
         CommunityCategory communityCategory = communityCategoryRepository.findByNameEquals(
                 communityPostRequest.getCategoryName())
             .orElseThrow();
-        if (communityCategory.getStatus() == false) {
+
+        if (!communityCategory.getStatus()) {
             throw new NoSuchElementException();
         }
 
@@ -54,13 +55,18 @@ public class CommunityPostsService {
                 user
             )
         );
-        return CommunityPostResponse.builder().
-            communityPostId(communityPost.getCommunityPostId()).
-            title(communityPost.getTitle()).
-            categoryName(communityPostRequest.getCategoryName()).
-            username(user.getUserName()).
-            contents(communityPost.getContent()).
-            build();
+
+        String imageUrl = null;
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                imageUrl = imageService.createImage(image, communityPost);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return new CommunityPostResponse(communityPost, user.getUserName(), imageUrl);
     }
 
     @Transactional
