@@ -28,9 +28,9 @@ public class ImageService {
     private final ImageRepository imageRepository;
 
     @Transactional
-    public void createImage(MultipartFile file, Object object) throws IOException {
+    public String createImage(MultipartFile file, Object object) throws IOException {
         String imageName = getImageName(file);
-        imageRepository.save(new Image(imageName, object));
+        return imageRepository.save(new Image(imageName, object)).getImageUrl();
     }
 
     @Transactional

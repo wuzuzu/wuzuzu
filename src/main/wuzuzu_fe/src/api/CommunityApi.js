@@ -49,9 +49,26 @@ export const likePost = async (communityPostId) => {
     return apiClient.post(startUrl + `/communityposts/${communityPostId}/likes`);
 }
 
-export const createCommunityPost = async (communityPost) => {
-    return apiClient.post(startUrl + `/communityposts`, communityPost);
-}
+export const createCommunityPost = async (communityPost, image) => {
+    const formData = new FormData();
+    await formData.append('communityPost', new Blob([JSON.stringify(communityPost)], {type: 'application/json'}));
+
+    if (image) {
+        formData.append('image', image);
+    }
+
+    try {
+        const response = await apiClient.post(startUrl + `/communityposts`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error('Error creating post:', error);
+        throw error;
+    }
+};
 
 export const uploadImage = async (communityPostId, image) => {
     const formData = new FormData();
