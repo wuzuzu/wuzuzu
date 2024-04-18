@@ -11,4 +11,7 @@ public class OrderRequest {
 
     @Positive(message = "주문 수량은 양수이어야 합니다.")
     private Long count;
+
+    @Positive(message = "가격 양수이어야 합니다.")
+    private Long amount;
 }

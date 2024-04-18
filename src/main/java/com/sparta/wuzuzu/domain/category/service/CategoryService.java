@@ -5,7 +5,6 @@ import com.sparta.wuzuzu.domain.category.dto.CategoryResponse;
 import com.sparta.wuzuzu.domain.category.entity.Category;
 import com.sparta.wuzuzu.domain.category.repository.CategoryRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
-import com.sparta.wuzuzu.domain.user.entity.UserRole;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

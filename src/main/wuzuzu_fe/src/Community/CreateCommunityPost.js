@@ -47,22 +47,19 @@ function CreateCommunityPost({handleBackClick}) {
         event.preventDefault();
 
         try {
-            const response = await createCommunityPost({
-                title: title,
-                content: content,
-                categoryName: selectedCategory,
-            });
-
-            console.log(response);
-            const communityPostId = response.data.communityPostId;
-
-            if (communityPostId && selectedImage) {
-                await uploadImage(communityPostId, selectedImage);
-            }
+            const response = await createCommunityPost(
+                {
+                    title: title,
+                    content: content,
+                    categoryName: selectedCategory,
+                },
+                selectedImage
+            );
 
             handleBackClick();
         } catch (error) {
             console.error('Error creating post:', error);
+            alert('업로드 실패...')
         }
     };
 

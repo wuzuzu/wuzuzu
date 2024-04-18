@@ -51,7 +51,7 @@ function CommentList({post}) {
     async function fetchComments() {
         try {
             const response = await getComments(post.communityPostId);
-            if (response && response.data.length > 0) {
+            if (response.data) {
                 setComments(response.data);
             }
         } catch (e) {

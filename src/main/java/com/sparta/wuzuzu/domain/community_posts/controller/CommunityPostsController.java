@@ -34,10 +34,12 @@ public class CommunityPostsController {
 
     @PostMapping
     public ResponseEntity<CommunityPostResponse> saveCommunityPosts(
-        @RequestBody @Valid CommunityPostRequest communityPostRequest,
+        @RequestPart(value = "communityPost") @Valid CommunityPostRequest communityPostRequest,
+        @RequestPart(value = "image", required = false) MultipartFile image,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommunityPostResponse communityPostResponse = communityPostsService.saveCommunityPosts(
             communityPostRequest,
+            image,
             userDetails.getUser());
 
         return new ResponseEntity<>(communityPostResponse, HttpStatus.CREATED);

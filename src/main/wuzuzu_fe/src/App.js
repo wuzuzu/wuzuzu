@@ -9,6 +9,7 @@ import Favorite from "./views/Favorite";
 import SpotDetail from "./views/SpotDetail";
 import ChattingAppButton from "./Chatting/ChattingAppButton";
 import CommunityMain from "./Community/CommunityMain";
+import OrderMain from "./Order/OrderMain";
 
 
 function App() {
@@ -23,7 +24,8 @@ function App() {
                     <Route path="/Spot" element={<Spot/>}/>
                     <Route path="/Favorite" element={<Favorite/>}/>
                     <Route path="/SpotDetail" element={<SpotDetail/>}/>
-                    <Route path="/Community" element={<CommunityMain/>}/>
+                    <Route path="/community" element={<CommunityMain/>}/>
+                    <Route path="/transaction" element={<OrderMain/>}/>
                 </Routes>
             </BrowserRouter>
             <ChattingAppButton/>

@@ -11,8 +11,8 @@ import MypageMap from "../views/MypageMap";
 
 const sections = [
   {title: '🐶스팟 조회', url: '/Spot'},
-  {title: '🐹 용품 거래', url: '#'},
-  {title: '🐱 커뮤니티', url: '/Community'}
+  {title: '🐹 용품 거래', url: '/transaction'},
+  {title: '🐱 커뮤니티', url: '/community'}
 ];
 
 const mainFeaturedPost = {
