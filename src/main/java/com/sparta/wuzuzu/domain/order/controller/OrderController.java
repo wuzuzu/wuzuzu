@@ -13,9 +13,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -27,7 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,14 +50,20 @@ public class OrderController {
         @Valid @RequestBody OrderRequest requestDto,
         @PathVariable("imp_uid") String imp_uid
     ) throws IamportResponseException, IOException {
-        IamportResponse<Payment> response = orderService.createOrder(userDetails.getUser(), requestDto, imp_uid);
+        IamportResponse<Payment> response = orderService.createOrder(userDetails.getUser(), requestDto,
+            imp_uid);
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(response);
+    }
+
+    @GetMapping("/{imp_uid}/sse")
+    public SseEmitter subscribeCreateOrder(@PathVariable("imp_uid") String imp_uid) {
+        return orderService.subscribeCreateOrder(imp_uid);
     }
 
     @GetMapping
     public ResponseEntity<CommonResponse<List<OrdersVo>>> getOrders(
         @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
+    ) {
         List<OrdersVo> orderResponseList = orderService.getOrders(userDetails.getUser());
         return CommonResponse.ofDataWithHttpStatus(orderResponseList, HttpStatus.CREATED);
     }

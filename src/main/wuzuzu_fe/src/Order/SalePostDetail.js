@@ -31,10 +31,12 @@ function SalePostDetail({post, handleBackClick}) {
             email: localStorage.getItem('email'),
             userName: localStorage.getItem('userName'),
         };
+
         await requestPay({
             user: buyer,
             salePost: post,
             count: quantity,
+            handleBackClick: handleBackClick,
         });
     };
 
