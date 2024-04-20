@@ -77,28 +77,28 @@ public class DatabasePerformaceTest {
     @Test
     public void testPagingWithIndexOnLikeCounts() {
         // 인덱스가 적용된 상황에서의 likeCount 기준 정렬 테스트
-        String queryWithIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' AND category = 1 ORDER BY like_count LIMIT 500, 10";
+        String queryWithIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' AND category = 1 ORDER BY like_count LIMIT 1000, 10";
         executeQueryAndLogTime(queryWithIndex, "With Index on LikeCount");
     }
 
     @Test
     public void testPagingWithoutIndexOnLikeCounts() {
         // 인덱스가 적용되지 않은 상황에서의 likeCount 기준 정렬 테스트
-        String queryWithoutIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' AND category = 1 ORDER BY like_count LIMIT 500, 10";
+        String queryWithoutIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' AND category = 1 ORDER BY like_count LIMIT 1000, 10";
         executeQueryAndLogTime(queryWithoutIndex, "Without Index on LikeCount");
     }
 
     @Test
     public void testPagingWithIndexOnViews() {
         // 인덱스가 적용된 상태에서 조회수 기준 정렬 테스트
-        String queryWithIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' ORDER BY views LIMIT 500, 10";
+        String queryWithIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' ORDER BY views LIMIT 1000, 10";
         executeQueryAndLogTime(queryWithIndex, "With Index on Views");
     }
 
     @Test
     public void testPagingWithoutIndexOnViews() {
         // 인덱스가 적용되지 않은 상태에서 조회수 기준 정렬 테스트
-        String queryWithoutIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' ORDER BY views LIMIT 500, 10";
+        String queryWithoutIndex = "SELECT SQL_NO_CACHE * FROM community_posts WHERE title LIKE '%dog%' ORDER BY views LIMIT 1000, 10";
         executeQueryAndLogTime(queryWithoutIndex, "Without Index on Views");
     }
 

@@ -68,6 +68,13 @@ dependencies {
 
     // S3
     implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+    // elasticsearch
+
+//    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    implementation 'co.elastic.clients:elasticsearch-java'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 }
 
 tasks.named('test') {

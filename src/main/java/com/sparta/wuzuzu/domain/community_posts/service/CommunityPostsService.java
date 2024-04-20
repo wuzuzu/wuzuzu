@@ -1,16 +1,24 @@
 package com.sparta.wuzuzu.domain.community_posts.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.sparta.wuzuzu.domain.common.image.service.ImageService;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityElasticResponse;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostElasticListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityCategory;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
+//import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPostDocument;
+//import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostDocumentRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityCategoryRepository;
+//import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostDocumentRepository;
+import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostElasticRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.global.dto.request.ListRequest;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
 import com.sparta.wuzuzu.global.util.PagingUtil;
 import java.io.IOException;
@@ -32,7 +40,11 @@ public class CommunityPostsService {
     private final CommunityPostRepository communityPostRepository;
     private final CommunityCategoryRepository communityCategoryRepository;
     private final CustomCommunityPostRepository customCommunityPostRepository;
+//    private final CommunityPostDocumentRepository communityPostDocumentRepository;
+    private final ElasticsearchClient elasticsearchClient;
     private final ImageService imageService;
+//    private final CustomCommunityPostDocumentRepository customCommunityPostDocumentRepository;
+    private final CustomCommunityPostElasticRepository communityPostElasticRepository;
     public CommunityPostResponse saveCommunityPosts(CommunityPostRequest communityPostRequest,
         User user) {
 
@@ -97,6 +109,88 @@ public class CommunityPostsService {
             .pagingUtil(pagingUtil)
             .build();
     }
+
+    public CommunityPostElasticListResponse searchPostByKeyword(String keyword, ListRequest request) {
+        if (request.getColumn() == null || request.getColumn().isEmpty()) {
+            request.setColumn("createdAt");//조회 기준 컬럼 입력 없을 경우 날짜순을 기본으로 지정
+        }
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(),
+            Sort.by(request.getSortDirection(), request.getColumn()));
+        Page<CommunityElasticResponse> postsPage = communityPostElasticRepository.findByTitleContaining(keyword, pageable);
+
+        PagingUtil pagingUtil = new PagingUtil(postsPage.getTotalElements(),
+            postsPage.getTotalPages(), request.getPage(), request.getPageSize());
+
+        return CommunityPostElasticListResponse.builder()
+            .postList(postsPage.getContent())
+            .pagingUtil(pagingUtil)
+            .build();
+    }
+
+
+
+//    public CommunityPostSearchListResponse searchPostByKeyword(String keyword, ListRequest request) {
+//        if (request.getColumn() == null || request.getColumn().isEmpty()) {
+//            request.setColumn("createdAt");//조회 기준 컬럼 입력 없을 경우 날짜순을 기본으로 지정
+//        }
+//
+//        try {
+//            Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(), Sort.by(request.getSortDirection(), request.getColumn()));
+//            Page<CommunityPostDocument> postsPage = communityPostDocumentRepository.findByTitleContaining(keyword, pageable);
+//            List<CommunityPostSearchResponse> searchResponses = postsPage.getContent().stream()
+//                .map(CommunityPostSearchResponse::new)
+//                .collect(Collectors.toList());
+//            PagingUtil pagingUtil = new PagingUtil(postsPage.getTotalElements(), postsPage.getTotalPages(), request.getPage(), request.getPageSize());
+//            return CommunityPostSearchListResponse.builder()
+//                .postList(searchResponses)
+//                .pagingUtil(pagingUtil)
+//                .build();
+//        } catch (Exception e) {
+//            // Log the exception or handle it accordingly
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
+//    public CommunityPostSearchListResponse searchPostByKeyword(String keyword, ListRequest request) throws IOException {
+//        SearchResponse<CommunityPostDocument> response = elasticsearchClient.search(s -> s
+//                .index("community_posts")
+//                .query(q -> q
+//                    .match(m -> m
+//                        .field("title")
+//                        .query(keyword)
+//                    )
+//                )
+//                .sort(so -> so
+//                    .field(f -> f
+//                        .field(request.getColumn().isEmpty() ? "createdAt" : request.getColumn())
+//                        .order(request.getSortDirection().equals("asc") ? SortOrder.Asc : SortOrder.Desc)
+//                    )
+//                )
+//                .from(request.getPage() * request.getPageSize())
+//                .size(request.getPageSize()),
+//            CommunityPostDocument.class
+//        );
+//
+//        List<CommunityPostSearchResponse> searchResponses = response.hits().hits().stream()
+//            .map(hit -> new CommunityPostSearchResponse(hit.source()))
+//            .collect(Collectors.toList());
+//
+//        PagingUtil pagingUtil = new PagingUtil(
+//            response.hits().total().value(),
+//            response.hits().hits().size(),
+//            request.getPage(),
+//            request.getPageSize()
+//        );
+//
+//        return CommunityPostSearchListResponse.builder()
+//            .postList(searchResponses) // Assuming CommunityPostListResponse can accept a list of CommunityPostSearchResponse
+//           .pagingUtil(pagingUtil)
+//           .build();
+//
+//    }
+
 
     @Transactional
     public CommunityPostResponse getDetail(Long communitypostsId) {

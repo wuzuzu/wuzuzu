@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.community_posts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.wuzuzu.domain.comment.entity.Comment;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
 import com.sparta.wuzuzu.domain.common.image.entity.Image;
@@ -58,19 +59,23 @@ public class CommunityPost extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "communityPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostLike> postLikeList = new ArrayList<>();
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "category", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CommunityCategory category;
 
     @OneToMany(mappedBy = "communityPost")
+    @JsonIgnore
     private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "communityPost")
+    @JsonIgnore
     private List<Image> imageUrl;
 
     public CommunityPost(String title, CommunityCategory category, String content, User user) {

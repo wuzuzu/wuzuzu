@@ -2,7 +2,10 @@ package com.sparta.wuzuzu.global.exception;
 
 import com.sparta.wuzuzu.domain.common.dto.ExceptionResponse;
 
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -63,6 +66,18 @@ public class GlobalExceptionHandler {
             .httpCode(HttpStatus.FORBIDDEN.value())
             .build();
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleIOException(IOException e) {
+        // Log the exception details for debugging
+        Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+        logger.error("IOException occurred", e);
+
+        // Provide a user-friendly message and a server error status
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Error processing your request: " + e.getMessage());
     }
 
 
