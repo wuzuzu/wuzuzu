@@ -34,10 +34,13 @@ const DetailPage = () => {
         navigate("/Spot");
         // Handle successful login (e.g., set user state, redirect, etc.)
       } else {
-        console.error('no');
+        const responseData = await response.json();
+        const errorMessage = responseData.msg || '즐겨찾기 추가에 실패했습니다.';
+        alert(errorMessage);
       }
     } catch (error) {
       console.error('Error logging in:', error);
+      // alert("즐겨찾기에 넣어뒀습니다")
 
     }
   };
