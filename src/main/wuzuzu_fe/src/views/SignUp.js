@@ -54,29 +54,36 @@ const Register = () => {
     setEmail(e.target.value);
   };
 
+  const [isVerifying, setIsVerifying] = useState(false); // 추가
+
   const handleVerifyEmail = async () => {
+    if (isVerifying) return; // 이미 요청 중이면 함수 종료
+
+    setIsVerifying(true); // 요청 시작, 버튼 비활성화
+
+    // 이메일 인증 모달 열기
+    setModalOpen(true);
 
     // 인증번호 발송 로직
     await axios
-    .post('/api/v1/email/users/auth', {mail})
+    .post('/api/v1/email/users/auth', { mail })
     .then(function (response) {
-        // 이메일 인증 모달 열기
-        setModalOpen(true);
-        console.log(response, '인증번호 발송 성공');
-
+      console.log(response, '인증번호 발송 성공');
     })
     .catch(function (err) {
       console.log(err);
       setRegisterError(err.response.data.msg);
+    })
+    .finally(() => {
+      setIsVerifying(false); // 요청 종료, 버튼 다시 활성화
     });
-
   };
 
 
   const handleCloseModal = () => {
     // 모달 닫기
     setModalOpen(false);
-    setIsVerified(true); // 모달이 닫힐 때 인증 완료로 설정
+    // setIsVerified(true); // 모달이 닫힐 때 인증 완료로 설정
   };
 
   const handleVerificationCodeChange = (e) => {
@@ -90,6 +97,7 @@ const Register = () => {
     .post('/api/v1/email/users/verify', { mail, verifyCode })
     .then(function (response) {
       alert('인증번호 확인 완료!');
+      setIsVerified(true); // 인증 완료
       handleCloseModal();
     })
     .catch(function (error) {
@@ -97,6 +105,7 @@ const Register = () => {
       alert('인증번호 확인에 실패했습니다. 다시 시도해주세요.');
     });
   };
+
 
   const onhandlePost = async (data) => {
     const {email, name, password, confirmPassword, address, userName, petName, petType} = data;
@@ -217,8 +226,16 @@ const Register = () => {
                         error={emailError !== ''}
                         value={mail}
                         onChange={handleEmailChange}
+                        disabled={isVerified || isVerifying}
                     />
-                    <Button variant="contained" onClick={handleVerifyEmail} fullWidth sx={{mt: 1, mb: 1}} style={{ backgroundColor: isVerified ? 'green' : undefined }}>
+                    <Button
+                        variant="contained"
+                        onClick={handleVerifyEmail}
+                        fullWidth
+                        sx={{ mt: 1, mb: 1 }}
+                        // style={{ backgroundColor: isVerified ? 'green' : undefined }}
+                        disabled={isVerified || isVerifying} // 인증되었거나 인증 중이면 비활성화
+                    >
                       {isVerified ? "인증되었습니다" : "인증하기"}
                     </Button>
                   </Grid>
