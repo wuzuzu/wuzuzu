@@ -10,6 +10,7 @@ import SpotDetail from "./views/SpotDetail";
 import ChattingAppButton from "./Chatting/ChattingAppButton";
 import CommunityMain from "./Community/CommunityMain";
 import OrderMain from "./Order/OrderMain";
+import Layout from "./views/Layout";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 
 const globalTheme = createTheme({
@@ -19,25 +20,27 @@ const globalTheme = createTheme({
 });
 
 function App() {
-    return (
-        <ThemeProvider theme={globalTheme}>
+  return (
+      <ThemeProvider theme={globalTheme}>
         <div>
-            <BrowserRouter>
-                <Routes>
-                    <Route exact path="/" element={<Login/>}/>
-                    <Route path="/signup" element={<SignUp/>}/>
-                    <Route path="/Main" element={<Main/>}/>
-                    <Route path="/Mypage" element={<Mypage/>}/>
-                    <Route path="/Spot" element={<Spot/>}/>
-                    <Route path="/Favorite" element={<Favorite/>}/>
-                    <Route path="/SpotDetail" element={<SpotDetail/>}/>
-                    <Route path="/community" element={<CommunityMain/>}/>
-                    <Route path="/transaction" element={<OrderMain/>}/>
-                </Routes>
-            </BrowserRouter>
-            <ChattingAppButton/>
+          <BrowserRouter>
+
+            <Routes>
+              <Route exact path="/" element={<Login/>}/>
+              <Route path="/signup" element={<SignUp/>}/>
+              <Route path="/Main" element={<Main/>}/>
+              <Route path="/Mypage" element={<Layout><Mypage/></Layout>}/>
+              <Route path="/Spot" element={<Layout><Spot/></Layout>}/>
+              <Route path="/Favorite" element={<Layout><Favorite/></Layout>}/>
+              <Route path="/SpotDetail" element={<Layout><SpotDetail/></Layout>}/>
+              <Route path="/community" element={<Layout><CommunityMain/></Layout>}/>
+              <Route path="/transaction" element={<Layout><OrderMain/></Layout>}/>
+            </Routes>
+          </BrowserRouter>
+          <ChattingAppButton/>
         </div>
-        </ThemeProvider>
-    );
+      </ThemeProvider>
+  );
 }
+
 export default App;

@@ -213,7 +213,7 @@ const Register = () => {
                 alignItems: 'center',
               }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }} />
+            <Avatar sx={{ m: 1, bgcolor: '#f5abab' }} />
             <Typography component="h1" variant="h5">
               회원가입
             </Typography>
@@ -239,7 +239,10 @@ const Register = () => {
                         onClick={handleVerifyEmail}
                         fullWidth
                         sx={{ mt: 1, mb: 1 }}
-                        // style={{ backgroundColor: isVerified ? 'green' : undefined }}
+                        style={{
+                          backgroundColor: '#FBEFEF',
+                          color: '#6E6E6E'
+                        }}
                         disabled={isVerified || isVerifying} // 인증되었거나 인증 중이면 비활성화
                     >
                       {isVerified ? "인증되었습니다" : "인증하기"}
@@ -322,6 +325,10 @@ const Register = () => {
                     fullWidth
                     variant="contained"
                     sx={{mt: 3, mb: 2}}
+                    style={{
+                      backgroundColor: '#FBEFEF',
+                      color: '#6E6E6E'
+                    }}
                     size="large"
                     disabled={!isVerified} // 인증되지 않았으면 비활성화
                 >

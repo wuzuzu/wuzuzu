@@ -60,7 +60,7 @@ const Login = ({history}) => {
                 alignItems: 'center',
               }}
           >
-            <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+            <Avatar sx={{m: 1, bgcolor: '#f5abab'}}>
               <LockOutlinedIcon/>
             </Avatar>
             <Typography component="h1" variant="h5">
@@ -77,6 +77,7 @@ const Login = ({history}) => {
                 autoFocus
                 defaultValue={"testUser"}
                 onChange={(e) => setEmail(e.target.value)}
+
             />
             <TextField
                 margin="normal"
@@ -101,6 +102,10 @@ const Login = ({history}) => {
                 fullWidth
                 variant="contained"
                 sx={{mt: 3, mb: 2}}
+                style={{
+                  backgroundColor: '#FBEFEF',
+                  color: '#6E6E6E'
+                }}
             >
               Log In
             </Button>
