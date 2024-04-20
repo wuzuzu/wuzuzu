@@ -32,7 +32,7 @@ const Boxs = styled(Box)`
 `;
 
 const Register = () => {
-  const theme = createTheme();
+  // const theme = createTheme();
   const [checked, setChecked] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -194,9 +194,15 @@ const Register = () => {
       onhandlePost(joinData);
     }
   };
+  const globalTheme = createTheme({
+    typography: {
+      fontFamily: 'Jua-Regular',
+    },
+  });
+
 
   return (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={globalTheme}>
         <CssBaseline />
         <Container component="main" maxWidth="xs">
           <Box

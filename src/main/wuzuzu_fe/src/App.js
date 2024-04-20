@@ -10,10 +10,17 @@ import SpotDetail from "./views/SpotDetail";
 import ChattingAppButton from "./Chatting/ChattingAppButton";
 import CommunityMain from "./Community/CommunityMain";
 import OrderMain from "./Order/OrderMain";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
 
+const globalTheme = createTheme({
+  typography: {
+    fontFamily: 'Jua-Regular',
+  },
+});
 
 function App() {
     return (
+        <ThemeProvider theme={globalTheme}>
         <div>
             <BrowserRouter>
                 <Routes>
@@ -30,6 +37,7 @@ function App() {
             </BrowserRouter>
             <ChattingAppButton/>
         </div>
+        </ThemeProvider>
     );
 }
 export default App;

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Header from './Header';
 import MainFeaturedPost from './MainFeaturedPost';
 import Footer from './Footer';
@@ -26,8 +25,6 @@ const mainFeaturedPosts = [
   }
 ];
 
-const defaultTheme = createTheme();
-
 const StyledGrid = styled(Grid)({
   '&.MuiGrid-root': {
     border: 'none', // 그리드의 외곽선을 제거합니다.
@@ -39,8 +36,6 @@ const StyledGrid = styled(Grid)({
 
 export default function Main() {
   return (
-      <ThemeProvider theme={defaultTheme}>
-        <CssBaseline />
         <div style={{ backgroundColor: '#FBEFEF' }}>
           <Container maxWidth="lg" style={{ backgroundColor: '#FFFFFF' }} sx={{ borderBottom: 1, borderColor: 'divider', overflowX: 'auto' }}>
             <Header title="Wuzuzu" sections={sections} />
@@ -62,6 +57,5 @@ export default function Main() {
               description="쭈니 재롱 부송 쩹이"
           />
         </div>
-      </ThemeProvider>
   );
 }

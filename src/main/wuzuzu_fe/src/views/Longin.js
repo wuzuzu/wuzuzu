@@ -1,4 +1,4 @@
-import {apiClient} from "../Client"
+import {apiClient} from "../Client";
 import React, {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -22,13 +22,11 @@ const FormHelperTexts = styled(FormHelperText)`
   color: #d32f2f !important;
 `;
 
-
-const Login = ({ history }) => {
+const Login = ({history}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [registerError, setRegisterError] = useState('');
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -38,32 +36,22 @@ const Login = ({ history }) => {
       localStorage.setItem("Authorization", result.data.accessToken);
       localStorage.setItem("userId", result.data.userId);
       localStorage.setItem("userName", result.data.userName);
-      // alert('로그인 완료되었습니다.');
       navigate("/Main");
     } catch (error) {
       setRegisterError('로그인에 실패하였습니다. 다시한번 확인해 주세요.');
     }
   };
 
-  function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-          {'Copyright © '}
-          <Link color="inherit" href="https://mui.com/">
-            Your Website
-          </Link>{' '}
-          {new Date().getFullYear()}
-          {'.'}
-        </Typography>
-    );
-  }
-
-  const defaultTheme = createTheme();
+  const globalTheme = createTheme({
+    typography: {
+      fontFamily: 'Jua-Regular',
+    },
+  });
 
   return (
-      <ThemeProvider theme={defaultTheme}>
+      <ThemeProvider theme={globalTheme}>
         <Container component="main" maxWidth="xs">
-          <CssBaseline />
+          <CssBaseline/>
           <Box
               sx={{
                 marginTop: 8,
@@ -72,8 +60,8 @@ const Login = ({ history }) => {
                 alignItems: 'center',
               }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
+            <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+              <LockOutlinedIcon/>
             </Avatar>
             <Typography component="h1" variant="h5">
               Login
@@ -103,7 +91,7 @@ const Login = ({ history }) => {
                 onChange={(e) => setPassword(e.target.value)}
             />
             <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
+                control={<Checkbox value="remember" color="primary"/>}
                 label="Remember me"
             />
             <FormHelperTexts>{registerError}</FormHelperTexts>
@@ -112,7 +100,7 @@ const Login = ({ history }) => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{mt: 3, mb: 2}}
             >
               Log In
             </Button>
@@ -126,7 +114,6 @@ const Login = ({ history }) => {
             </Grid>
 
           </Box>
-          <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
       </ThemeProvider>
   );
