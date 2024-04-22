@@ -57,12 +57,12 @@ function ChattingRoomInfoList({
     }
 
     useEffect(() => {
-        if (menuItem === "my" && roomList === null) {
+        if (menuItem === "my") {
             getMyRoomList();
-        } else if (menuItem === "all" && roomList === null) {
+        } else if (menuItem === "all") {
             getRoomList();
         }
-    }, [menuItem, roomList]);
+    }, [menuItem]);
 
     const handleChange = (event) => {
         setRoomList(null);

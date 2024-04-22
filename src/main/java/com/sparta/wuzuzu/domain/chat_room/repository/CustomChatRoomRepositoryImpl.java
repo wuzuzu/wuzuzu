@@ -6,6 +6,7 @@ import static com.sparta.wuzuzu.domain.common.image.entity.QImage.image;
 import static com.sparta.wuzuzu.domain.user.entity.QUser.user;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.wuzuzu.domain.chat_room.dto.GetChatRoomResponse;
@@ -51,9 +52,12 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository {
                     image.imageUrl,
                     chatRoom.chatRoomTag))
             .from(chatRoom)
-            .leftJoin(member).on(member.chatRoomId.eq(chatRoom.chatRoomId))
             .leftJoin(image).on(image.chatRoom.chatRoomId.eq(chatRoom.chatRoomId))
-            .where(member.userId.ne(userId));
+            .where(chatRoom.chatRoomId.notIn(
+                JPAExpressions.select(member.chatRoomId)
+                    .from(member)
+                    .where(member.userId.eq(userId))
+            ));
 
         return query.fetch();
     }
