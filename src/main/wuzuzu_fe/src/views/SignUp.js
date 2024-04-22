@@ -32,7 +32,7 @@ const Boxs = styled(Box)`
 `;
 
 const Register = () => {
-  const theme = createTheme();
+  // const theme = createTheme();
   const [checked, setChecked] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -194,9 +194,15 @@ const Register = () => {
       onhandlePost(joinData);
     }
   };
+  const globalTheme = createTheme({
+    typography: {
+      fontFamily: 'Jua-Regular',
+    },
+  });
+
 
   return (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={globalTheme}>
         <CssBaseline />
         <Container component="main" maxWidth="xs">
           <Box
@@ -207,7 +213,7 @@ const Register = () => {
                 alignItems: 'center',
               }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }} />
+            <Avatar sx={{ m: 1, bgcolor: '#f5abab' }} />
             <Typography component="h1" variant="h5">
               회원가입
             </Typography>
@@ -233,7 +239,10 @@ const Register = () => {
                         onClick={handleVerifyEmail}
                         fullWidth
                         sx={{ mt: 1, mb: 1 }}
-                        // style={{ backgroundColor: isVerified ? 'green' : undefined }}
+                        style={{
+                          backgroundColor: '#FBEFEF',
+                          color: '#6E6E6E'
+                        }}
                         disabled={isVerified || isVerifying} // 인증되었거나 인증 중이면 비활성화
                     >
                       {isVerified ? "인증되었습니다" : "인증하기"}
@@ -316,6 +325,10 @@ const Register = () => {
                     fullWidth
                     variant="contained"
                     sx={{mt: 3, mb: 2}}
+                    style={{
+                      backgroundColor: '#FBEFEF',
+                      color: '#6E6E6E'
+                    }}
                     size="large"
                     disabled={!isVerified} // 인증되지 않았으면 비활성화
                 >

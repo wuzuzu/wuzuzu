@@ -63,7 +63,7 @@ const YourComponent = () => {
       }}>
         <Button onClick={handleGoBack}>이전 페이지로 돌아가기</Button>
         <Box display="flex" justifyContent="flex-end" alignItems="center" height="100vh">
-          <Box style={{  backgroundColor: '#FFFFFF', position: 'absolute', top: '10%', left: '80%', transform: 'translateY(-50%)', marginRight: '20px' }}>
+          <Box style={{ backgroundColor: '#FFFFFF', position: 'absolute', top: '15%', left: '80%', transform: 'translateY(-50%)', marginRight: '20px' }}>
             <Select
                 value={selectedOption}
                 onChange={handleOptionChange}
@@ -74,9 +74,9 @@ const YourComponent = () => {
               <MenuItem value="반려동물 미용">반려동물 미용</MenuItem>
             </Select>
           </Box>
-          <Box style={{ backgroundColor: '#FFFFFF',position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', width: '1500px' }}>
+          <Box style={{ borderRadius: "30px", backgroundColor: '#FFFFFF',position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', width: '1500px' }}>
             {items.length > 0 ? (
-                <List style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
+                <List style={{  border: '1px solid #ccc', borderRadius: '30px' }}>
                   {items.map((item, index) => (
                       <ListItem key={index} button onClick={() => handleItemClick(item.spotName, item.address,selectedOption )}>
                         <ListItemText primary={item.spotName} secondary={item.address} />
