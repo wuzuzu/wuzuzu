@@ -1,10 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ModalDialog} from "@mui/joy";
 import {listStyle_mt, style} from "./ChattingApp";
 import {AppBar, Box, IconButton, List, TextField, Toolbar} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
 import MyMessage from "./MyMessage";
 import OtherMessage from "./OtherMessage";
@@ -14,8 +11,7 @@ export default function ChattingRoom({
     onBackClick,
     messages,
     stompClient,
-    receiveMessage,
-    handleClose
+    receiveMessage
 }) {
 
     const myUserId = Number(localStorage.getItem("userId"));
@@ -70,20 +66,22 @@ export default function ChattingRoom({
     }
 
     return (
-        <ModalDialog sx={style} variant="plain">
+        <Box sx={style} variant="plain">
             <AppBar position="fixed" color="primary"
                     sx={{top: 0, bottom: 'auto'}}>
                 <Toolbar>
                     <IconButton color="inherit" onClick={onBackClick}>
                         <ArrowBackIcon/>
                     </IconButton>
-                    <Box sx={{flexGrow: 1}}>{room.chatRoomName}</Box>
-                    <IconButton color="inherit">
-                        <SearchIcon/>
-                    </IconButton>
-                    <IconButton color="inherit" aria-label="open drawer">
-                        <MenuIcon/>
-                    </IconButton>
+                    <Box sx={{flexGrow: 1}}>
+                        {room.chatRoomName}
+                    </Box>
+                    {/*<IconButton color="inherit">*/}
+                    {/*    <SearchIcon/>*/}
+                    {/*</IconButton>*/}
+                    {/*<IconButton color="inherit" aria-label="open drawer">*/}
+                    {/*    <MenuIcon/>*/}
+                    {/*</IconButton>*/}
                 </Toolbar>
             </AppBar>
             <List ref={listRef} spacing={2} sx={listStyle_mt}
@@ -111,21 +109,37 @@ export default function ChattingRoom({
             <AppBar position="fixed" color="primary"
                     sx={{top: 'auto', bottom: 0}}>
                 <Toolbar>
-                    <TextField
-                        hiddenLabel
-                        id="filled-hidden-label-normal"
-                        variant="filled"
-                        sx={{flexGrow: 1}}
-                        value={messageInput}
-                        onChange={e => setMessageInput(e.target.value)}
-                    />
-                    <IconButton color="inherit" aria-label="send"
-                                onClick={sendMessage}
-                                disabled={messageInput.length === 0}>
-                        <SendIcon/>
-                    </IconButton>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            sendMessage();
+                        }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%'
+                        }}
+                    >
+                        <TextField
+                            hiddenLabel
+                            id="filled-hidden-label-normal"
+                            variant="filled"
+                            sx={{flexGrow: 1, marginRight: '10px'}}
+                            value={messageInput}
+                            onChange={e => setMessageInput(e.target.value)}
+                        />
+                        <IconButton
+                            type="submit"
+                            color="inherit"
+                            aria-label="send"
+                            onClick={sendMessage}
+                            disabled={messageInput.length === 0}
+                        >
+                            <SendIcon/>
+                        </IconButton>
+                    </form>
                 </Toolbar>
             </AppBar>
-        </ModalDialog>
+        </Box>
     );
 }

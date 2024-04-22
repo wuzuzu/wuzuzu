@@ -40,9 +40,6 @@ public class ChatRoom extends Timestamped {
 //    private Boolean secret = false;
 
     @Column
-    private String coverImage;
-
-    @Column
     private String chatRoomTag;
 
     @ManyToOne(fetch = FetchType.LAZY)

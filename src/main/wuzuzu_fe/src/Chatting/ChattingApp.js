@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
 import ChattingRoomInfoList from "./ChattingRoomInfoList";
-import {Modal} from "@mui/joy";
+import {Modal} from "@mui/material";
 import ChattingRoom from "./ChattingRoom";
 import * as StompJs from "@stomp/stompjs";
 import {getRoomMessages} from "../api/MessageApi";
 import CreateChattingRoom from "./CreateChattingRoom";
-import {createChatRoom} from "../api/ChatRoomApi";
+import {createChatRoom, enterChatRoom} from "../api/ChatRoomApi";
+import ChattingRoomInfoDetail from "./ChattingRoomInfoDetail";
 
 export const style = {
     position: 'absolute',
@@ -35,7 +36,8 @@ export const listStyle_mt = {
 export const chattingAppState = {
     채팅방조회중: 1,
     채팅방생성중: 2,
-    채팅방입장: 3
+    채팅방입장: 3,
+    채팅방상세조회중: 4
 };
 
 function ChattingApp({open, handleClose}) {
@@ -43,11 +45,25 @@ function ChattingApp({open, handleClose}) {
     const [stompClient, setStompClient] = useState(null);
     const [state, setState] = useState(chattingAppState.채팅방조회중);
     const [currentRoom, setCurrentRoom] = useState(null);
+    const [selectedRoom, setSelectedRoom] = useState(null);
     const [roomMessages, setRoomMessages] = useState([]);
     const [receiveMessage, setReceiveMessage] = useState(null);
 
-    const handleEnterClick = (room) => {
+    const handleEnterClick = async (room, isEntered) => {
         if (room) {
+            if (receiveMessage) {
+                setReceiveMessage(null);
+            }
+
+            if (!isEntered) {
+                try {
+                    await enterChatRoom(room.chatRoomId);
+                } catch (e) {
+                    alert("채팅방 입장 실패...");
+                    return;
+                }
+            }
+
             setCurrentRoom(room);
         }
     }
@@ -102,9 +118,16 @@ function ChattingApp({open, handleClose}) {
         setState(chattingAppState.채팅방생성중);
     }
 
-    const onCreate = async (newRoom) => {
+    const handleChatRoomInfoClick = (room) => {
+        if (room) {
+            setSelectedRoom(room);
+            setState(chattingAppState.채팅방상세조회중);
+        }
+    };
+
+    const onCreate = async (newRoom, coverImage) => {
         try {
-            const response = await createChatRoom(newRoom);
+            const response = await createChatRoom(newRoom, coverImage);
             alert("[" + response.data.chatRoomName + "] 채팅방 생성 완료!");
         } catch (error) {
             alert("채팅방 생성 실패");
@@ -113,13 +136,22 @@ function ChattingApp({open, handleClose}) {
         }
     }
 
+    function onCloseModal() {
+        if (stompClient) {
+            stompClient.deactivate();
+        }
+
+        handleClose();
+    }
+
     function switchUI() {
         switch (state) {
             case chattingAppState.채팅방조회중 :
                 return <ChattingRoomInfoList
-                    handleClose={handleClose}
+                    handleClose={onCloseModal}
                     handleEnterClick={handleEnterClick}
                     handleCreateChatRoomClick={handleCreateChatRoomClick}
+                    onChatRoomInfoClick={handleChatRoomInfoClick}
                 />
             case chattingAppState.채팅방생성중 :
                 return <CreateChattingRoom
@@ -130,10 +162,14 @@ function ChattingApp({open, handleClose}) {
                 return <ChattingRoom
                     room={currentRoom}
                     onBackClick={handleBackClick}
-                    stompClient={stompClient}
-                    handleClose={handleClose}
-                    receiveMessage={receiveMessage}
                     messages={roomMessages}
+                    stompClient={stompClient}
+                    receiveMessage={receiveMessage}
+                />
+            case chattingAppState.채팅방상세조회중 :
+                return <ChattingRoomInfoDetail
+                    room={selectedRoom}
+                    onBackClick={handleBackClick}
                 />
         }
     }
@@ -142,6 +178,9 @@ function ChattingApp({open, handleClose}) {
         <Modal
             open={open}
             onClose={handleClose}
+            sx={{
+                borderRadius: '20px'
+            }}
         >
             <div>
                 {switchUI()}

@@ -16,6 +16,7 @@ public class SalePostResponse {
     private Long views;
     private String author;
     private String category;
+    private Long stock;
     private String image;
 
     public SalePostResponse(SalePost post) {
@@ -24,14 +25,11 @@ public class SalePostResponse {
         this.views = post.getViews();
         this.author = post.getUser().getUserName();
         this.category = post.getCategory().getName();
+        this.stock = post.getStock();
     }
 
     public SalePostResponse(SalePost post, String image) {
-        this.salePostId = post.getSalePostId();
-        this.title = post.getTitle();
-        this.views = post.getViews();
-        this.author = post.getUser().getUserName();
-        this.category = post.getCategory().getName();
+        this(post);
         this.image = image;
     }
 }

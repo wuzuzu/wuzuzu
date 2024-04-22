@@ -1,4 +1,4 @@
-import {apiClient} from "../Client";
+import {apiClient} from "../api/Client";
 import React, {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -23,8 +23,8 @@ const FormHelperTexts = styled(FormHelperText)`
 `;
 
 const Login = ({history}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('testUser');
+  const [password, setPassword] = useState('1234');
   const navigate = useNavigate();
   const [registerError, setRegisterError] = useState('');
 

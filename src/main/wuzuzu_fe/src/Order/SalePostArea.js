@@ -31,7 +31,11 @@ export const category = [
     },
 ];
 
-function SalePostArea({handleCreateClick, handlePostClick}) {
+function SalePostArea({
+    handleCreateClick,
+    handlePostClick,
+    handleOrderHistoryClick
+}) {
     const [postList, setPostList] = useState();
 
     useEffect(() => {
@@ -66,9 +70,16 @@ function SalePostArea({handleCreateClick, handlePostClick}) {
                 >
                     <RefreshIcon/>
                 </IconButton>
-                <Button variant="contained" onClick={handleCreateClick}>
-                    상품 등록하기
-                </Button>
+                <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <Button variant="contained"
+                            onClick={handleOrderHistoryClick}
+                            sx={{mr: 2}}>
+                        내 주문 조회
+                    </Button>
+                    <Button variant="contained" onClick={handleCreateClick}>
+                        상품 등록하기
+                    </Button>
+                </Box>
             </Box>
             <Grid container spacing={2}>
                 {postList && postList.map((post) => {

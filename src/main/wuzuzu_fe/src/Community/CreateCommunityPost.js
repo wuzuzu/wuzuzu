@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import {
     Alert,
     Box,
-    Button, Chip,
+    Button,
+    Chip,
     MenuItem,
     Select,
     Snackbar,
@@ -11,7 +12,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {category} from "./CommunityPostArea";
-import {createCommunityPost, uploadImage} from "../api/CommunityApi";
+import {createCommunityPost} from "../api/CommunityApi";
 import {Add as AddIcon, Cancel as CancelIcon} from "@mui/icons-material";
 
 function CreateCommunityPost({handleBackClick}) {
@@ -105,7 +106,7 @@ function CreateCommunityPost({handleBackClick}) {
                                 카테고리 선택
                             </MenuItem>
                             {category
-                            .filter(({value}) => value !== null)
+                            .filter(({name}) => name !== "전체")
                             .map(({value, name}) => (
                                 <MenuItem key={value} value={value}>
                                     {name}

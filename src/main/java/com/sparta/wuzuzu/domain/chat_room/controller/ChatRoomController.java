@@ -10,10 +10,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -30,9 +31,10 @@ public class ChatRoomController {
 
     @PostMapping("/chat-rooms")
     public GetChatRoomResponse createChatRoom(
-        @RequestBody CreateChatRoomRequest request,
+        @RequestPart(value = "chatRoom") CreateChatRoomRequest request,
+        @RequestPart(value = "image", required = false) MultipartFile image,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return chatRoomService.createChatRoom(request, userDetails.getUser());
+        return chatRoomService.createChatRoom(request, image, userDetails.getUser());
     }
 
     @PostMapping("/chat-rooms/{chatRoomId}")
