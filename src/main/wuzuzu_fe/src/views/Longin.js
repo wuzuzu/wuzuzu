@@ -77,7 +77,6 @@ const Login = ({history}) => {
                 autoFocus
                 defaultValue={"testUser"}
                 onChange={(e) => setEmail(e.target.value)}
-
             />
             <TextField
                 margin="normal"
