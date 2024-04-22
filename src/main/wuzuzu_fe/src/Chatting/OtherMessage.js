@@ -27,11 +27,13 @@ const OtherMessage = ({message, avatarUrl, userName}) => {
                         backgroundColor: '#ffffff',
                         borderRadius: '10px',
                         padding: '10px',
-                        maxWidth: '70%',
                         boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.1)',
+                        wordBreak: 'break-word',
                     }}
                 >
-                    <Typography variant="caption" component="body1">{message}</Typography>
+                    <Typography variant="caption" component="body1">
+                        {message}
+                    </Typography>
                 </Box>
             </Box>
         </Box>

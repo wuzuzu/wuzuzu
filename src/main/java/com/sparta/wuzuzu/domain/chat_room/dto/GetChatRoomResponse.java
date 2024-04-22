@@ -27,7 +27,21 @@ public class GetChatRoomResponse {
         chatRoomId = chatRoom.getChatRoomId();
         chatRoomName = chatRoom.getChatRoomName();
         description = chatRoom.getDescription();
-        coverImage = chatRoom.getDescription();
         chatRoomTags = Arrays.stream(chatRoom.getChatRoomTag().split(",")).toList();
+    }
+
+    public GetChatRoomResponse(String userName, String imageUrl, ChatRoom chatRoom) {
+        this(userName, chatRoom);
+        coverImage = imageUrl;
+    }
+
+    public GetChatRoomResponse(String userName, Long chatRoomId, String chatRoomName,
+        String description, String coverImage, String chatRoomTag) {
+        this.userName = userName;
+        this.chatRoomId = chatRoomId;
+        this.chatRoomName = chatRoomName;
+        this.description = description;
+        this.coverImage = coverImage;
+        this.chatRoomTags = Arrays.stream(chatRoomTag.split(",")).toList();
     }
 }

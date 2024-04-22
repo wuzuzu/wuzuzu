@@ -8,13 +8,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrdersVo {
+
     private Long salePostId;
     private String title;
-    private Long views;
     private String author;
     private String category;
     private Boolean status;
     private String goods;
     private Long price;
+    private Long orderId;
     private Long count;
+    private String impUid;
+    private String merchantUid;
+    private String image;
 }

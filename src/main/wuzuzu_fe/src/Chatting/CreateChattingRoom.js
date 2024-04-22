@@ -7,7 +7,6 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ModalDialog} from "@mui/joy";
 import {
     Add as AddIcon,
     PhotoCamera as PhotoCameraIcon
@@ -44,7 +43,7 @@ function CreateChattingRoom({onCreate, handleBackClick}) {
         setHashtags(hashtags.filter((tag) => tag !== hashtag));
     };
 
-    const handleImageUpload = (event) => {
+    const handleImageChange = (event) => {
         const file = event.target.files[0];
         setCoverImage(file);
     };
@@ -54,13 +53,12 @@ function CreateChattingRoom({onCreate, handleBackClick}) {
             chatRoomName: title,
             description: description,
             chatRoomTags: hashtags,
-            coverImage: coverImage,
         };
-        onCreate(newRoom);
+        onCreate(newRoom, coverImage);
     };
 
     return (
-        <ModalDialog
+        <Box
             sx={{
                 ...style,
                 bgcolor: "white",
@@ -143,28 +141,39 @@ function CreateChattingRoom({onCreate, handleBackClick}) {
                 ))}
             </Box>
             <Box sx={{mt: 2}}>
-                <input
-                    accept="image/*"
-                    id="cover-image-upload"
-                    type="file"
-                    onChange={handleImageUpload}
-                    style={{display: "none"}}
-                />
-                <label htmlFor="cover-image-upload">
-                    <Button
-                        variant="outlined"
-                        component="span"
-                        startIcon={<PhotoCameraIcon/>}
-                        sx={{
-                            borderRadius: "20px",
-                            bgcolor: "#E0F7FA",
-                            color: "#00ACC1",
-                            "&:hover": {bgcolor: "#B2EBF2"},
-                        }}
-                    >
-                        커버 이미지 업로드
-                    </Button>
-                </label>
+                <Button
+                    variant="outlined"
+                    component="label"
+                    startIcon={<PhotoCameraIcon/>}
+                    sx={{
+                        borderRadius: "20px",
+                        bgcolor: "#E0F7FA",
+                        color: "#00ACC1",
+                        "&:hover": {bgcolor: "#B2EBF2"},
+                    }}
+                >
+                    커버 이미지 업로드
+                    <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleImageChange}
+                    />
+                </Button>
+                {coverImage && (
+                    <Box ml={2} display="flex"
+                         alignItems="center">
+                        <Chip
+                            label={coverImage.name}
+                            color="primary"
+                            size="small"
+                            onDelete={() => {
+                                setCoverImage(null);
+                            }}
+                            sx={{mr: 1}}
+                        />
+                    </Box>
+                )}
             </Box>
             <Box sx={{display: "flex", justifyContent: "flex-end", mt: 1}}>
                 <Button
@@ -192,7 +201,7 @@ function CreateChattingRoom({onCreate, handleBackClick}) {
                     취소
                 </Button>
             </Box>
-        </ModalDialog>
+        </Box>
     );
 }
 

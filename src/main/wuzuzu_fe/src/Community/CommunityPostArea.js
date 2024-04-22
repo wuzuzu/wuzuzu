@@ -47,7 +47,6 @@ export const searchOptions = [
 
 function CommunityPostArea({handleCreateClick, handlePostClick}) {
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedSearchOption, setSelectedSearchOption] = useState("전체");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
     const [postList, setPostList] = useState([]);
@@ -62,10 +61,6 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
             categoryName: category,
             page: 1,
         });
-    };
-
-    const handleSearchOptionChange = (event) => {
-        setSelectedSearchOption(event.target.value);
     };
 
     const handlePageChange = (event, value) => {
@@ -85,7 +80,6 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
     function onClickSearch() {
         setSearchParams((prevParams) => ({
             ...prevParams,
-            // column: selectedSearchOption,
             keyword: keyword,
         }));
     }
@@ -132,20 +126,6 @@ function CommunityPostArea({handleCreateClick, handlePostClick}) {
                 alignItems: 'center',
                 flexGrow: 1
             }}>
-                {/*<FormControl variant="standard"*/}
-                {/*             sx={{mr: 'auto', minWidth: 120}}>*/}
-                {/*    <Select*/}
-                {/*        value={selectedSearchOption}*/}
-                {/*        onChange={handleSearchOptionChange}*/}
-                {/*        displayEmpty*/}
-                {/*    >*/}
-                {/*        {searchOptions.map(({value, name}) => (*/}
-                {/*            <MenuItem key={value} value={value}>*/}
-                {/*                {name}*/}
-                {/*            </MenuItem>*/}
-                {/*        ))}*/}
-                {/*    </Select>*/}
-                {/*</FormControl>*/}
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();

@@ -99,7 +99,8 @@ public class OrderService {
         }
 
         Order order = orderRepository.save(
-            new Order(orderRequest, message.getUser(), message.getMerchant_uid()));
+            new Order(orderRequest, message.getUser(), message.getImp_uid(),
+                message.getMerchant_uid()));
         salePost.updateStock(salePost.getStock() - order.getCount());
 
         // SSE 알림
@@ -125,12 +126,6 @@ public class OrderService {
     public List<OrdersVo> getOrders(
         User user
     ) {
-        List<OrdersVo> orderList = orderQueryRepository.findAllOrders(user.getUserId());
-
-        if (orderList.isEmpty()) {
-            throw new IllegalArgumentException("orderList is empty.");
-        }
-
-        return orderList;
+        return orderQueryRepository.findAllOrders(user.getUserId());
     }
 }

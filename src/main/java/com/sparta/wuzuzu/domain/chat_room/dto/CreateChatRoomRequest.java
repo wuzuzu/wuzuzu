@@ -14,6 +14,5 @@ public class CreateChatRoomRequest {
 
     private String chatRoomName;
     private String description;
-    private String coverImage;
     private List<String> chatRoomTags;
 }
