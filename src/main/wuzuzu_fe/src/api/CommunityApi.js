@@ -1,4 +1,4 @@
-import {apiClient} from "../Client";
+import {apiClient} from "./Client";
 import communityPost from "../Community/CommunityPost";
 
 const startUrl = "/api/v1";

@@ -1,4 +1,4 @@
-import {apiClient} from "../Client";
+import {apiClient} from "./Client";
 
 const startUrl = "/api/v1";
 
