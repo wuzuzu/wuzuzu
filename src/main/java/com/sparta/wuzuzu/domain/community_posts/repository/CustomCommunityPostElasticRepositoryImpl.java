@@ -31,37 +31,6 @@ public class CustomCommunityPostElasticRepositoryImpl implements CustomCommunity
         this.elasticsearchClient = elasticsearchClient;
     }
 
-//    @Override
-//    public Page<CommunityElasticResponse> findByTitleContaining(String keyword, Pageable pageable) {
-//        try {
-//            SearchRequest request = new SearchRequest.Builder()
-//                .index("community_posts")
-//                .query(q -> q
-//                    .match(m -> m
-//                        .field("title")
-//                        .query(keyword)
-//                    )
-//                )
-//                .from((int) pageable.getOffset())
-//                .size(pageable.getPageSize())
-//                .build();
-//
-//            SearchResponse<Map> response = elasticsearchClient.search(request, Map.class);
-//            List<CommunityElasticResponse> content = response.hits().hits().stream()
-//                .map(hit -> mapToDto((Map<String, Object>) hit.source()))
-//                .collect(Collectors.toList());
-//
-//            return new PageImpl<>(content, pageable, response.hits().total().value());
-//        } catch (Exception e) {
-//            log.error("Failed to convert map to DTO: {}", source, e);
-//            throw new RuntimeException("Failed to search in Elasticsearch", e);
-//        }
-//    }
-//
-//    private CommunityElasticResponse mapToDto(Map<String, Object> source) {
-//        ObjectMapper mapper = new ObjectMapper();
-//        return mapper.convertValue(source, CommunityElasticResponse.class);
-//    }
     @Override
     public Page<CommunityElasticResponse> findByTitleContaining(String keyword, Pageable pageable) {
         try {

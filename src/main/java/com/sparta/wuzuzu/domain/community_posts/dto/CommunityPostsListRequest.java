@@ -3,7 +3,6 @@ package com.sparta.wuzuzu.domain.community_posts.dto;
 import com.sparta.wuzuzu.global.dto.request.ListRequest;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
