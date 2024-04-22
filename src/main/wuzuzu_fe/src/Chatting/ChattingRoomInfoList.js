@@ -10,19 +10,17 @@ import {
     MenuItem,
     Select,
     Skeleton,
-    TextField,
     Toolbar
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import {listStyle, style} from "./ChattingApp";
 import ChattingRoomInfo from "./ChattingRoomInfo";
-import {ModalDialog} from "@mui/joy";
 
 function ChattingRoomInfoList({
     handleClose,
     handleEnterClick,
-    handleCreateChatRoomClick
+    handleCreateChatRoomClick,
+    onChatRoomInfoClick
 }) {
 
     const [menuItem, setMenuItem] = useState("my");
@@ -76,7 +74,7 @@ function ChattingRoomInfoList({
     }
 
     return (
-        <ModalDialog
+        <Box
             sx={{
                 ...style,
                 bgcolor: 'white', // 원하는 배경색으로 변경
@@ -123,6 +121,8 @@ function ChattingRoomInfoList({
                                         selected={selectedIndex === index}
                                         onClick={() => handleListItemClick(
                                             index)}
+                                        onChatRoomInfoClick={() => onChatRoomInfoClick(
+                                            room)}
                                     />
                                 )
                             })
@@ -137,22 +137,25 @@ function ChattingRoomInfoList({
                         variant="contained"
                         sx={{mr: "10px"}}
                         onClick={() => handleEnterClick(
-                            roomList[selectedIndex])}
+                            roomList[selectedIndex],
+                            menuItem === "my"
+                        )}
                         disabled={selectedIndex === -1}
                     >
                         입장
                     </Button>
-                    <TextField
-                        id="standard-textarea"
-                        placeholder="검색"
-                        variant="standard"
-                        sx={{flexGrow: 1}}
-                    />
-                    <IconButton color="inherit"
-                                disabled={roomList === null}
-                    >
-                        <SearchIcon/>
-                    </IconButton>
+                    <Box sx={{flexGrow: 1}}/>
+                    {/*<TextField*/}
+                    {/*    id="standard-textarea"*/}
+                    {/*    placeholder="검색"*/}
+                    {/*    variant="standard"*/}
+                    {/*    sx={{flexGrow: 1}}*/}
+                    {/*/>*/}
+                    {/*<IconButton color="inherit"*/}
+                    {/*            disabled={roomList === null}*/}
+                    {/*>*/}
+                    {/*    <SearchIcon/>*/}
+                    {/*</IconButton>*/}
                     <IconButton color="inherit"
                                 id="basic-button"
                                 aria-controls={open ? 'basic-menu' : undefined}
@@ -180,12 +183,13 @@ function ChattingRoomInfoList({
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem onClick={handleCreateChatRoomClick}>방
-                            생성</MenuItem>
+                        <MenuItem onClick={handleCreateChatRoomClick}>
+                            방 생성
+                        </MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>
-        </ModalDialog>
+        </Box>
     );
 }
 
