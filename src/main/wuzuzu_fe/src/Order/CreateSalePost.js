@@ -14,7 +14,7 @@ import {
 import Grid from "@mui/material/Grid";
 import {category} from "./SalePostArea";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import {createSalePost, uploadImage} from "../api/SalePostApi";
+import {createSalePost} from "../api/SalePostApi";
 
 function CreateSalePost({handleBackClick}) {
     const [title, setTitle] = useState("");
@@ -154,7 +154,9 @@ function CreateSalePost({handleBackClick}) {
                                 <MenuItem value="" disabled>
                                     카테고리 선택
                                 </MenuItem>
-                                {category.map(({value, name}) => (
+                                {category
+                                .filter(({name}) => name !== "전체")
+                                .map(({value, name}) => (
                                     <MenuItem key={value} value={value}>
                                         {name}
                                     </MenuItem>
