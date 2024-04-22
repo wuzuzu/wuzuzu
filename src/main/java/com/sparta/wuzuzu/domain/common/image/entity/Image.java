@@ -1,5 +1,6 @@
 package com.sparta.wuzuzu.domain.common.image.entity;
 
+import com.sparta.wuzuzu.domain.chat_room.entity.ChatRoom;
 import com.sparta.wuzuzu.domain.common.entity.Timestamped;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
@@ -40,12 +41,18 @@ public class Image extends Timestamped {
     @JoinColumn(name = "communityPost_id")
     private CommunityPost communityPost;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chatRoom_id")
+    private ChatRoom chatRoom;
+
     public Image(String imageName, Object object) {
         this.imageUrl = imageName;
-        if(object instanceof SalePost){
+        if (object instanceof SalePost) {
             this.salePost = (SalePost) object;
         } else if (object instanceof CommunityPost) {
             this.communityPost = (CommunityPost) object;
+        } else if (object instanceof ChatRoom) {
+            this.chatRoom = (ChatRoom) object;
         }
     }
 }

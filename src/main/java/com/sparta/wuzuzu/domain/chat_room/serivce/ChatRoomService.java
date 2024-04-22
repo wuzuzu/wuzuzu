@@ -6,10 +6,13 @@ import com.sparta.wuzuzu.domain.chat_room.entity.ChatRoom;
 import com.sparta.wuzuzu.domain.chat_room.entity.Member;
 import com.sparta.wuzuzu.domain.chat_room.repository.ChatRoomRepository;
 import com.sparta.wuzuzu.domain.chat_room.repository.MemberRepository;
+import com.sparta.wuzuzu.domain.common.image.service.ImageService;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -17,18 +20,14 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final ImageService imageService;
 
-    public List<GetChatRoomResponse> getChatRooms(User user) {
-        return chatRoomRepository.findAllByNotInMember(user.getUserId()).stream()
-            .map(chatRoom -> new GetChatRoomResponse(chatRoom.getUser().getUserName(), chatRoom))
-            .toList();
-    }
-
-    public GetChatRoomResponse createChatRoom(CreateChatRoomRequest request, User user) {
+    public GetChatRoomResponse createChatRoom(CreateChatRoomRequest request, MultipartFile image,
+        User user) {
         StringBuilder sb = new StringBuilder();
         int i = 0;
 
-        if(request.getChatRoomTags() != null && !request.getChatRoomTags().isEmpty()) {
+        if (request.getChatRoomTags() != null && !request.getChatRoomTags().isEmpty()) {
             for (i = 0; i < request.getChatRoomTags().size() - 1; i++) {
                 sb.append(request.getChatRoomTags().get(i)).append(",");
             }
@@ -40,7 +39,6 @@ public class ChatRoomService {
             ChatRoom.builder()
                 .chatRoomName(request.getChatRoomName())
                 .description(request.getDescription())
-                .coverImage(request.getCoverImage())
                 .chatRoomTag(sb.toString())
                 .user(user)
                 .build()
@@ -49,7 +47,17 @@ public class ChatRoomService {
         memberRepository.save(
             Member.builder().chatRoomId(chatRoom.getChatRoomId()).userId(user.getUserId()).build());
 
-        return new GetChatRoomResponse(user.getUserName(), chatRoom);
+        String imageUrl = null;
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                imageUrl = imageService.createImage(image, chatRoom);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return new GetChatRoomResponse(user.getUserName(), imageUrl, chatRoom);
     }
 
     public Long enterChatRoom(Long chatRoomId, User user) {
@@ -59,10 +67,12 @@ public class ChatRoomService {
         return member.getMemberId();
     }
 
+    public List<GetChatRoomResponse> getChatRooms(User user) {
+        return chatRoomRepository.findAllNotMyRooms(user.getUserId());
+    }
+
     public List<GetChatRoomResponse> getMyChatRooms(User user) {
-        return chatRoomRepository.findAllByMember(user.getUserId()).stream()
-            .map(chatRoom -> new GetChatRoomResponse(chatRoom.getUser().getUserName(), chatRoom))
-            .toList();
+        return chatRoomRepository.findAllMyRooms(user.getUserId());
     }
 
     public List<GetChatRoomResponse> searchChatRoomsByKeyword(String keyword) {
