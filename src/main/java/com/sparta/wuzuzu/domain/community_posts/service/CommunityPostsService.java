@@ -37,7 +37,6 @@ public class CommunityPostsService {
     private final CommunityCategoryRepository communityCategoryRepository;
     private final CustomCommunityPostRepository customCommunityPostRepository;
     private final ImageService imageService;
-//    private final CustomCommunityPostDocumentRepository customCommunityPostDocumentRepository;
     private final CustomCommunityPostElasticRepository communityPostElasticRepository;
     public CommunityPostResponse saveCommunityPosts(CommunityPostRequest communityPostRequest,
         User user) {
