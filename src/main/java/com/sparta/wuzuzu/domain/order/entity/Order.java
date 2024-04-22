@@ -41,9 +41,21 @@ public class Order extends Timestamped {
     @Column(nullable = false)
     private Long count;
 
+    @Column
+    private String impUid;
+
+    @Column
+    private String merchantUid;
+
     public Order(OrderRequest requestDto, User user) {
         this.salePostId = requestDto.getSalePostId();
         this.count = requestDto.getCount();
         this.user = user;
+    }
+
+    public Order(OrderRequest requestDto, User user, String impUid, String merchantUid) {
+        this(requestDto, user);
+        this.impUid = impUid;
+        this.merchantUid = merchantUid;
     }
 }

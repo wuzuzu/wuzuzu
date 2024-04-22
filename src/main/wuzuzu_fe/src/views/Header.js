@@ -6,7 +6,16 @@ import Typography from '@mui/material/Typography';
 import {Link, useNavigate} from "react-router-dom";
 
 function Header(props) {
-  const { sections, title } = props;
+  // const { sections, title } = props;
+
+  const sections = [
+    {title: '🐶스팟 조회', url: '/Spot'},
+    {title: '🐹 용품 거래', url: '/transaction'},
+    {title: '🐱 커뮤니티', url: '/community'}
+  ];
+
+
+  const title = 'WuZuZu'
 
   const navigate = useNavigate();
 
@@ -44,7 +53,11 @@ function Header(props) {
   return (
       <React.Fragment>
         <Toolbar sx={{ borderBottom: 1, borderColor: 'divider',overflowX: 'auto'  }}>
-          <Button onClick={handleLogout} variant="outlined" size="small">
+          <Button onClick={handleLogout}  size="small" style={{
+            backgroundColor: '#FBEFEF',
+            color: '#6E6E6E',
+            borderColor: '#6E6E6E'
+          }}>
             log out
           </Button>
 
@@ -54,13 +67,19 @@ function Header(props) {
               color="inherit"
               align="center"
               noWrap
-              sx={{ flex: 1 }}
+              sx={{ flex: 1, cursor: 'pointer' }} // 커서를 포인터로 변경하여 클릭 가능하도록 설정
+              onClick={() => navigate('/Main')} // 클릭 이벤트 추가
+
           >
             {title}
           </Typography>
 
 
-          <Button onClick={handleMypageClick} variant="outlined" size="small">
+          <Button onClick={handleMypageClick}  size="small" style={{
+            backgroundColor: '#FBEFEF',
+            color: '#6E6E6E',
+            borderColor: '#6E6E6E'
+          }}>
             My page
           </Button>
 

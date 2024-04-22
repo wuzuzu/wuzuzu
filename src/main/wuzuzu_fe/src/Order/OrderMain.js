@@ -5,18 +5,22 @@ import CreateSalePost from "./CreateSalePost";
 import SalePostDetail from "./SalePostDetail";
 import {communityAppState} from "../Community/CommunityMain";
 import {getPostDetail} from "../api/SalePostApi";
+import OrderHistory from "./OrderHistory";
+import {getOrders} from "../api/OrderApi";
 
 export const orderAppState = {
     상품조회중: 1,
     상품상세조회중: 2,
     상품등록중: 3,
-    상품구매중: 4
+    상품구매중: 4,
+    주문조회중: 5
 };
 
 function OrderMain() {
 
     const [state, setState] = useState(orderAppState.상품조회중);
     const [selectedPost, setSelectedPost] = useState(null);
+    const [orders, setOrders] = useState([]);
 
     function handleCreateClick() {
         setState(orderAppState.상품등록중);
@@ -37,18 +41,33 @@ function OrderMain() {
         }
     }
 
+    async function handleOrderHistoryClick() {
+        try {
+            const response = await getOrders();
+            setOrders(response.data.data);
+            setState(orderAppState.주문조회중);
+        } catch (e) {
+            alert('주문 내역 조회 실패...');
+        }
+    }
+
     function switchUI() {
         switch (state) {
             case orderAppState.상품조회중:
                 return <SalePostArea
                     handleCreateClick={handleCreateClick}
-                    handlePostClick={handlePostClick}/>
+                    handlePostClick={handlePostClick}
+                    handleOrderHistoryClick={handleOrderHistoryClick}/>
             case orderAppState.상품상세조회중:
                 return <SalePostDetail
                     post={selectedPost}
                     handleBackClick={handleBackClick}/>
             case orderAppState.상품등록중:
                 return <CreateSalePost
+                    handleBackClick={handleBackClick}/>
+            case orderAppState.주문조회중:
+                return <OrderHistory
+                    orders={orders}
                     handleBackClick={handleBackClick}/>
             default:
                 return null;

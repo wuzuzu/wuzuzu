@@ -8,7 +8,6 @@ import {
     CardMedia,
     Chip,
     Divider,
-    MenuItem,
     Typography,
 } from '@mui/material';
 import {Visibility as VisibilityIcon} from '@mui/icons-material';
@@ -31,10 +30,12 @@ function SalePostDetail({post, handleBackClick}) {
             email: localStorage.getItem('email'),
             userName: localStorage.getItem('userName'),
         };
+
         await requestPay({
             user: buyer,
             salePost: post,
             count: quantity,
+            handleBackClick: handleBackClick,
         });
     };
 
@@ -122,14 +123,16 @@ function SalePostDetail({post, handleBackClick}) {
                             }}
                             sx={{mr: 2, width: '100px'}}
                         />
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            sx={{borderRadius: '20px'}}
-                            onClick={handleBuyClick}
-                        >
-                            구매하기
-                        </Button>
+                        {post.stock > 0 && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                sx={{borderRadius: '20px'}}
+                                onClick={handleBuyClick}
+                            >
+                                구매하기
+                            </Button>
+                        )}
                     </Box>
                 </CardContent>
             </Card>

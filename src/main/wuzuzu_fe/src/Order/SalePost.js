@@ -17,7 +17,8 @@ function SalePost({post, handlePostClick}) {
         <Grid item xs={12} sm={6} md={6}>
             <Card sx={{
                 borderRadius: "20px",
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)"
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                position: "relative"
             }}>
                 <CardActionArea onClick={() => handlePostClick(post)}>
                     <CardContent>
@@ -48,6 +49,26 @@ function SalePost({post, handlePostClick}) {
                         </Box>
                     </CardContent>
                 </CardActionArea>
+                {post.stock === 0 && (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            backgroundColor: "rgba(255, 255, 255, 0.8)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            zIndex: 1
+                        }}
+                    >
+                        <Typography variant="h6" color="error">
+                            품절
+                        </Typography>
+                    </Box>
+                )}
             </Card>
         </Grid>
     );

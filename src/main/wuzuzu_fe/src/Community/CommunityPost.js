@@ -1,12 +1,13 @@
 import {
     Avatar,
     Box,
+    Card,
     CardActionArea,
+    CardContent,
     CardMedia,
     Grid,
     Typography
 } from "@mui/material";
-import {Card, CardContent} from "@mui/joy";
 import {
     Comment as CommentIcon,
     Favorite as FavoriteIcon,

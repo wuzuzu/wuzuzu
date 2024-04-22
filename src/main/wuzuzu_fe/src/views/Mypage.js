@@ -116,8 +116,12 @@ const Mypage = () => {
 
   if (user) {
     return (
-        <Card>
-          <CardContent>
+        <Card >
+          <CardContent style={{
+            backgroundColor: 'white',
+            border: '1px solid #ccc',
+            borderRadius: '10px'
+          }}>
             <Stack spacing={2} sx={{alignItems: 'center'}}>
               <div>
                 <Avatar
@@ -142,14 +146,22 @@ const Mypage = () => {
             </Stack>
           </CardContent>
           <Divider/>
-          <CardActions>
-            <Button fullWidth variant="text">
+          <CardActions sx={{ justifyContent: 'center' }}>
+            <Button fullWidth variant="text" style={{
+              backgroundColor: '#FBEFEF',
+              color: '#6E6E6E',
+              width: '150px',
+              height: '50px'
+            }}>
               Upload picture
             </Button>
-          </CardActions>
 
-          <CardActions>
-            <Button fullWidth variant="text" onClick={handleFavorite}>
+            <Button fullWidth variant="text" onClick={handleFavorite} style={{
+              backgroundColor: '#FBEFEF',
+              color: '#6E6E6E',
+              width: '150px',
+              height: '50px'
+            }} >
               즐겨 찾기
             </Button>
           </CardActions>
@@ -159,9 +171,19 @@ const Mypage = () => {
                 event.preventDefault();
               }}
           >
-            <Card>
-              <CardHeader subheader="The information can be edited"
-                          title="Profile"/>
+            <Card sx={{maxWidth: 800, margin: 'auto'}} style={{
+              backgroundColor: 'white',
+              border: '1px solid #ccc',
+              borderRadius: '10px'
+            }}>
+              <CardHeader
+                  style={{
+                    backgroundColor: '#FBEFEF'
+                  }}
+                  subheader="The information can be edited"
+                  title="Profile"
+                  sx={{textAlign: 'center'}}
+              />
               <Divider/>
               <CardContent>
                 <Grid container spacing={3}>
@@ -180,39 +202,45 @@ const Mypage = () => {
                   <Grid xs={12}>
                     <FormControl fullWidth required>
                       <InputLabel>address</InputLabel>
-
-                      <OutlinedInput defaultValue={user.data.address}
-                                     label="address"
-                                     name="address"
-                                     onChange={(e) => setAddress(
-                                         e.target.value)}/>
+                      <OutlinedInput
+                          defaultValue={user.data.address}
+                          label="address"
+                          name="address"
+                          onChange={(e) => setAddress(e.target.value)}
+                      />
                     </FormControl>
                   </Grid>
                   <Grid xs={12}>
                     <FormControl fullWidth required>
                       <InputLabel>userName</InputLabel>
-                      <OutlinedInput defaultValue={user.data.userName}
-                                     label="userName" name="userName"
-                                     onChange={(e) => setUserName(
-                                         e.target.value)}/>
+                      <OutlinedInput
+                          defaultValue={user.data.userName}
+                          label="userName"
+                          name="userName"
+                          onChange={(e) => setUserName(e.target.value)}
+                      />
                     </FormControl>
                   </Grid>
                   <Grid md={6} xs={12}>
                     <FormControl fullWidth>
                       <InputLabel>petName</InputLabel>
-                      <OutlinedInput defaultValue={user.data.petName}
-                                     label="petName" name="petName"
-                                     onChange={(e) => setPetName(
-                                         e.target.value)}/>
+                      <OutlinedInput
+                          defaultValue={user.data.petName}
+                          label="petName"
+                          name="petName"
+                          onChange={(e) => setPetName(e.target.value)}
+                      />
                     </FormControl>
                   </Grid>
                   <Grid md={6} xs={12}>
                     <FormControl fullWidth>
                       <InputLabel>petType</InputLabel>
-                      <OutlinedInput defaultValue={user.data.petType}
-                                     label="petType" name="petType"
-                                     onChange={(e) => setPetType(
-                                         e.target.value)}/>
+                      <OutlinedInput
+                          defaultValue={user.data.petType}
+                          label="petType"
+                          name="petType"
+                          onChange={(e) => setPetType(e.target.value)}
+                      />
                     </FormControl>
                   </Grid>
                 </Grid>
@@ -220,14 +248,28 @@ const Mypage = () => {
               <Divider/>
               <FormHelperTexts>{updateAllError}</FormHelperTexts>
               <CardActions sx={{justifyContent: 'flex-end'}}>
-                <Button variant="contained" onClick={handleUpdateAll}> Save
-                  details</Button>
+                <Button variant="contained" onClick={handleUpdateAll} style={{
+                  backgroundColor: '#FBEFEF',
+                  color: '#6E6E6E',
+                  width: '150px',
+                  height: '50px'
+                }}>
+                  Save details
+                </Button>
               </CardActions>
             </Card>
 
+            <br/>
 
-            <Card>
-              <CardHeader subheader="비밀번호 수정 "
+            <Card sx={{maxWidth: 800, margin: 'auto'}} style={{
+              backgroundColor: 'white',
+              border: '1px solid #ccc',
+              borderRadius: '10px'
+            }}>
+              <CardHeader style={{
+                backgroundColor: '#FBEFEF'
+              }} sx={{textAlign: 'center'}}
+                          subheader="비밀번호 수정 "
                           title="PW "/>
               <Divider/>
               <CardContent>
@@ -276,7 +318,12 @@ const Mypage = () => {
               <Divider/>
               <FormHelperTexts>{updatePwError}</FormHelperTexts>
               <CardActions sx={{justifyContent: 'flex-end'}}>
-                <Button variant="contained" onClick={handleUpdatePw}>Save
+                <Button variant="contained" onClick={handleUpdatePw} style={{
+                  backgroundColor: '#FBEFEF',
+                  color: '#6E6E6E',
+                  width: '150px',
+                  height: '50px'
+                }}>Save
                   pw</Button>
               </CardActions>
             </Card>

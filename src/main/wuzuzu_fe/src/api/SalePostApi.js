@@ -1,4 +1,4 @@
-import {apiClient} from "../Client";
+import {apiClient} from "./Client";
 
 const startUrl = "/api/v1/sale-posts";
 
@@ -12,7 +12,8 @@ export const getPosts = async () => {
 
 export const createSalePost = async (salePost, image) => {
     const formData = new FormData();
-    await formData.append('salePost', new Blob([JSON.stringify(salePost)], {type: 'application/json'}));
+    await formData.append('salePost',
+        new Blob([JSON.stringify(salePost)], {type: 'application/json'}));
 
     if (image) {
         formData.append('image', image);
