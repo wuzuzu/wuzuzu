@@ -1,11 +1,13 @@
 package com.sparta.wuzuzu.domain.community_posts.controller;
 
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostDetailResponse;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostElasticListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostResponse;
 import com.sparta.wuzuzu.domain.community_posts.service.CommunityPostsService;
+import com.sparta.wuzuzu.global.dto.request.ListRequest;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -81,6 +83,11 @@ public class CommunityPostsController {
     public ResponseEntity<CommunityPostListResponse> searchCommunityPosts(
         @ModelAttribute CommunityPostListRequest request) {
         return ResponseEntity.ok(communityPostsService.searchCommunityPosts(request));
+    }
+
+    @GetMapping("/search/keyword/{keyword}")
+    public ResponseEntity<CommunityPostElasticListResponse> searchCommunityPostsByTitle(@PathVariable String keyword, @ModelAttribute ListRequest request) {
+        return ResponseEntity.ok(communityPostsService.searchPostByKeyword(keyword, request));
     }
 
     @GetMapping("/{communityPostsId}")
