@@ -2,7 +2,9 @@ package com.sparta.wuzuzu.domain.community_posts.service;
 
 import com.sparta.wuzuzu.domain.common.image.entity.Image;
 import com.sparta.wuzuzu.domain.common.image.service.ImageService;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityElasticResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostDetailResponse;
+import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostElasticListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostRequest;
@@ -11,9 +13,11 @@ import com.sparta.wuzuzu.domain.community_posts.entity.CommunityCategory;
 import com.sparta.wuzuzu.domain.community_posts.entity.CommunityPost;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityCategoryRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CommunityPostRepository;
+import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostElasticRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.PostLikeRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.global.dto.request.ListRequest;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
 import com.sparta.wuzuzu.global.util.PagingUtil;
 import java.io.IOException;
@@ -36,6 +40,7 @@ public class CommunityPostsService {
     private final CustomCommunityPostRepository customCommunityPostRepository;
     private final ImageService imageService;
     private final PostLikeRepository postLikeRepository;
+    private final CustomCommunityPostElasticRepository communityPostElasticRepository;
 
     public CommunityPostResponse saveCommunityPosts(CommunityPostRequest communityPostRequest,
         MultipartFile image, User user) {
@@ -102,6 +107,24 @@ public class CommunityPostsService {
             postsPage.getTotalPages(), request.getPage(), request.getPageSize());
 
         return CommunityPostListResponse.builder()
+            .postList(postsPage.getContent())
+            .pagingUtil(pagingUtil)
+            .build();
+    }
+
+    public CommunityPostElasticListResponse searchPostByKeyword(String keyword, ListRequest request) {
+        if (request.getColumn() == null || request.getColumn().isEmpty()) {
+            request.setColumn("createdAt");//조회 기준 컬럼 입력 없을 경우 날짜순을 기본으로 지정
+        }
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(),
+            Sort.by(request.getSortDirection(), request.getColumn()));
+        Page<CommunityElasticResponse> postsPage = communityPostElasticRepository.findByTitleContaining(keyword, pageable);
+
+        PagingUtil pagingUtil = new PagingUtil(postsPage.getTotalElements(),
+            postsPage.getTotalPages(), request.getPage(), request.getPageSize());
+
+        return CommunityPostElasticListResponse.builder()
             .postList(postsPage.getContent())
             .pagingUtil(pagingUtil)
             .build();
