@@ -6,14 +6,23 @@ import com.sparta.wuzuzu.domain.common.image.service.ImageService;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostResponse;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostVo;
+import com.sparta.wuzuzu.domain.sale_post.dto.SalePostElasticListResponse;
+import com.sparta.wuzuzu.domain.sale_post.dto.SalePostElasticResponse;
 import com.sparta.wuzuzu.domain.sale_post.entity.SalePost;
+import com.sparta.wuzuzu.domain.sale_post.repository.CustomSalePostElasticRepository;
 import com.sparta.wuzuzu.domain.sale_post.repository.SalePostRepository;
 import com.sparta.wuzuzu.domain.sale_post.repository.query.SalePostQueryRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.global.dto.request.ListRequest;
+import com.sparta.wuzuzu.global.util.PagingUtil;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +37,7 @@ public class SalePostService {
     private final CategoryRepository categoryRepository;
     private final ImageService imageService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final CustomSalePostElasticRepository SalesPostElasticRepository;
 
     @Transactional
     public SalePostResponse createSalePost(
@@ -74,6 +84,24 @@ public class SalePostService {
         return salePostList.stream()
             .map(SalePostResponse::new)
             .collect(Collectors.toList());
+    }
+
+    public SalePostElasticListResponse getSalePostsByTitleAndGoods(String keyword, ListRequest request) {
+        if (request.getColumn() == null || request.getColumn().isEmpty()) {
+            request.setColumn("createdAt");//조회 기준 컬럼 입력 없을 경우 날짜순을 기본으로 지정
+        }
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(),
+            Sort.by(request.getSortDirection(), request.getColumn()));
+
+        Page<SalePostElasticResponse> SalesPage = SalesPostElasticRepository.findByTitleAndGoodsContaining(keyword, pageable);
+        PagingUtil pagingUtil = new PagingUtil(SalesPage.getTotalElements(),
+            SalesPage.getTotalPages(), request.getPage(), request.getPageSize());
+
+        return SalePostElasticListResponse.builder()
+            .responseList(SalesPage.getContent())
+            .pagingUtil(pagingUtil)
+            .build();
+
     }
 
     // 상세 게시글 : 제목, 조회수, 설명, 상품 내용 출력

@@ -64,7 +64,7 @@ public class CommunityPost extends Timestamped {
     private List<PostLike> postLikeList = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "category", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CommunityCategory category;
 
     @OneToMany(mappedBy = "communityPost")

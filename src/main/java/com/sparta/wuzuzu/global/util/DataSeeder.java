@@ -37,7 +37,8 @@ public class DataSeeder implements CommandLineRunner {
                 .views((long) (Math.random() * 1000))
                 .likeCount((long) (Math.random() * 100))
                 .user(testUser) // 임시 사용자 객체 할당
-                .category(testCategory1) // 임시 카테고리 객체 할당
+                .category(testCategory1)// 임시 카테고리 객체 할당
+                .comments((long) (Math.random() * 10))
                 .build();
             posts.add(post);
         }
@@ -49,6 +50,7 @@ public class DataSeeder implements CommandLineRunner {
                 .views((long) (Math.random() * 1000))
                 .likeCount((long) (Math.random() * 100))
                 .user(testUser) // 임시 사용자 객체 할당
+                .comments((long) (Math.random() * 10))
                 .category(testCategory2) // 임시 카테고리 객체 할당
                 .build();
             posts.add(post);
@@ -62,6 +64,7 @@ public class DataSeeder implements CommandLineRunner {
                 .likeCount((long) (Math.random() * 100))
                 .user(testUser) // 임시 사용자 객체 할당
                 .category(testCategory3) // 임시 카테고리 객체 할당
+                .comments((long) (Math.random() * 10))
                 .build();
             posts.add(post);
         }
@@ -73,6 +76,7 @@ public class DataSeeder implements CommandLineRunner {
                 .views((long) (Math.random() * 1000))
                 .likeCount((long) (Math.random() * 100))
                 .user(testUser) // 임시 사용자 객체 할당
+                .comments((long) (Math.random() * 10))
                 .category(testCategory1) // 임시 카테고리 객체 할당
                 .build();
             posts.add(post);
@@ -85,6 +89,7 @@ public class DataSeeder implements CommandLineRunner {
                 .views((long) (Math.random() * 1000))
                 .likeCount((long) (Math.random() * 100))
                 .user(testUser) // 임시 사용자 객체 할당
+                .comments((long) (Math.random() * 10))
                 .category(testCategory2) // 임시 카테고리 객체 할당
                 .build();
             posts.add(post);
@@ -96,6 +101,7 @@ public class DataSeeder implements CommandLineRunner {
                 .views((long) (Math.random() * 1000))
                 .likeCount((long) (Math.random() * 100))
                 .user(testUser) // 임시 사용자 객체 할당
+                .comments((long) (Math.random() * 10))
                 .category(testCategory3) // 임시 카테고리 객체 할당
                 .build();
             posts.add(post);
