@@ -37,18 +37,24 @@ public class CustomSalePostElasticRepositoryImpl implements CustomSalePostElasti
                             .match(mm -> mm
                                 .field("title")
                                 .query(keyword)
+                                .fuzziness("AUTO")
+                                .maxExpansions(50)
                             )
                         )
                         .should(m -> m
                             .match(mm -> mm
                                 .field("goods")
                                 .query(keyword)
+                                .fuzziness("AUTO")
+                                .maxExpansions(50)
                             )
                         )
                         .should(m -> m
                             .match(mm -> mm
                                 .field("category.name")  // 카테고리 이름에서 검색 추가
                                 .query(keyword)
+                                .fuzziness("AUTO")
+                                .maxExpansions(50)
                             )
                         )
                         .minimumShouldMatch("1")  // 적어도 하나의 조건을 만족

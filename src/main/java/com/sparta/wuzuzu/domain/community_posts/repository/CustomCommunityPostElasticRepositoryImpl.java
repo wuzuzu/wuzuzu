@@ -34,6 +34,8 @@ public class CustomCommunityPostElasticRepositoryImpl implements CustomCommunity
                     .match(m -> m
                         .field("title")
                         .query(keyword)
+                        .fuzziness("AUTO")
+                        .maxExpansions(50)
                     )
                 )
                 .from((int) pageable.getOffset())
