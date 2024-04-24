@@ -4,7 +4,9 @@ import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostResponse;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostVo;
+import com.sparta.wuzuzu.domain.sale_post.dto.SalePostElasticListResponse;
 import com.sparta.wuzuzu.domain.sale_post.service.SalePostService;
+import com.sparta.wuzuzu.global.dto.request.ListRequest;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,6 +50,11 @@ public class SalePostController {
     public ResponseEntity<CommonResponse<List<SalePostResponse>>> getSalePosts() {
         List<SalePostResponse> salePostResponseList = salePostService.getSalePosts();
         return CommonResponse.ofDataWithHttpStatus(salePostResponseList, HttpStatus.OK);
+    }
+
+    @GetMapping("/keyword/{keyword}")
+    public ResponseEntity<SalePostElasticListResponse> searchSalesPostByTitleAndGoods(@PathVariable String keyword, @ModelAttribute ListRequest request) {
+        return ResponseEntity.ok(salePostService.getSalePostsByTitleAndGoods(keyword, request));
     }
 
     // 게시물 상세 조회 : QueryDSL 사용하기, 조회시 동시성 제어로 조회수 증가
