@@ -2,7 +2,6 @@ package com.sparta.wuzuzu.domain.sale_post.repository;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.SearchRequest.Builder;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostElasticResponse;
@@ -30,7 +29,7 @@ public class CustomSalePostElasticRepositoryImpl implements CustomSalePostElasti
     public Page<SalePostElasticResponse> findByTitleAndGoodsContaining(String keyword,
         Pageable pageable) {
         try {
-            SearchRequest request = new Builder()
+            SearchRequest request = new SearchRequest.Builder()
                 .index("sale_posts")
                 .query(q -> q
                     .bool(b -> b
@@ -46,7 +45,13 @@ public class CustomSalePostElasticRepositoryImpl implements CustomSalePostElasti
                                 .query(keyword)
                             )
                         )
-                        .minimumShouldMatch("1")  // Ensure at least one 'should' clause matches
+                        .should(m -> m
+                            .match(mm -> mm
+                                .field("category.name")  // 카테고리 이름에서 검색 추가
+                                .query(keyword)
+                            )
+                        )
+                        .minimumShouldMatch("1")  // 적어도 하나의 조건을 만족
                     )
                 )
                 .from((int) pageable.getOffset())
