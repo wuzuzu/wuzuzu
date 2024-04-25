@@ -1,7 +1,9 @@
 package com.sparta.wuzuzu.domain.sale_post.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.wuzuzu.domain.category.entity.Category;
 import java.util.Date;
 import lombok.AllArgsConstructor;
@@ -16,27 +18,15 @@ import org.junit.experimental.categories.Categories;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SalePostElasticResponse {
 
-    private Long salePostId;
+    private Long sale_post_id;
     private String title;
-    private String description;
-    private Long views = 0L;
-    private Boolean status = true;
+    private Long views;
     private String goods;
-    private Long price;
     private Long stock;
-    private Category category;
-    private User user;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date timestamp;
 
-    @Data
-    public static class User {
-        private long userId;
-    }
-
-    @Data
-    public static class Category {
-        private long categoryId;
-        private String name;
-    }
+    private String author;
+    private String category;
 
 }
