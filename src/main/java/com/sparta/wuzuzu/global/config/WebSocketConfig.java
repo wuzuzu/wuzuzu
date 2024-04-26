@@ -32,7 +32,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // STOMP 엔드포인트 등록
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/gs-guide-websocket"); // 핸드셰이크 엔드포인트 설정
+        registry.addEndpoint("/gs-guide-websocket")
+            .setAllowedOriginPatterns("*")
+            .withSockJS(); // 핸드셰이크 엔드포인트 설정
     }
 
     @Override

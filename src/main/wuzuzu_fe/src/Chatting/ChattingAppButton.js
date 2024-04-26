@@ -22,9 +22,10 @@ function ChattingAppButton() {
             position: 'fixed',
             bottom: '5%',
             right: '5%',
-            boxShadow: '2px',
+            boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
             backgroundColor: '#EFF2FB',
-            borderRadius: '10px'
+            border: '1px solid #E0E0E0'
         }}>
             <IconButton color="primary" aria-label="open chat"
                         onClick={handleOpen}>
