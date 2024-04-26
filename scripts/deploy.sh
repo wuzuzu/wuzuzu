@@ -9,7 +9,7 @@ cd $REPOSITORY/src/frontend
 npm install
 echo "> Frontend 설치 완료"
 
-APP_NAME=cicd_project
+APP_NAME=wuzuzu
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
@@ -19,7 +19,7 @@ if [ -z $CURRENT_PID ]
 then
   echo "> 종료할 애플리케이션이 없습니다."
 else
-  echo "> kill -9 $CURRENT_PID"
+  echo "> kill -15 $CURRENT_PID"
   kill -15 $CURRENT_PID
   sleep 5
 fi
