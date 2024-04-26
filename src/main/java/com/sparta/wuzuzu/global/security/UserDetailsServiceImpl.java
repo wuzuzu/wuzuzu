@@ -23,19 +23,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
-        if (user != null)
+        if (user != null) {
             return new UserDetailsImpl(user);
+        }
 
         Admin admin = adminRepository.findByEmail(email);
-        if (admin != null)
+        if (admin != null) {
             return new UserDetailsImpl(admin);
+        }
 
         throw new UsernameNotFoundException("Not Found " + email);
     }
 
     public UserDetails loadUserByClaims(Claims info) {
         User user = new User(info.getSubject(),
-                UserRole.valueOf(info.get(JwtUtil.AUTHORIZATION_KEY).toString()));
+            UserRole.valueOf(info.get(JwtUtil.AUTHORIZATION_KEY).toString()));
         user.setUserId(info.get("userId", Long.class));
 
         return new UserDetailsImpl(user);

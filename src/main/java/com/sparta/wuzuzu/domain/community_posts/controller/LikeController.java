@@ -25,5 +25,4 @@ public class LikeController {
         return ResponseEntity.ok()
             .body(likeService.createLike(communityPostId, userDetails.getUser()));
     }
-
 }

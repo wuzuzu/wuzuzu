@@ -2,23 +2,27 @@ package com.sparta.wuzuzu.global.jwt;
 
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
-import com.sparta.wuzuzu.domain.user.repository.UserRepository;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j(topic = "JwtUtil")
 @Component
@@ -36,7 +40,8 @@ public class JwtUtil {
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-    public JwtUtil(@Qualifier("refreshTokenRedisTemplate") RedisTemplate<String, String> refreshTokenRedisTemplate) {
+    public JwtUtil(
+        @Qualifier("refreshTokenRedisTemplate") RedisTemplate<String, String> refreshTokenRedisTemplate) {
         this.refreshTokenRedisTemplate = refreshTokenRedisTemplate;
     }
 
@@ -51,14 +56,14 @@ public class JwtUtil {
         Date date = new Date();
 
         return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(user.getEmail())
-                        .claim("userId",user.getUserId())
-                        .claim(AUTHORIZATION_KEY, user.getRole())
-                        .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
-                        .setIssuedAt(date)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
+            Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("userId", user.getUserId())
+                .claim(AUTHORIZATION_KEY, user.getRole())
+                .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
     }
 
     // REFRESH 토큰 생성
@@ -66,21 +71,21 @@ public class JwtUtil {
         Date date = new Date();
 
         String refreshToken = BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(user.getEmail())
-                        .claim("userId",user.getUserId())
-                        .claim(AUTHORIZATION_KEY, user.getRole())
-                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
-                        .setIssuedAt(date)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
+            Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("userId", user.getUserId())
+                .claim(AUTHORIZATION_KEY, user.getRole())
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
 
         // redis에 저장
         refreshTokenRedisTemplate.opsForValue().set(
-                user.getEmail(),
-                refreshToken,
-                REFRESH_TOKEN_TIME,
-                TimeUnit.MILLISECONDS
+            user.getEmail(),
+            refreshToken,
+            REFRESH_TOKEN_TIME,
+            TimeUnit.MILLISECONDS
         );
 
         return refreshToken;
@@ -94,10 +99,10 @@ public class JwtUtil {
     public String generateAccessTokenFromRefreshToken(String refreshToken) {
         // refreshToken에서 사용자 정보 추출
         Claims refreshTokenClaims = Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(refreshToken).getBody();
+            .parseClaimsJws(refreshToken).getBody();
         String email = refreshTokenClaims.getSubject();
         UserRole role = UserRole.valueOf(
-                (String) refreshTokenClaims.get(AUTHORIZATION_KEY));
+            (String) refreshTokenClaims.get(AUTHORIZATION_KEY));
         User user = new User(email, role);
 
         // 새로운 accessToken 생성
@@ -107,9 +112,11 @@ public class JwtUtil {
     // 토큰 만료 확인
     public boolean isAccessTokenExpired(String accessToken) {
         try {
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(accessToken).getBody();
             Date expiration = claims.getExpiration();
-            return expiration != null && expiration.after(new Date()); // 토큰 만료 시간과 현재 시간을 비교하여 유효 여부 반환
+            return expiration != null && expiration.after(
+                new Date()); // 토큰 만료 시간과 현재 시간을 비교하여 유효 여부 반환
         } catch (ExpiredJwtException e) {
             return false; // 만료된 토큰
         } catch (JwtException e) {

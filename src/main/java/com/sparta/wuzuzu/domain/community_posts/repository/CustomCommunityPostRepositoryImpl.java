@@ -1,6 +1,6 @@
 package com.sparta.wuzuzu.domain.community_posts.repository;
 
-import static com.sparta.wuzuzu.domain.common.image.entity.QImage.*;
+import static com.sparta.wuzuzu.domain.common.image.entity.QImage.image;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
@@ -9,7 +9,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.wuzuzu.domain.common.image.entity.QImage;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostResponse;
 import com.sparta.wuzuzu.domain.community_posts.entity.QCommunityPost;
 import com.sparta.wuzuzu.domain.user.entity.QUser;
@@ -56,7 +55,8 @@ public class CustomCommunityPostRepositoryImpl implements CustomCommunityPostRep
                 image.imageUrl.as("image")))
             .from(communityPost)
             .leftJoin(communityPost.user, user)
-            .leftJoin(image).on(image.communityPost.communityPostId.eq(communityPost.communityPostId))
+            .leftJoin(image)
+            .on(image.communityPost.communityPostId.eq(communityPost.communityPostId))
             .where(
                 keywordIs(keyword),
                 categoryIs(categoryName)
@@ -98,14 +98,18 @@ public class CustomCommunityPostRepositoryImpl implements CustomCommunityPostRep
 
         switch (order.getProperty()) {
             case TITLE:
-                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.title);
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                    communityPost.title);
             case VIEWS:
-                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.views);
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                    communityPost.views);
             case LIKE_COUNT:
-                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.likeCount);
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                    communityPost.likeCount);
             case CREATED_AT:
                 // createdAt 컬럼에 인덱스가 적용되어 있으므로, 이 컬럼을 기준으로 정렬할 때 쿼리 성능이 향상됩니다.
-                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC, communityPost.createdAt);
+                return new OrderSpecifier<>(order.isAscending() ? Order.ASC : Order.DESC,
+                    communityPost.createdAt);
             default:
                 throw new IllegalArgumentException("정렬 기준이 유효하지 않습니다: " + order.getProperty());
         }

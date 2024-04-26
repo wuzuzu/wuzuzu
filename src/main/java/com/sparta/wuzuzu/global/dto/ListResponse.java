@@ -1,4 +1,4 @@
-package com.sparta.wuzuzu.global.dto.response;
+package com.sparta.wuzuzu.global.dto;
 
 import com.sparta.wuzuzu.global.util.PagingUtil;
 import lombok.AccessLevel;

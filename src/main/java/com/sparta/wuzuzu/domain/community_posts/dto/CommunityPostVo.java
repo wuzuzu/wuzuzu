@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class CommunityPostVo {
+
     private String title;
     private String username;
     private String contents;
     private Long likeCount;
     private Long views;
     private List<String> imageUrls;
-
 }

@@ -30,15 +30,15 @@ public class CommunityCategoryController {
     public ResponseEntity<CommunityCategoryResponse> createCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody CommunityCategoryRequest communityCategoryRequest
-    )
-    {
-        CommunityCategoryResponse response = community_CategoryService.createCategory(userDetails.getUser(), communityCategoryRequest);
-        return new ResponseEntity<>(response,HttpStatus.CREATED);
+    ) {
+        CommunityCategoryResponse response = community_CategoryService.createCategory(
+            userDetails.getUser(), communityCategoryRequest);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<CommunityCategoryResponse>> getCategory(
-    ){
+    ) {
         List<CommunityCategoryResponse> response = community_CategoryService.getCategory();
         return ResponseEntity.ok().body(response);
     }
@@ -48,15 +48,15 @@ public class CommunityCategoryController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long categoryId,
         @Valid @RequestBody CommunityCategoryRequest requestDto
-    ){
+    ) {
         community_CategoryService.updateCategory(userDetails.getUser(), categoryId, requestDto);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
 
     @PostMapping("/admin/{categoryId}")
-    public ResponseEntity<Void> deleteCategory (@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long categoryId){
+    public ResponseEntity<Void> deleteCategory(@AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long categoryId) {
         community_CategoryService.deleteCategory(userDetails.getUser(), categoryId);
         return ResponseEntity.status(HttpStatus.OK.value()).build();
     }
-
 }

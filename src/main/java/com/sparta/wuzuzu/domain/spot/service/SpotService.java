@@ -1,7 +1,7 @@
 package com.sparta.wuzuzu.domain.spot.service;
 
-import com.sparta.wuzuzu.domain.spot.dto.response.SpotDetailResponse;
-import com.sparta.wuzuzu.domain.spot.dto.response.CategorySpotResponse;
+import com.sparta.wuzuzu.domain.spot.dto.CategorySpotResponse;
+import com.sparta.wuzuzu.domain.spot.dto.SpotDetailResponse;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,6 @@ public class SpotService {
     public SpotService(RestTemplateBuilder builder) {
         this.restTemplate = builder.build();
     }
-
 
     /**
      * 카테고리별 전체 조회
@@ -50,7 +49,6 @@ public class SpotService {
         return itemDtoList;
     }
 
-
     /**
      * 장소 상세 조회
      *
@@ -70,7 +68,6 @@ public class SpotService {
 //        }
         return new SpotDetailResponse((JSONObject) items.get(0));
     }
-
 
     /**
      * 검색 api 요청
@@ -105,6 +102,4 @@ public class SpotService {
         JSONArray items = jsonObject.getJSONArray("documents");
         return items;
     }
-
-
 }

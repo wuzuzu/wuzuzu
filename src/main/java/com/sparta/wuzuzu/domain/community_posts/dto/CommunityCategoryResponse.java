@@ -12,9 +12,7 @@ public class CommunityCategoryResponse {
     private boolean status;
 
     public CommunityCategoryResponse(CommunityCategory category) {
-
         this.name = category.getName();
         this.status = category.getStatus();
     }
-
 }

@@ -47,7 +47,7 @@ public class CustomCommunityPostElasticRepositoryImpl implements
                         .includes(List.of(
                             "title", "content", "views", "like_count", "comments", "timestamp",
                             "user_id", "user_name",
-                            "category_id", "category_name","communitypost_id"
+                            "category_id", "category_name", "communitypost_id"
                         ))
                     ))
                 ))

@@ -28,5 +28,4 @@ public class SalePostElasticResponse {
 
     private String author;
     private String category;
-
 }

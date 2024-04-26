@@ -17,7 +17,7 @@ import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostEl
 import com.sparta.wuzuzu.domain.community_posts.repository.CustomCommunityPostRepository;
 import com.sparta.wuzuzu.domain.community_posts.repository.PostLikeRepository;
 import com.sparta.wuzuzu.domain.user.entity.User;
-import com.sparta.wuzuzu.global.dto.request.ListRequest;
+import com.sparta.wuzuzu.global.dto.ListRequest;
 import com.sparta.wuzuzu.global.exception.ValidateUserException;
 import com.sparta.wuzuzu.global.util.PagingUtil;
 import java.io.IOException;
@@ -78,12 +78,15 @@ public class CommunityPostsService {
     public CommunityPostResponse updateCommunityPosts(CommunityPostRequest communityPostRequest,
         Long userId, Long communityPostsId) {
         CommunityPost post = communityPostRepository.findById(communityPostsId).orElseThrow();
+
         post.validateUser(userId);
+
         post.updateCommunityPosts(
             communityPostRequest.getTitle(),
             communityCategoryRepository.findByNameEquals(communityPostRequest.getCategoryName())
                 .orElseThrow(),
             communityPostRequest.getContent());
+
         return CommunityPostResponse.builder().
             title(post.getTitle()).
             categoryName(post.getCategory().getName()).
@@ -112,14 +115,16 @@ public class CommunityPostsService {
             .build();
     }
 
-    public CommunityPostElasticListResponse searchPostByKeyword(String keyword, ListRequest request) {
+    public CommunityPostElasticListResponse searchPostByKeyword(String keyword,
+        ListRequest request) {
         if (request.getColumn() == null || request.getColumn().isEmpty()) {
             request.setColumn("createdAt");//조회 기준 컬럼 입력 없을 경우 날짜순을 기본으로 지정
         }
 
         Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(),
             Sort.by(request.getSortDirection(), request.getColumn()));
-        Page<CommunityElasticResponse> postsPage = communityPostElasticRepository.findByTitleContaining(keyword, pageable);
+        Page<CommunityElasticResponse> postsPage = communityPostElasticRepository.findByTitleContaining(
+            keyword, pageable);
 
         PagingUtil pagingUtil = new PagingUtil(postsPage.getTotalElements(),
             postsPage.getTotalPages(), request.getPage(), request.getPageSize());

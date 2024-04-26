@@ -26,7 +26,7 @@ public class CommunityCategory {
     @Column(columnDefinition = "TINYINT(1) default 0")
     private Boolean status = true;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityPost> communityPosts;
 
     public CommunityCategory(String name) {
@@ -44,6 +44,4 @@ public class CommunityCategory {
     public void reCreate() {
         this.status = true;
     }
-
-
 }

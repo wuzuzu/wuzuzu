@@ -7,7 +7,7 @@ import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostListResponse;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostRequest;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityPostResponse;
 import com.sparta.wuzuzu.domain.community_posts.service.CommunityPostsService;
-import com.sparta.wuzuzu.global.dto.request.ListRequest;
+import com.sparta.wuzuzu.global.dto.ListRequest;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -86,7 +86,8 @@ public class CommunityPostsController {
     }
 
     @GetMapping("/search/keyword/{keyword}")
-    public ResponseEntity<CommunityPostElasticListResponse> searchCommunityPostsByTitle(@PathVariable String keyword, @ModelAttribute ListRequest request) {
+    public ResponseEntity<CommunityPostElasticListResponse> searchCommunityPostsByTitle(
+        @PathVariable String keyword, @ModelAttribute ListRequest request) {
         return ResponseEntity.ok(communityPostsService.searchPostByKeyword(keyword, request));
     }
 

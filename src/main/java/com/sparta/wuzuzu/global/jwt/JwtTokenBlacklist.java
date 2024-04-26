@@ -1,12 +1,12 @@
 package com.sparta.wuzuzu.global.jwt;
 
-import org.springframework.stereotype.Component;
-
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenBlacklist {
+
     private Set<String> blacklist = new HashSet<>();
 
     // 토큰 추가

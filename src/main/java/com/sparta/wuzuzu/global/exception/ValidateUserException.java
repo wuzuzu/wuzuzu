@@ -9,5 +9,4 @@ public class ValidateUserException extends RuntimeException {
     public ValidateUserException(String s) {
         super(s);
     }
-
 }

@@ -12,7 +12,8 @@ export const getAllRooms = async () => {
 
 export const createChatRoom = async (chatRoom, image) => {
     const formData = new FormData();
-    await formData.append('chatRoom', new Blob([JSON.stringify(chatRoom)], {type: 'application/json'}));
+    await formData.append('chatRoom',
+        new Blob([JSON.stringify(chatRoom)], {type: 'application/json'}));
 
     if (image) {
         formData.append('image', image);
