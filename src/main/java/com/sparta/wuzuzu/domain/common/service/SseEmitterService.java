@@ -1,4 +1,4 @@
-package com.sparta.wuzuzu.domain.common.image.service;
+package com.sparta.wuzuzu.domain.common.service;
 
 import java.io.IOException;
 import java.util.Map;
