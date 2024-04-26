@@ -38,7 +38,11 @@ export const searchPosts = async (searchParams) => {
         params.categoryName = categoryName;
     }
 
+    if(keyword){
+        return apiClient.get(startUrl + `/communityposts/search/keyword/${keyword}`, {params});
+    }
     return apiClient.get(startUrl + `/communityposts/search`, {params});
+
 };
 
 export const getPostDetail = async (communityPostId) => {

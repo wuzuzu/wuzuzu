@@ -3,6 +3,8 @@ package com.sparta.wuzuzu.domain.sale_post.repository;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.SourceConfig;
+import co.elastic.clients.elasticsearch.core.search.SourceFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostElasticResponse;
 import java.util.List;
@@ -60,6 +62,14 @@ public class CustomSalePostElasticRepositoryImpl implements CustomSalePostElasti
                         .minimumShouldMatch("1")  // 적어도 하나의 조건을 만족
                     )
                 )
+                .source(SourceConfig.of(s -> s
+                    .filter(SourceFilter.of(f -> f
+                        .includes(List.of(
+                            "sale_post_id", "title", "views", "goods", "like_count", "timestamp",
+                            "author", "category"
+                        ))
+                    ))
+                ))
                 .from((int) pageable.getOffset())
                 .size(pageable.getPageSize())
                 .build();

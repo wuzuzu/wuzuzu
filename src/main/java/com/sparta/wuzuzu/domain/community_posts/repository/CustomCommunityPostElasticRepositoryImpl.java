@@ -3,6 +3,8 @@ package com.sparta.wuzuzu.domain.community_posts.repository;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.SourceConfig;
+import co.elastic.clients.elasticsearch.core.search.SourceFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.wuzuzu.domain.community_posts.dto.CommunityElasticResponse;
 import java.util.List;
@@ -15,9 +17,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+
 @Slf4j
 @Repository
-public class CustomCommunityPostElasticRepositoryImpl implements CustomCommunityPostElasticRepository {
+public class CustomCommunityPostElasticRepositoryImpl implements
+    CustomCommunityPostElasticRepository {
 
     private final ElasticsearchClient elasticsearchClient;
 
@@ -38,6 +42,15 @@ public class CustomCommunityPostElasticRepositoryImpl implements CustomCommunity
                         .maxExpansions(50)
                     )
                 )
+                .source(SourceConfig.of(s -> s
+                    .filter(SourceFilter.of(f -> f
+                        .includes(List.of(
+                            "title", "content", "views", "like_count", "comments", "timestamp",
+                            "user_id", "user_name",
+                            "category_id", "category_name","communitypost_id"
+                        ))
+                    ))
+                ))
                 .from((int) pageable.getOffset())
                 .size(pageable.getPageSize())
                 .build();

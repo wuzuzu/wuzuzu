@@ -33,7 +33,16 @@ function OrderMain() {
 
     async function handlePostClick(post) {
         try {
-            const response = await getPostDetail(post.salePostId);
+            let postId;
+            // 조건문을 사용하여 postId 설정
+            if (post.salePostId) {
+                postId = post.salePostId;
+            } else if (post.sale_post_id) {
+                postId = post.sale_post_id;
+            } else {
+                throw new Error("게시글 ID가 없습니다.");
+            }
+            const response = await getPostDetail(postId);
             setSelectedPost(response.data.data);
             setState(communityAppState.게시글상세조회중);
         } catch (error) {

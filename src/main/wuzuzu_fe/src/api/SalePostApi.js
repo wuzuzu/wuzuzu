@@ -10,6 +10,48 @@ export const getPosts = async () => {
     return apiClient.get(startUrl);
 }
 
+export const searchPosts = async (searchParams) => {
+    const {
+        page,
+        pageSize,
+        column,
+        title,
+        contents,
+        keyword,
+        categoryName,
+    } = searchParams;
+
+    const params = {};
+
+    if (page) {
+        params.page = page;
+    }
+    if (pageSize) {
+        params.pageSize = pageSize;
+    }
+    if (column) {
+        params.column = column;
+    }
+    if (title) {
+        params.title = title;
+    }
+    if (contents) {
+        params.contents = contents;
+    }
+    if (keyword) {
+        params.keyword = keyword;
+    }
+    if (categoryName) {
+        params.categoryName = categoryName;
+    }
+
+    if(keyword){
+        return apiClient.get(startUrl + `/keyword/${keyword}`, {params});
+    }
+    return apiClient.get(startUrl);
+
+};
+
 export const createSalePost = async (salePost, image) => {
     const formData = new FormData();
     await formData.append('salePost',
