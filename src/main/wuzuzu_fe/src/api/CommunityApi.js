@@ -1,5 +1,4 @@
 import {apiClient} from "./Client";
-import communityPost from "../Community/CommunityPost";
 
 const startUrl = "/api/v1";
 
@@ -38,8 +37,9 @@ export const searchPosts = async (searchParams) => {
         params.categoryName = categoryName;
     }
 
-    if(keyword){
-        return apiClient.get(startUrl + `/communityposts/search/keyword/${keyword}`, {params});
+    if (keyword) {
+        return apiClient.get(
+            startUrl + `/communityposts/search/keyword/${keyword}`, {params});
     }
     return apiClient.get(startUrl + `/communityposts/search`, {params});
 
@@ -50,23 +50,26 @@ export const getPostDetail = async (communityPostId) => {
 }
 
 export const likePost = async (communityPostId) => {
-    return apiClient.post(startUrl + `/communityposts/${communityPostId}/likes`);
+    return apiClient.post(
+        startUrl + `/communityposts/${communityPostId}/likes`);
 }
 
 export const createCommunityPost = async (communityPost, image) => {
     const formData = new FormData();
-    await formData.append('communityPost', new Blob([JSON.stringify(communityPost)], {type: 'application/json'}));
+    await formData.append('communityPost',
+        new Blob([JSON.stringify(communityPost)], {type: 'application/json'}));
 
     if (image) {
         formData.append('image', image);
     }
 
     try {
-        const response = await apiClient.post(startUrl + `/communityposts`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+        const response = await apiClient.post(startUrl + `/communityposts`,
+            formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
         return response;
     } catch (error) {
         console.error('Error creating post:', error);
@@ -96,11 +99,13 @@ export const uploadImage = async (communityPostId, image) => {
 };
 
 export const createComment = async (communityPostId, comment) => {
-    return apiClient.post(startUrl + `/comments/communityposts/${communityPostId}`, comment);
+    return apiClient.post(
+        startUrl + `/comments/communityposts/${communityPostId}`, comment);
 }
 
 export const getComments = async (communityPostId) => {
-    return apiClient.get(startUrl + `/comments/communityposts/${communityPostId}`);
+    return apiClient.get(
+        startUrl + `/comments/communityposts/${communityPostId}`);
 }
 
 export const deleteComment = async (communityPostId, comment) => {

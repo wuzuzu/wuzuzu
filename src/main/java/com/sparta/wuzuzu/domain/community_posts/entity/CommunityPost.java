@@ -88,11 +88,14 @@ public class CommunityPost extends Timestamped {
     public void removeLike() {
         this.likeCount = Math.max(0, this.likeCount - 1); // 0 미만으로 내려가지 않도록 보장
     }
+
     public void increaseViews() {
         views++;
     }
 
-    public void addComment() {this.comments++;}
+    public void addComment() {
+        this.comments++;
+    }
 
     public void removeComments() {
         this.comments = Math.max(0, this.comments - 1); // 0 미만으로 내려가지 않도록 보장

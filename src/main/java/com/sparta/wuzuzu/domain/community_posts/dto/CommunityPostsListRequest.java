@@ -1,9 +1,8 @@
 package com.sparta.wuzuzu.domain.community_posts.dto;
 
-import com.sparta.wuzuzu.global.dto.request.ListRequest;
+import com.sparta.wuzuzu.global.dto.ListRequest;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -22,11 +21,11 @@ public class CommunityPostsListRequest extends ListRequest {
         this.title = title;
         this.contents = contents;
     }
+
     public CommunityPostsListRequest() {
         this.title = "";
         this.contents = "";
         this.keyword = "";
         this.categoryName = "";
     }
-
 }

@@ -1,12 +1,12 @@
 package com.sparta.wuzuzu.domain.sale_post.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
+import com.sparta.wuzuzu.domain.sale_post.dto.SalePostElasticListResponse;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostRequest;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostResponse;
 import com.sparta.wuzuzu.domain.sale_post.dto.SalePostVo;
-import com.sparta.wuzuzu.domain.sale_post.dto.SalePostElasticListResponse;
 import com.sparta.wuzuzu.domain.sale_post.service.SalePostService;
-import com.sparta.wuzuzu.global.dto.request.ListRequest;
+import com.sparta.wuzuzu.global.dto.ListRequest;
 import com.sparta.wuzuzu.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -53,7 +53,8 @@ public class SalePostController {
     }
 
     @GetMapping("/keyword/{keyword}")
-    public ResponseEntity<SalePostElasticListResponse> searchSalesPostByTitleAndGoods(@PathVariable String keyword, @ModelAttribute ListRequest request) {
+    public ResponseEntity<SalePostElasticListResponse> searchSalesPostByTitleAndGoods(
+        @PathVariable String keyword, @ModelAttribute ListRequest request) {
         return ResponseEntity.ok(salePostService.getSalePostsByTitleAndGoods(keyword, request));
     }
 

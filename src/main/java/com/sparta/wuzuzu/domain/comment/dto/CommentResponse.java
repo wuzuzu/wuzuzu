@@ -14,8 +14,7 @@ public class CommentResponse {
     private String username;
     private String contents;
 
-
-    public CommentResponse(Comment comment){
+    public CommentResponse(Comment comment) {
         User user = comment.getUser();
         this.commentId = comment.getCommentId();
         this.userId = user.getUserId();

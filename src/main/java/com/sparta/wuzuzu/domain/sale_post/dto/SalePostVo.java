@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class SalePostVo {
+
     private Long salePostId;
     private String title;
     private String description;

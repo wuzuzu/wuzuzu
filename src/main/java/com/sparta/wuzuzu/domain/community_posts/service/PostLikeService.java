@@ -29,6 +29,7 @@ public class PostLikeService {
             like.removeLike(post);//게시글 좋아요 리스트에서 제거.
             post.removeLike();
             communityPostRepository.save(post);
+
             return new PostLikeResponse(false);
         } else {
             PostLike like = new PostLike(user, post);

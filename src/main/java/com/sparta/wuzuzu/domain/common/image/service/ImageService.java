@@ -34,11 +34,11 @@ public class ImageService {
     }
 
     @Transactional
-    public void deleteImage(String url, Object object){
+    public void deleteImage(String url, Object object) {
         Optional<Image> imageUrlToDelete;
 
         // Object 에 속한 이미지 목록에서 해당 URL 을 가진 이미지 탐색
-        if(object instanceof SalePost salePost){
+        if (object instanceof SalePost salePost) {
             imageUrlToDelete = salePost.getImageUrl().stream()
                 .filter(imageUrl -> imageUrl.getImageUrl().equals(uploadPath + url))
                 .findFirst();
@@ -48,9 +48,7 @@ public class ImageService {
                 salePost.getImageUrl().remove(image);
                 imageRepository.delete(image);
             }
-        }
-
-        else if(object instanceof CommunityPost communityPost){
+        } else if (object instanceof CommunityPost communityPost) {
             imageUrlToDelete = communityPost.getImageUrl().stream()
                 .filter(imageUrl -> imageUrl.getImageUrl().equals(uploadPath + url))
                 .findFirst();
@@ -60,9 +58,7 @@ public class ImageService {
                 communityPost.getImageUrl().remove(image);
                 imageRepository.delete(image);
             }
-        }
-
-        else {
+        } else {
             throw new IllegalArgumentException("Object 가 잘못되었습니다.");
         }
 

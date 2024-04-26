@@ -19,7 +19,8 @@ function MyMessage({message}) {
                     boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.1)',
                 }}
             >
-                <Typography variant="caption" component="body1">{message}</Typography>
+                <Typography variant="caption"
+                            component="body1">{message}</Typography>
             </Box>
         </Box>
     );

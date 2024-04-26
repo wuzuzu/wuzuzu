@@ -45,7 +45,7 @@ export const searchPosts = async (searchParams) => {
         params.categoryName = categoryName;
     }
 
-    if(keyword){
+    if (keyword) {
         return apiClient.get(startUrl + `/keyword/${keyword}`, {params});
     }
     return apiClient.get(startUrl);

@@ -3,12 +3,11 @@ package com.sparta.wuzuzu.global.security;
 import com.sparta.wuzuzu.domain.admin.entity.Admin;
 import com.sparta.wuzuzu.domain.user.entity.User;
 import com.sparta.wuzuzu.domain.user.entity.UserRole;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -62,7 +61,8 @@ public class UserDetailsImpl implements UserDetails {
             return null;
         }
 
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.getAuthority());
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
+            role.getAuthority());
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(simpleGrantedAuthority);
 

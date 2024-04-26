@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 //@Component //사용할 때만 주석처리 제거
 @RequiredArgsConstructor

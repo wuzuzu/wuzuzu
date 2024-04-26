@@ -23,11 +23,6 @@ public class CommunityCategoryService {
     public CommunityCategoryResponse createCategory(User user,
         CommunityCategoryRequest communityCategoryRequest) {
 
-//        UserRole userRole = user.getRole();
-//        if (userRole != UserRole.ADMIN) {
-//            throw new ValidateAdminException();
-//        }
-
         CommunityCategory category = community_CategoryRepository
             .findByNameEquals(communityCategoryRequest.getName())
             .orElse(null); // Optional 객체를 사용하여 값의 존재 유무를 먼저 확인
@@ -85,6 +80,5 @@ public class CommunityCategoryService {
             community_Category.delete();
         }
     }
-
 }
 

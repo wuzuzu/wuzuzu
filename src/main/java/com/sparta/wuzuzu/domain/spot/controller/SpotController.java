@@ -1,8 +1,8 @@
 package com.sparta.wuzuzu.domain.spot.controller;
 
 import com.sparta.wuzuzu.domain.common.dto.CommonResponse;
-import com.sparta.wuzuzu.domain.spot.dto.response.SpotDetailResponse;
-import com.sparta.wuzuzu.domain.spot.dto.response.CategorySpotResponse;
+import com.sparta.wuzuzu.domain.spot.dto.CategorySpotResponse;
+import com.sparta.wuzuzu.domain.spot.dto.SpotDetailResponse;
 import com.sparta.wuzuzu.domain.spot.service.SpotService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +37,4 @@ public class SpotController {
             storeName);
         return CommonResponse.ofDataWithHttpStatus(spotDetailResponseList, HttpStatus.OK);
     }
-
-
 }

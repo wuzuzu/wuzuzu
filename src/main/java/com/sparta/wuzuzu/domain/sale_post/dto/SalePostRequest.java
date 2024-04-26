@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class SalePostRequest {
+
     @NotBlank(message = "제목은 필수입니다.")
     private String title;
 

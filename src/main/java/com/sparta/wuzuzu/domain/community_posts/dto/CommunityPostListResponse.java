@@ -1,7 +1,7 @@
 package com.sparta.wuzuzu.domain.community_posts.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sparta.wuzuzu.global.dto.response.ListResponse;
+import com.sparta.wuzuzu.global.dto.ListResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +16,6 @@ import lombok.experimental.SuperBuilder;
 public class CommunityPostListResponse extends ListResponse {
 
     private List<CommunityPostResponse> postList;
-
 }
 
 
