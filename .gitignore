@@ -39,6 +39,7 @@ out/
 ### properties ###
 application.properties
 application-main.properties
+application-test.properties
 
 ### env ###
 .env
