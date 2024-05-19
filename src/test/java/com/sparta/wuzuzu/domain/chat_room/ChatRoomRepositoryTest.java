@@ -3,15 +3,13 @@ package com.sparta.wuzuzu.domain.chat_room;
 import static com.sparta.wuzuzu.domain.chat_room.entity.QChatRoom.chatRoom;
 import static com.sparta.wuzuzu.domain.chat_room.entity.QMember.member;
 import static com.sparta.wuzuzu.domain.common.image.entity.QImage.image;
-import static com.sparta.wuzuzu.domain.user.entity.QUser.*;
-import static com.sparta.wuzuzu.domain.user.entity.QUser.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.wuzuzu.domain.chat_room.dto.GetChatRoomResponse;
 import com.sparta.wuzuzu.domain.chat_room.entity.ChatRoom;
@@ -21,6 +19,8 @@ import com.sparta.wuzuzu.domain.chat_room.repository.MemberRepository;
 import com.sparta.wuzuzu.domain.common.image.repository.ImageRepository;
 import com.sparta.wuzuzu.domain.user.entity.QUser;
 import com.sparta.wuzuzu.domain.user.entity.User;
+import com.sparta.wuzuzu.domain.user.entity.UserRole;
+import com.sparta.wuzuzu.domain.user.repository.UserRepository;
 import com.sparta.wuzuzu.global.config.QueryDSLConfig;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,14 +48,18 @@ public class ChatRoomRepositoryTest {
     @Autowired
     ImageRepository imageRepository;
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     JPAQueryFactory queryFactory;
 
     User user;
 
     @BeforeEach
     void setUp() {
-        user = new User();
-        user.setUserId(100L);
+        user = new User("", "", "유저이름", "", "", "", UserRole.USER, false, 0);
+        user.setUserId(1L);
+        userRepository.save(user);
     }
 
     @Nested
@@ -186,32 +190,52 @@ public class ChatRoomRepositoryTest {
             }
         }
 
-//        @Test
-//        @DisplayName("내 채팅방 찾기")
-//        void findAllMyRooms() {
-//            System.out.println(user.getUserId());
-//            for(Member member : memberRepository.findAll()) {
-//                System.out.println(member.getChatRoomId() + " " + member.getUserId());
-//            }
-//            for(ChatRoom chatRoom : chatRooms) {
-//                System.out.println(chatRoom.getChatRoomId() + " " + chatRoom.getUser().getUserId());
-//            }
-//
-//            List<GetChatRoomResponse> find = queryFactory.select(
-//                    Projections.constructor(GetChatRoomResponse.class,
-//                        QUser.user.userName,
-//                        chatRoom.chatRoomId,
-//                        chatRoom.chatRoomName,
-//                        chatRoom.description,
-//                        image.imageUrl,
-//                        chatRoom.chatRoomTag))
-//                .from(chatRoom)
-//                .leftJoin(member).on(member.chatRoomId.eq(chatRoom.chatRoomId))
-//                .leftJoin(image).on(image.chatRoom.chatRoomId.eq(chatRoom.chatRoomId))
-//                .where(member.userId.eq(user.getUserId()))
-//                .fetch();
-//
-//            assertEquals(chatRooms.size(), find.size());
-//        }
+        @Test
+        @DisplayName("내 채팅방 찾기")
+        void findAllMyRooms() {
+            List<GetChatRoomResponse> find = queryFactory.select(
+                    Projections.constructor(GetChatRoomResponse.class,
+                        QUser.user.userName,
+                        chatRoom.chatRoomId,
+                        chatRoom.chatRoomName,
+                        chatRoom.description,
+                        image.imageUrl,
+                        chatRoom.chatRoomTag))
+                .from(chatRoom)
+                .leftJoin(member).on(member.chatRoomId.eq(chatRoom.chatRoomId))
+                .leftJoin(image).on(image.chatRoom.chatRoomId.eq(chatRoom.chatRoomId))
+                .where(member.userId.eq(user.getUserId()))
+                .fetch();
+
+            assertEquals(chatRooms.size(), find.size());
+
+            for (GetChatRoomResponse response : find) {
+                assertEquals(user.getUserName(), response.getUserName());
+            }
+        }
+
+        @Test
+        @DisplayName("다른 채팅방 찾기")
+        void findAllNotMyRooms() {
+            List<GetChatRoomResponse> find = queryFactory.select(
+                    Projections.constructor(GetChatRoomResponse.class,
+                        QUser.user.userName,
+                        chatRoom.chatRoomId,
+                        chatRoom.chatRoomName,
+                        chatRoom.description,
+                        image.imageUrl,
+                        chatRoom.chatRoomTag))
+                .from(chatRoom)
+                .leftJoin(member).on(member.chatRoomId.eq(chatRoom.chatRoomId))
+                .leftJoin(image).on(image.chatRoom.chatRoomId.eq(chatRoom.chatRoomId))
+                .where(member.userId.eq(2L))
+                .fetch();
+
+            assertEquals(chatRooms.size(), find.size());
+
+            for (GetChatRoomResponse response : find) {
+                assertNotEquals(user.getUserName(), response.getUserName());
+            }
+        }
     }
 }
